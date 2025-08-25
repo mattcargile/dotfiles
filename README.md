@@ -1,2 +1,3 @@
 # dotfiles
-Configuration for terminal, editor, shell, etc using chezmoi
+Personal cross-platform configuration using chezmoi.
+
