@@ -1,0 +1,188 @@
+Function Get-FileProcess {
+    <#
+    .SYNOPSIS
+    Get the process that has opened the requested file.
+
+    .DESCRIPTION
+    Output the path and process id of each process that has an opened HANDLE of
+    the provided files.
+
+    .PARAMETER Path
+    The paths to check for opened handles, this supports wildcard matching.
+
+    .PARAMETER LiteralPath
+    The paths to check for opened handles, this is the literal path with no
+    wildcard matching.
+
+    .EXAMPLE
+    Get-FilePath -Path C:\temp\test.txt
+
+    # Path             PID
+    # ----             ---
+    # C:\temp\test.txt 824
+
+    .OUTPUTS
+    An object with Path and PID being the file path the process id of the
+    opened handle.
+
+    .NOTES
+    If the file(s) requested do not have an opened handle then there will be no
+    output.
+    #>
+    [CmdletBinding(DefaultParameterSetName = "Path")]
+    [Alias('gfilp','test')]
+    param (
+        [Parameter(
+            Position = 0,
+            Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = "Path")]
+        [string[]]
+        $Path,
+
+        [Parameter(
+            Mandatory,
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = "LiteralPath")]
+        [string[]]
+        [Alias("PSPath")]
+        $LiteralPath
+    )
+
+    begin {
+        $k32 = New-CtypesLib Kernel32.dll
+        $ntdll = New-CtypesLib Ntdll.dll
+
+        $FileProcessIdsUsingFileInformation = 47
+        $FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
+        $STATUS_INFO_LENGTH_MISMATCH = 0xC0000004
+
+        ctypes_struct FILE_PROCESS_IDS_USING_FILE_INFORMATION {
+            [int]$NumberOfProcessIdsInList
+            [MarshalAs('ByValArray', SizeConst=1)][IntPtr[]]$ProcessIdList
+        }
+
+        ctypes_struct IO_STATUS_BLOCK {
+            [int]$Status
+            [IntPtr]$Information
+        }
+
+        $ioStatus = [IO_STATUS_BLOCK]::new()
+        $procIdOffset = [int][System.Runtime.InteropServices.Marshal]::OffsetOf[FILE_PROCESS_IDS_USING_FILE_INFORMATION](
+            'ProcessIdList')
+    }
+
+    process {
+        if ($PSCmdlet.ParameterSetName -eq 'Path') {
+            $allPaths = $Path | ForEach-Object -Process {
+                $provider = $null
+                try {
+                    $PSCmdlet.SessionState.Path.GetResolvedProviderPathFromPSPath($_, [ref]$provider)
+                }
+                catch [System.Management.Automation.ItemNotFoundException] {
+                    $PSCmdlet.WriteError($_)
+                }
+            }
+        }
+        elseif ($PSCmdlet.ParameterSetName -eq 'LiteralPath') {
+            $allPaths = $LiteralPath | ForEach-Object -Process {
+                $resolvedPath = $PSCmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath($_)
+                if (-not (Test-Path -LiteralPath $resolvedPath)) {
+                    $msg = "Cannot find path '$resolvedPath' because it does not exist"
+                    $err = [System.Management.Automation.ErrorRecord]::new(
+                        [System.Management.Automation.ItemNotFoundException]::new($msg),
+                        "PathNotFound",
+                        "ObjectNotFound",
+                        $resolvedPath)
+                    $PSCmdlet.WriteError($err)
+                    return
+                }
+
+                $resolvedPath
+            }
+        }
+
+        foreach ($filePath in $allPaths) {
+            # ReadAttributes can open a file even if it's locked by another
+            # process. It also can open files where we have dir access but not
+            # to the file itself.
+            $fileHandle = $k32.CharSet('Unicode').SetLastError().CreateFileW[Microsoft.Win32.SafeHandles.SafeFileHandle](
+                $filePath,
+                [System.Security.AccessControl.FileSystemRights]::ReadAttributes,
+                [System.IO.FileShare]'ReadWrite, Delete',
+                $null,
+                [System.IO.FileMode]::Open,
+                $FILE_FLAG_BACKUP_SEMANTICS,
+                $null)
+
+            if ($fileHandle.IsInvalid) {
+                $exp = [System.ComponentModel.Win32Exception]::new($k32.LastError)
+                $err = [System.Management.Automation.ErrorRecord]::new(
+                    $exp,
+                    "FailedToOpenFileHandle",
+                    "NotSpecified",
+                    $filePath)
+                $err.ErrorDetails = "Failed to open handle for '{0}' (0x{1:X8}): {2}" -f @(
+                    $filePath, $exp.NativeErrorCode, $exp.Message)
+                $PSCmdlet.WriteError($err)
+                continue
+            }
+
+            $bufferLength = 8192
+            $buffer = [System.Runtime.InteropServices.Marshal]::AllocHGlobal($bufferLength)
+            try {
+                while ($true) {
+                    $res = $ntdll.NtQueryInformationFile(
+                        $fileHandle,
+                        [ref]$ioStatus,
+                        $buffer,
+                        $bufferLength,
+                        $FileProcessIdsUsingFileInformation)
+
+                    if ($res -eq $STATUS_INFO_LENGTH_MISMATCH) {
+                        $bufferLength = $bufferLength * 8192
+                        $buffer = [System.Runtime.InteropServices.Marshal]::ReAllocHGlobal($buffer, $bufferLength)
+                    }
+                    else {
+                        break
+                    }
+                }
+
+                if ($res -ne 0) {
+                    $errCode = $ntdll.TrlNtStatusToDosError($res)
+                    $exp = [System.ComponentModel.Win32Exception]::new($errCode)
+
+                    $err = [System.Management.Automation.ErrorRecord]::new(
+                        $exp,
+                        "FailedToRetrievePidList",
+                        "NotSpecified",
+                        $filePath)
+                    $err.ErrorDetails = "Failed to retrieve PID list for '{0}' (0x{1:X8}): {2}" -f @(
+                        $filePath, $exp.NativeErrorCode, $exp.Message)
+                    $PSCmdlet.WriteError($err)
+                    continue
+                }
+
+                $idInfo = [System.Runtime.InteropServices.Marshal]::PtrToStructure(
+                    $buffer,
+                    [type][FILE_PROCESS_IDS_USING_FILE_INFORMATION])
+                $pidsBuffer = [IntPtr]::Add($buffer, $procIdOffset)
+                for ($i = 0; $i -lt $idInfo.NumberOfProcessIdsInList; $i++) {
+                    $processId = [System.Runtime.InteropServices.Marshal]::ReadIntPtr(
+                        $pidsBuffer,
+                        ([IntPtr]::Size * $i))
+
+                    [PSCustomObject]@{
+                        Path = $filePath
+                        PID = $processId
+                    }
+                }
+            }
+            finally {
+               $fileHandle.Dispose()
+               [System.Runtime.InteropServices.Marshal]::FreeHGlobal($buffer)
+            }
+        }
+    }
+}

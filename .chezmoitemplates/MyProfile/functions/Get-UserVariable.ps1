@@ -1,0 +1,232 @@
+function Get-UserVariable {
+    [Alias('guv')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkID=2096711')]
+    param(
+        [Parameter(Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string[]]
+        ${Name},
+
+        [switch]
+        ${ValueOnly},
+
+        [string[]]
+        ${Include},
+
+        [string[]]
+        ${Exclude},
+
+        [ValidateNotNullOrEmpty()]
+        [string]
+        ${Scope}
+    )
+
+    begin
+    {
+        try {
+            $outBuffer = $null
+            if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer))
+            {
+                $PSBoundParameters['OutBuffer'] = 1
+            }
+
+            $MiscVar = @(
+                'FormatEnumerationLimit'
+                'MaximumAliasCount'
+                'MaximumDriveCount'
+                'MaximumErrorCount'
+                'MaximumFunctionCount'
+                'MaximumVariableCount'
+                'PGHome'
+                'PGSE'
+                'PGUICulture'
+                'PGVersionTable'
+                'PROFILE'
+                'PSSessionOption'
+                'PSGetPath'
+                'psEditor'
+                <# Microsoft Storage Module ( e.g. `Mount-DiskImage` )#>
+                'StorageHistoryCharts'
+                <# Oh My Posh Argument Completer Script #>
+                '__oh_my_poshCompleterBlock'
+                <# oh-my-posh-core Module Global Enablers #>
+                '_ompAzure'
+                '_ompExecutable'
+                '_ompFTCSMarks'
+                '_ompJobCount'
+                '_ompPoshGit'
+                <# Az Module #>
+                'AzPSPolicyCachedLocations'
+                <# carapace.exe various completer #>
+                '_carapace_completer'
+                <# gh.exe GitHub CLI Arg Completer #>
+                '__ghCompleterBlock'
+                <# glow.exe Arg Completer #>
+                '__glowCompleterBlock'
+		        <# bb.exe Arg Completer #>
+		        '__bbCompleterBlock'
+                <# chezmoi.exe Arg Completer #>
+                '__chezmoiCompleterBlock'
+                <# VSCode Powershell Editor Services Debug #>
+                '__psEditorServices_CallStack'
+                '__psEditorServices_userInput'
+                <# VMware.PowerCLI variables#>
+                'UidUtil'
+                <# Remove `global:` for the below four items as the `-Exclude` parameter doesn't work with it #>
+                'DefaultVIServer'
+                'DefaultVIServers' 
+                'DefaultCisServer'
+                'DefaultCisServers'
+                <# ZLocation Module variables #>
+                'ZLocationPromptScriptBlock'
+                <# Selenium Module leaks variables by accident and purposefully. #>
+                'SeDriver'
+                'dll1Path'
+                'dll2Path'
+                <# SqlServer Module variables #>
+                'SqlServerConnectionTimeout'
+                'SqlServerIncludeSystemObjects'
+                'SqlServerMaximumChildItems'
+                'SqlServerMaximumTabCompletion'
+                <# dbatools/PSFramework - Select-DbaObject #>
+                '__PSFramework_SelectParam'
+                <# PSKoans Module #>
+                'PSKoans_ClearOutputStyle'
+                'PSKoans_SetOutputStyle'
+                <# Chocolatey Tab Completion Module ( chocolateyProfile.psm1 ) #>
+                'ChocolateyTabSettings'
+                <# posh-git Module #>
+                'GitMissing'
+                'GitStatus'
+                'GitPromptScriptBlock'
+                'GitPromptSettings'
+                'GitPromptValues'
+                'GitTabSettings'
+                'TortoiseGitSettings'
+                'VcsPromptStatuses'
+                <# gsudo chocolatey tool #>
+                'gsudoVerbose'
+                'gsudoLoadProfile'
+                'gsudoAutoComplete'
+                <# PnP.PowerShell #>
+                'WebRequestCounter'
+                <# EZOut Module #>
+                'EZOut'
+                'EZOut_clearOutputStyle'
+                'EZOut_Format-Heatmap'
+                'EZOut_Format-Markdown'
+                'EZOut_Format-RichText'
+                'EZOut_Indent'
+                'EZOut_setOutputStyle'
+                <# SentinelOneAPI Module #>
+                'S1_API_Key'
+                'S1_Base_URI'
+                'S1_Headers'
+                'S1_JSON_Conversion_Depth'
+                <# string module #>
+                'StringModule_ExportAlias'
+                'StringModule_DontInjectJoinString'
+                <# PSWriteHTML #>
+                'HTMLIcons'
+                <# NTFSSecurity Module #>
+                'type_NTFS1' 
+                <# posh-SSH Module #>
+                'SFTPSessions'
+                'SshSessions'
+                <# PoshRSJob Module #>
+                'PoshRS_jobCleanup'
+                'PoshRS_JobID'
+                'PoshRS_Jobs'
+                'PoshRS_RunspacePoolCleanup'
+                'PoshRS_RunspacePools'
+                'completion_ID'
+                'completion_Name'
+                'options'
+                <# VSCode Shell Integration #>
+		'__VSCodeState' # New single state variable. Remove below after PR #251114
+		'__vscode_shell_env_reporting'
+                '__LastHistoryId'
+                '__VSCodeOriginalPrompt'
+                '__VSCodeOriginalPSConsoleHostReadLine'
+                'isStable'
+                'isWindows10'
+                'Nonce'
+                'osVersion'
+                '__VSCodeIsInExecution'
+                'ContinuationPrompt'
+                'envVarsToReport'
+                <# $PROFILE.CurrentUserAllHosts #>
+                'MyDbaToolsRegServer_3f10603d-6f6f-4e0e-ade7-76265971485e'
+                'omp_lastVIServerConn'
+                '__'
+                <# Select Object Command Stopper #>
+                '__exceptionToThrow'
+                <# Local function variables #>
+                'MiscVar'
+                'SpecialVarType'
+                'SpecialVarFlags'
+                'SpecialVar'
+                'SpecialVarStr'
+                'SpecialVarValue'
+                'outBuffer'
+                'wrappedCmd'
+                'scriptCmd'
+                'steppablePipeline'
+            )
+            $SpecialVarType = 'System.Management.Automation.SpecialVariables'
+            $SpecialVarFlags = 'NonPublic,Static' # [System.Reflection.BindingFlags]
+            $SpecialVar = [psobject].Assembly.GetType($SpecialVarType).GetFields($SpecialVarFlags)
+            $SpecialVarStr = $SpecialVar | Where-Object -Property FieldType -EQ ([string])
+            $SpecialVarValue = $SpecialVarStr | ForEach-Object { [WildcardPattern]::Escape( $_.GetValue('') ) }
+            $PSBoundParameters['Exclude'] += $MiscVar + $SpecialVarValue + $PSCmdlet.MyInvocation.MyCommand.Parameters.Values.Name
+
+            $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand(
+                'Microsoft.PowerShell.Utility\Get-Variable',
+                [System.Management.Automation.CommandTypes]::Cmdlet
+            )
+            $scriptCmd = { & $wrappedCmd @PSBoundParameters }
+
+            $steppablePipeline = $scriptCmd.GetSteppablePipeline($MyInvocation.CommandOrigin)
+            $steppablePipeline.Begin($PSCmdlet)
+        } catch {
+            throw
+        }
+    }
+
+    process
+    {
+        try {
+            $steppablePipeline.Process($_)
+        } catch {
+            throw
+        }
+    }
+
+    end
+    {
+        try {
+            $steppablePipeline.End()
+        } catch {
+            throw
+        }
+    }
+
+    <# New clean Block Note:
+     # Not available in PowerShell Desktop
+     # Not currently used in `Get-Variable` as of 4/4/2023
+     # https://github.com/PowerShell/PowerShell/blob/master/src/Microsoft.PowerShell.Commands.Utility/commands/utility/Var.cs
+     #>
+    # clean
+    # {
+    #     if ($null -ne $steppablePipeline) {
+    #         $steppablePipeline.Clean()
+    #     }
+    # }
+
+<#
+.ForwardHelpTargetName Microsoft.PowerShell.Utility\Get-Variable
+.ForwardHelpCategory Cmdlet
+#>
+
+}
+
