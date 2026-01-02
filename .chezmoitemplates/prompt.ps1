@@ -13,7 +13,7 @@ Import-Module @ZLocationParam#>
 # OhMyPosh prompt
 # executiontime postfix invisible spacing character for bug in wt.exe (https://github.com/JanDeDobbeleer/oh-my-posh/discussions/668)
 # Had to change the hourglass icon
-$OhMyPoshConfig = "$env:OneDrive\Documents\oh-my-posh\themes\night-owl_mac.omp.json"
+$OhMyPoshConfig = "$env:USERPROFILE\.config\oh-my-posh\night-owl_mac.omp.json"
 if ($IsCoreCLR) { oh-my-posh.exe init pwsh --config $OhMyPoshConfig | Invoke-Expression }
 else { oh-my-posh.exe init powershell --config $OhMyPoshConfig | Invoke-Expression }
 
