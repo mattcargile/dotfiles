@@ -42,28 +42,6 @@ $env:ChocolateyToolsLocation = "C:\tools"
 # carapace completions use PSReadLine tooltip
 $env:CARAPACE_TOOLTIP = 1 # Powershell tooltip
 
-<# Chocolatey Install Notes:
- # TODO: Add to `choco_packages.config` for next time. See `choco install --help`.
- # OpenSSH
- # 1. Install with the below.
- #  sudo { choco install openssh --pre --version=9.5.0-beta1 -y --params='"/SSHServerFeature /SSHAgentFeature /PathSpecsToProbeForShellEXEString:$env:programfiles\PowerShell\*\pwsh.exe"' }
- # LogParser for IIS Logs
- # 1. Install with below to create the ShimGen.exe
- #       `sudo choco install logparser -y --ia='LPTARGETDIR=C:\ProgramData\chocolatey\lib\logparser\tools\'`
- # 2. Get the PROPERTY to pass to chocolatey to get the ShimGen.exe working properly.
- #       `MsiExec.exe /package LogParser.msi /L*v "$env:WINDIR\Temp\LogParser-Install.log" /quiet /qn`
- # 3. The default install location is `"${env:ProgramFiles(x86)}\Log Parser 2.2\"`
- # pandoc for PDF conversion
- # 1. Use `sudo choco install pandoc --ia=ALLUSERS=1 --ia=APPLICATIONFOLDER=C:\ProgramData\chocolatey\lib\pandoc\tools -y` otherwise it installs under
- #    the current user only and outside the `lib` dir. See [link](https://github.com/jgm/pandoc/tree/3.1.2/windows)
- # 2. Need to remove `C:\Program Files\pandoc` from `$env:Path`.
- # 3. Need to install before `ripgrep-all` so that it doesn't default to current user. Should prefer editing the `.config` file.
- # 4. Switched to using `scoop install pandoc` because it has better handling of the location of the `exe`.
- # gh GitHub CLI New Install Location
- # 1. Use `sudo choco install gh -y --ia='INSTALLDIR=C:\ProgramData\chocolatey\lib\gh\tools\'`to install to directory for `shimgen.exe`.
- # 2. Need to remove `INSTALLDIR` from `$env:Path`
- #>
-
 $envvarPathSeperator = [System.IO.Path]::PathSeparator
 $envvarPathsToAdd = [System.Collections.Generic.List[string]]@(
     # Custom miscellaneous exe folder
