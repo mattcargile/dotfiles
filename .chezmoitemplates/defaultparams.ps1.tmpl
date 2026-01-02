@@ -73,7 +73,9 @@ $rmVar = @(
   'credSspAdmSbk'
   # 'veeamComputerName'
   'cmsSqlInstance'
-  'companyProp'
+  if ($env:OneDriveCommercial) {
+    'companyProp'
+  }
   'vCenterComputerName'
   'workKeepassName'
 )
