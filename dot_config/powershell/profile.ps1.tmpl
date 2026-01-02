@@ -32,7 +32,7 @@ Import-Module Microsoft.PowerShell.Utility
 {{ includeTemplate "defaultparams.ps1.tmpl" . }}
 
 # ArgumentCompleter
-{{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir ".chezmoitemplates" "New-ArgCompleterOutput.ps1" ) }}
+{{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir ".chezmoitemplates" "Write-ArgCompleterOutput.ps1" ) }}
 {{ outputList "pwsh" $argCompleterArgList }}
 {{ includeTemplate "argcompleter.ps1" . }}
 
