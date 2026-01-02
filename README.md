@@ -30,6 +30,7 @@ Personal cross-platform configuration using chezmoi.
     ```
 1. `scoop` requires a `scoop install git` first for buckets and such
     * Should run `scoop update` after
+1. Then run `scoop install lessmsi` prior to `scoop import`.
 1. Add aliases back.
     ```powershell
     Import-CliXml $env:onedrive\backup\scoop_export_alias_cli.xml | % { scoop alias add $_.Name $_.Command $_.Summary }
