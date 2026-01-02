@@ -1,0 +1,46 @@
+#Requires -Version 5.1
+
+{{ includeTemplate "usingnm.ps1" . }}
+
+# NOTE: PM Console already imports these. To avoid the warning ( e.g. "..snap-in was already imported" ) on boot up, 
+# one has to check for `$Host.Name -eq 'Package Manager Host'`
+# All the pros do the below. It might be faster?
+Import-Module Microsoft.PowerShell.Management
+Import-Module Microsoft.PowerShell.Utility
+
+<# ISSUES:
+ # 1.) `code` with `powershell.exe` as default terminal opened from `pwsh.exe` causes "malformed" `$env:PSModulePath`.
+ #      Modules like 'Terminal-Icons' error out because `Import-PowerShellDataFile` doesn't exist.
+ # 2.) `code` introduces a new $env:PSModulePath with different versions of modules like PSReadLine
+ #>
+
+<# TODO:
+ # 1.) Configure `$profile.AllUsersAllHosts` for better alias handling with `sudo`.
+ # 2.) Add all below into the `build.ps1` script.
+ #>
+
+# Environment Variables
+{{ includeTemplate "env.ps1" . }}
+
+# Prompt
+{{ includeTemplate "prompt.ps1" . }}
+
+# Modules and Icons
+{{ includeTemplate "module.ps1" . }}
+
+# PSDefaultParameterValues
+{{ includeTemplate "defaultparams.ps1.tmpl" . }}
+
+# ArgumentCompleter
+{{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir ".chezmoitemplates" "New-ArgCompleterOutput.ps1" ) }}
+{{ outputList "pwsh" $argCompleterArgList }}
+{{ includeTemplate "argcompleter.ps1" . }}
+
+# Alias
+{{ includeTemplate "alias.ps1" . }}
+
+# ReadLine
+{{ includeTemplate "readline.ps1" . }}
+
+# Custom Formatters
+Update-FormatData -PrependPath "$env:USERPROFILE\.config\powershell\profile.format.ps1xml"

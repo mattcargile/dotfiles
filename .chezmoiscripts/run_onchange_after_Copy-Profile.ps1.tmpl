@@ -1,0 +1,15 @@
+[CmdletBinding()]
+param()
+# profile.ps1 SHA256: {{ includeTemplate "dot_config/powershell/profile.ps1.tmpl" . | sha256sum }}
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+$profileFilePath = "$env:USERPROFILE\.config\powershell\profile.ps1"
+if ($env:OneDriveCommercial) {
+    Copy-Item -Path $profileFilePath -Destination "$env:OneDriveCommercial\Documents\PowerShell\profile.ps1"
+    Copy-Item -Path $profileFilePath -Destination "$env:OneDriveCommercial\Documents\WindowsPowerShell\profile.ps1"
+}
+if ($env:OneDriveConsumer) {
+    Copy-Item -Path $profileFilePath -Destination "$env:OneDriveConsumer\Documents\PowerShell\profile.ps1"
+    Copy-Item -Path $profileFilePath -Destination "$env:OneDriveConsumer\Documents\WindowsPowerShell\profile.ps1"
+}

@@ -1,0 +1,23 @@
+{{ $isPSCore := hasPrefix "core" ( base .chezmoi.sourceFile ) }}
+{{ $psFileGlobPattern := "*ps1*" }}
+{{ $tmplRelativeDir := "MyProfile/functions" }}
+{{ $tmplFuncDir := joinPath .chezmoi.sourceDir ".chezmoitemplates" $tmplRelativeDir }}
+{{ $tmplFuncGlobDir := joinPath $tmplFuncDir $psFileGlobPattern }}
+{{ $tmplPSCoreDict := dict "isPSCore" $isPSCore }}
+{{ $tmplPSEditionFuncGlobDir := "" }}
+{{ $tmplPSEditionRelativeDir := "" }}
+{{/* Include the PS files for both Core and Desktop */}}
+{{ range $file := glob $tmplFuncGlobDir  }}
+{{ includeTemplate ( list $tmplRelativeDir ( base $file ) | join "/" ) $tmplPSCoreDict }}
+{{ end }}
+{{ if eq $isPSCore true }}
+{{ $tmplPSEditionRelativeDir = list $tmplRelativeDir "core" | join "/" }}
+{{ $tmplPSEditionFuncGlobDir = joinPath $tmplFuncDir "core" $psFileGlobPattern  }}
+{{ else }}
+{{ $tmplPSEditionRelativeDir = list $tmplRelativeDir "desktop" | join "/" }}
+{{ $tmplPSEditionFuncGlobDir = joinPath $tmplFuncDir "desktop" $psFileGlobPattern }}
+{{ end }}
+{{/* Include the PS files for either Core or Desktop */}}
+{{ range $file := glob $tmplPSEditionFuncGlobDir  }}
+{{ includeTemplate ( list $tmplPSEditionRelativeDir ( base $file ) | join "/" ) $tmplPSCoreDict }}
+{{ end }}

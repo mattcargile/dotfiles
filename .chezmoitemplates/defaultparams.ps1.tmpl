@@ -1,0 +1,80 @@
+# $veeamComputerName = ''
+$cmsSqlInstance = {{ .msSqlMgmtInstance | squote }} 
+$vCenterComputerName = {{ .vCenterComputerName | squote }}
+$workKeepassName = {{ .workKeepassName | squote }}
+# $credSbk = { Get-Secret -Name du -Vault dp } 
+$credAdmSbk = { Get-Secret -Name da -Vault dp } 
+$credSspAdmSbk = { if ($args.BoundParameters -contains 'Authentication') { Get-Secret -Name da -Vault dp } }
+
+if ($Env:OneDriveCommercial) {
+  $companyProp = [string[]]@(
+    'extensionAttribute2'
+    'extensionAttribute4'
+    'extensionAttribute11'
+    'extensionAttribute12'
+    'EmployeeID'
+  )
+}
+$PSDefaultParameterValues = @{
+    'Get-AdUser:Properties' = [string[]]@(
+      'Description'
+      'DisplayName'
+      'LockedOut'
+      'PasswordExpired'
+      'physicalDeliveryOfficeName'
+      'Surname'
+      'Title'
+      'msDS-AllowedToDelegateTo'
+      'whenCreated'
+      'whenChanged' # isn't replicated because of the high rate of change.
+    ) + $companyProp
+    'Get-AdGroup:Properties' = [string[]]@(
+      'Description'
+      'DisplayName'
+      'whenCreated'
+      'whenChanged'
+    )
+    'Search-Giphy:ApiKey' = { Get-Secret -Name giphy -Vault dp }
+    <#'Import-InvokePSSession:ComputerName' = $veeamComputerName
+    'Import-InvokePSSession:Module' = [string[]]@(
+      'VeeamPSSnapIn'
+      'Veeam.Oracle.PowerShell'
+      'Veeam.SharePoint.PowerShell'
+      'Veeam.SQL.PowerShell'
+      'Veeam.Exchange.PowerShell'
+      'Veeam.ActiveDirectory.PowerShell'
+    )
+    'Import-InvokePSSession:Credential' = $credSbk#>
+    'Invoke-DbaWhoIsActive:FormatOutput' = 2 # Not perfect. This does line up the output better. Using 0 removes the default first column for time spent.
+    'Invoke-Mstsc:Credential' = $credAdmSbk
+    'Unlock-SecretVault:Password' = { Get-Secret -Name dbakey -Vault dp }
+    'Invoke-Command:Credential' = $credSspAdmSbk
+    'Enter-PSSession:Credential' = $credSspAdmSbk
+    'New-PSSession:Credential' = $credSspAdmSbk
+    'Out-Default:OutVariable' = '__' # "All" output is written to $__ to make it easier to work interactively like if a user forgets to assign the output.
+    'Format-Table:AutoSize' = $true
+    'Format-Table:Wrap' = $true
+}
+
+if ($cmsSqlInstance) {
+  $PSDefaultParameterValues['Get-DbaRegServer:SqlInstance'] = $cmsSqlInstance
+}
+if ($vCenterComputerName) {
+  $PSDefaultParameterValues['Connect-VIServer:Server'] = $cmsSqlInstance 
+}
+if ($workKeepassName) {
+    $PSDefaultParameterValues['Unlock-SecretVault:Name'] = $workKeepassName 
+}
+
+$rmVar = @(
+  'rmVar'
+  # 'credSbk'
+  'credAdmSbk'
+  'credSspAdmSbk'
+  # 'veeamComputerName'
+  'cmsSqlInstance'
+  'companyProp'
+  'vCenterComputerName'
+  'workKeepassName'
+)
+Remove-Variable -Name $rmVar

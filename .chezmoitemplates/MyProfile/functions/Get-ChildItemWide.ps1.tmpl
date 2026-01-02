@@ -25,7 +25,11 @@ function Get-ChildItemWide {
         [switch]
         ${Recurse},
 
+        {{ if eq .isPSCore true }}
         [uint]
+        {{ else }}
+        [uint32]
+        {{ end }}
         ${Depth},
 
         [switch]
@@ -97,7 +101,7 @@ function Get-ChildItemWide {
             throw
         }
     }
-{{ if eq ( base .chezmoi.sourceFile ) "core.ps1.tmpl" }}
+{{ if eq .isPSCore true }}
     clean
     {
         if ($null -ne $steppablePipeline) {

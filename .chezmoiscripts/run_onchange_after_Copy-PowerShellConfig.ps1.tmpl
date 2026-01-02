@@ -1,0 +1,5 @@
+[CmdletBinding()]
+param()
+# powershell.config.json SHA256: {{ include "dot_config/powershell/powershell.config.json" | sha256sum }}
+
+Copy-Item -Path $env:USERPROFILE\.config\powershell\powershell.config.json -Destination (Split-Path -Path $PROFILE.CurrentUserCurrentHost)

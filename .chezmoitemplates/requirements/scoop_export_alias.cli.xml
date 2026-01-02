@@ -1,0 +1,30 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Selected.System.Management.Automation.PSCustomObject</T>
+      <T>System.Management.Automation.PSCustomObject</T>
+      <T>System.Object</T>
+    </TN>
+    <MS>
+      <S N="Name">finfo</S>
+      <S N="Command">sfsu.exe info $args[0]</S>
+      <S N="Summary">Fast info with sfsu.exe</S>
+    </MS>
+  </Obj>
+  <Obj RefId="1">
+    <TNRef RefId="0" />
+    <MS>
+      <S N="Name">fsearch</S>
+      <S N="Command">sfsu.exe search $args[0]</S>
+      <S N="Summary">Fast search with sfsu.exe</S>
+    </MS>
+  </Obj>
+  <Obj RefId="2">
+    <TNRef RefId="0" />
+    <MS>
+      <S N="Name">upsts</S>
+      <S N="Command">scoop update; scoop status</S>
+      <S N="Summary">Update scoop and check status</S>
+    </MS>
+  </Obj>
+</Objs>

@@ -1,0 +1,2 @@
+{{ $formatArgList := list "-NoProfile" "-NoLogo" "-File" ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "New-PwshFormatOutput.ps1" ) }}
+{{- outputList "pwsh" $formatArgList }}
