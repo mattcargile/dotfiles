@@ -1,9 +1,473 @@
 {
+    "apps": [
+        {
+            "Info": "",
+            "Updated": "2025-11-12T08:51:02.7890749-06:00",
+            "Source": "main",
+            "Version": "25.01",
+            "Name": "7zip"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:13:09.9931282-06:00",
+            "Source": "main",
+            "Version": "10.31.0",
+            "Name": "azcopy"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-02T19:53:43.9760781-06:00",
+            "Source": "main",
+            "Version": "2.81.0",
+            "Name": "azure-cli"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-02T19:53:45.6722898-06:00",
+            "Source": "main",
+            "Version": "0.26.1",
+            "Name": "bat"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-19T12:32:52.0738496-06:00",
+            "Source": "gildas",
+            "Version": "0.16.1",
+            "Name": "bitbucket-cli"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:13:36.5589295-06:00",
+            "Source": "main",
+            "Version": "1.0.8.0",
+            "Name": "bzip2"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-29T18:34:33.0116568-06:00",
+            "Source": "extras",
+            "Version": "1.5.7",
+            "Name": "carapace-bin"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-10T14:36:22.7834071-06:00",
+            "Source": "main",
+            "Version": "2.68.1",
+            "Name": "chezmoi"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:13:39.8818965-06:00",
+            "Source": "main",
+            "Version": "0.7.2",
+            "Name": "cht"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-29T15:44:23.6701238-06:00",
+            "Source": "main",
+            "Version": "1.9.7",
+            "Name": "clink"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:13:42.7066095-06:00",
+            "Source": "main",
+            "Version": "0.18.2",
+            "Name": "delta"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-18T22:32:12.7345486-06:00",
+            "Source": "main",
+            "Version": "0.67.0",
+            "Name": "difftastic"
+        },
+        {
+            "Info": "Held package",
+            "Updated": "2025-11-12T09:13:52.8294991-06:00",
+            "Source": "extras",
+            "Version": "1.0.9208-23",
+            "Name": "discord"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:13:54.2398835-06:00",
+            "Source": "extras",
+            "Version": "2.2",
+            "Name": "diskspd"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:13:55.4393137-06:00",
+            "Source": "extras",
+            "Version": "3.2.0",
+            "Name": "echoargs"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:13:56.7451965-06:00",
+            "Source": "main",
+            "Version": "1.2.1",
+            "Name": "edit"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-29T15:44:28.9310463-06:00",
+            "Source": "main",
+            "Version": "13.45",
+            "Name": "exiftool"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:14:02.4950881-06:00",
+            "Source": "main",
+            "Version": "0.23.4",
+            "Name": "eza"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-19T12:33:02.3138596-06:00",
+            "Source": "main",
+            "Version": "2.56.1",
+            "Name": "fastfetch"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:14:05.3961439-06:00",
+            "Source": "main",
+            "Version": "10.3.0",
+            "Name": "fd"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-25T18:42:43.9633025-06:00",
+            "Source": "main",
+            "Version": "8.0.1",
+            "Name": "ffmpeg"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-18T22:32:20.4062453-06:00",
+            "Source": "main",
+            "Version": "0.67.0",
+            "Name": "fzf"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:14:19.0698558-06:00",
+            "Source": "main",
+            "Version": "5.3.2",
+            "Name": "gawk"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-10T14:36:25.0193559-06:00",
+            "Source": "main",
+            "Version": "2.83.2",
+            "Name": "gh"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-18T22:34:58.7663259-06:00",
+            "Source": "main",
+            "Version": "2.52.0",
+            "Name": "git"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:14:24.3601216-06:00",
+            "Source": "extras",
+            "Version": "2.6.1",
+            "Name": "git-credential-manager"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:14:28.5226717-06:00",
+            "Source": "main",
+            "Version": "0.34.0",
+            "Name": "git-tfs"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-15T09:52:34.593492-06:00",
+            "Source": "main",
+            "Version": "0.28.0",
+            "Name": "gitui"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:14:31.7687477-06:00",
+            "Source": "main",
+            "Version": "2.1.1",
+            "Name": "glow"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-02T19:54:31.9627635-06:00",
+            "Source": "main",
+            "Version": "1.25.5",
+            "Name": "go"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-30T14:20:04.2681159-06:00",
+            "Source": "main",
+            "Version": "2.5.16",
+            "Name": "gpg"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:15:26.9195351-06:00",
+            "Source": "main",
+            "Version": "1.20.1",
+            "Name": "gping"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:15:29.0139504-06:00",
+            "Source": "main",
+            "Version": "2.6.1",
+            "Name": "gsudo"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:15:31.9144276-06:00",
+            "Source": "main",
+            "Version": "1.3.12",
+            "Name": "gzip"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:15:33.261599-06:00",
+            "Source": "main",
+            "Version": "0.16.0",
+            "Name": "hexyl"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-25T18:42:45.37488-06:00",
+            "Source": "main",
+            "Version": "2.66.1",
+            "Name": "innounp"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:15:35.6947001-06:00",
+            "Source": "main",
+            "Version": "1.8.1",
+            "Name": "jq"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-09T10:46:05.0918367-06:00",
+            "Source": "extras",
+            "Version": "0.57.0",
+            "Name": "lazygit"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:15:38.5406254-06:00",
+            "Source": "main",
+            "Version": "685",
+            "Name": "less"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-29T15:44:31.1771775-06:00",
+            "Source": "main",
+            "Version": "2.11.3",
+            "Name": "lessmsi"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-10T14:36:26.829579-06:00",
+            "Source": "main",
+            "Version": "r40",
+            "Name": "lf"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:15:47.7417539-06:00",
+            "Source": "main",
+            "Version": "4.4.1",
+            "Name": "make"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-31T11:18:01.3603146-06:00",
+            "Source": "main",
+            "Version": "25.12",
+            "Name": "miktex"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-28T13:26:16.8599805-06:00",
+            "Source": "extras",
+            "Version": "2.5.10",
+            "Name": "mongosh"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-25T18:44:38.8785072-06:00",
+            "Source": "main",
+            "Version": "8.0.45",
+            "Name": "mysql-workbench"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:18:46.0850503-06:00",
+            "Source": "main",
+            "Version": "2.0.4",
+            "Name": "neo-cowsay"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:18:56.4556718-06:00",
+            "Source": "main",
+            "Version": "0.11.5",
+            "Name": "neovim"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-02T19:54:37.4939457-06:00",
+            "Source": "main",
+            "Version": "0.109.1",
+            "Name": "nu"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-31T11:18:05.7215669-06:00",
+            "Source": "main",
+            "Version": "28.9.0",
+            "Name": "oh-my-posh"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-21T13:16:28.0051837-06:00",
+            "Source": "extras",
+            "Version": "2.26.1",
+            "Name": "onefetch"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:19:07.2411571-06:00",
+            "Source": "main",
+            "Version": "3.6.0",
+            "Name": "openssl-light"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:19:09.2168446-06:00",
+            "Source": "extras",
+            "Version": "5.0.18362.1",
+            "Name": "orca"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-18T22:35:06.5375715-06:00",
+            "Source": "main",
+            "Version": "5.20.0",
+            "Name": "osquery"
+        },
+        {
+            "Info": "",
+            "Updated": "2026-01-02T21:46:08.7033448-06:00",
+            "Source": "main",
+            "Version": "0.50.2",
+            "Name": "ov"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-01T09:35:42.8053069-06:00",
+            "Source": "main",
+            "Version": "3.8.3",
+            "Name": "pandoc"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-09T10:46:13.7075914-06:00",
+            "Source": "main",
+            "Version": "25.12.0-0",
+            "Name": "poppler"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:19:25.6735318-06:00",
+            "Source": "extras",
+            "Version": "0.83",
+            "Name": "putty"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:19:28.718079-06:00",
+            "Source": "main",
+            "Version": "0.10.9",
+            "Name": "rga"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-21T13:16:31.067685-06:00",
+            "Source": "extras",
+            "Version": "0.2.37",
+            "Name": "rio"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:19:27.8156053-06:00",
+            "Source": "main",
+            "Version": "15.1.0",
+            "Name": "ripgrep"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:19:33.9418302-06:00",
+            "Source": "extras",
+            "Version": "1.17.2",
+            "Name": "sfsu"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-12T09:19:35.2605837-06:00",
+            "Source": "main",
+            "Version": "1.2.0",
+            "Name": "speedtest-cli"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-12-19T12:33:19.612421-06:00",
+            "Source": "extras",
+            "Version": "1.107.1",
+            "Name": "vscode"
+        },
+        {
+            "Info": "Held package",
+            "Updated": "2025-11-12T09:19:55.6436325-06:00",
+            "Source": "extras",
+            "Version": "20240203-110809-5046fc22",
+            "Name": "wezterm"
+        },
+        {
+            "Info": "Held package",
+            "Updated": "2025-11-12T09:19:58.2773139-06:00",
+            "Source": "extras",
+            "Version": "1.23.12811.0",
+            "Name": "windows-terminal"
+        },
+        {
+            "Info": "",
+            "Updated": "2025-11-19T18:25:39.4953647-06:00",
+            "Source": "extras",
+            "Version": "6.5.5",
+            "Name": "winscp"
+        }
+    ],
     "buckets": [
         {
             "Name": "main",
             "Source": "https://github.com/ScoopInstaller/Main",
-            "Updated": "2026-01-01T14:29:55-06:00",
+            "Updated": "2026-01-02T18:41:36-06:00",
             "Manifests": {
                 "value": 1412,
                 "Weeks": {
@@ -113,110 +577,110 @@
         {
             "Name": "extras",
             "Source": "https://github.com/ScoopInstaller/Extras",
-            "Updated": "2026-01-01T21:57:08-06:00",
+            "Updated": "2026-01-02T18:41:44-06:00",
             "Manifests": {
-                "value": 2241,
+                "value": 2239,
                 "Weeks": {
-                    "Ticks": 13553568000000000,
-                    "Days": 15687,
+                    "Ticks": 13541472000000000,
+                    "Days": 15673,
                     "Hours": 0,
                     "Milliseconds": 0,
                     "Microseconds": 0,
                     "Nanoseconds": 0,
                     "Minutes": 0,
                     "Seconds": 0,
-                    "TotalDays": 15687.0,
-                    "TotalHours": 376488.0,
-                    "TotalMilliseconds": 1355356800000.0,
-                    "TotalMicroseconds": 1355356800000000.0,
-                    "TotalNanoseconds": 1.3553568E+18,
-                    "TotalMinutes": 22589280.0,
-                    "TotalSeconds": 1355356800.0
+                    "TotalDays": 15673.0,
+                    "TotalHours": 376152.0,
+                    "TotalMilliseconds": 1354147200000.0,
+                    "TotalMicroseconds": 1354147200000000.0,
+                    "TotalNanoseconds": 1.3541472E+18,
+                    "TotalMinutes": 22569120.0,
+                    "TotalSeconds": 1354147200.0
                 },
                 "Days": {
-                    "Ticks": 1936224000000000,
-                    "Days": 2241,
+                    "Ticks": 1934496000000000,
+                    "Days": 2239,
                     "Hours": 0,
                     "Milliseconds": 0,
                     "Microseconds": 0,
                     "Nanoseconds": 0,
                     "Minutes": 0,
                     "Seconds": 0,
-                    "TotalDays": 2241.0,
-                    "TotalHours": 53784.0,
-                    "TotalMilliseconds": 193622400000.0,
-                    "TotalMicroseconds": 193622400000000.0,
-                    "TotalNanoseconds": 1.936224E+17,
-                    "TotalMinutes": 3227040.0,
-                    "TotalSeconds": 193622400.0
+                    "TotalDays": 2239.0,
+                    "TotalHours": 53736.0,
+                    "TotalMilliseconds": 193449600000.0,
+                    "TotalMicroseconds": 193449600000000.0,
+                    "TotalNanoseconds": 1.934496E+17,
+                    "TotalMinutes": 3224160.0,
+                    "TotalSeconds": 193449600.0
                 },
                 "Hours": {
-                    "Ticks": 80676000000000,
+                    "Ticks": 80604000000000,
                     "Days": 93,
-                    "Hours": 9,
+                    "Hours": 7,
                     "Milliseconds": 0,
                     "Microseconds": 0,
                     "Nanoseconds": 0,
                     "Minutes": 0,
                     "Seconds": 0,
-                    "TotalDays": 93.375,
-                    "TotalHours": 2241.0,
-                    "TotalMilliseconds": 8067600000.0,
-                    "TotalMicroseconds": 8067600000000.0,
-                    "TotalNanoseconds": 8067600000000000.0,
-                    "TotalMinutes": 134460.0,
-                    "TotalSeconds": 8067600.0
+                    "TotalDays": 93.29166666666667,
+                    "TotalHours": 2239.0,
+                    "TotalMilliseconds": 8060400000.0,
+                    "TotalMicroseconds": 8060400000000.0,
+                    "TotalNanoseconds": 8060400000000000.0,
+                    "TotalMinutes": 134340.0,
+                    "TotalSeconds": 8060400.0
                 },
                 "Minutes": {
-                    "Ticks": 1344600000000,
+                    "Ticks": 1343400000000,
                     "Days": 1,
                     "Hours": 13,
                     "Milliseconds": 0,
                     "Microseconds": 0,
                     "Nanoseconds": 0,
-                    "Minutes": 21,
+                    "Minutes": 19,
                     "Seconds": 0,
-                    "TotalDays": 1.55625,
-                    "TotalHours": 37.35,
-                    "TotalMilliseconds": 134460000.0,
-                    "TotalMicroseconds": 134460000000.0,
-                    "TotalNanoseconds": 134460000000000.0,
-                    "TotalMinutes": 2241.0,
-                    "TotalSeconds": 134460.0
+                    "TotalDays": 1.554861111111111,
+                    "TotalHours": 37.31666666666667,
+                    "TotalMilliseconds": 134340000.0,
+                    "TotalMicroseconds": 134340000000.0,
+                    "TotalNanoseconds": 134340000000000.0,
+                    "TotalMinutes": 2239.0,
+                    "TotalSeconds": 134340.0
                 },
                 "Seconds": {
-                    "Ticks": 22410000000,
+                    "Ticks": 22390000000,
                     "Days": 0,
                     "Hours": 0,
                     "Milliseconds": 0,
                     "Microseconds": 0,
                     "Nanoseconds": 0,
                     "Minutes": 37,
-                    "Seconds": 21,
-                    "TotalDays": 0.0259375,
-                    "TotalHours": 0.6225,
-                    "TotalMilliseconds": 2241000.0,
-                    "TotalMicroseconds": 2241000000.0,
-                    "TotalNanoseconds": 2241000000000.0,
-                    "TotalMinutes": 37.35,
-                    "TotalSeconds": 2241.0
+                    "Seconds": 19,
+                    "TotalDays": 0.02591435185185185,
+                    "TotalHours": 0.6219444444444444,
+                    "TotalMilliseconds": 2239000.0,
+                    "TotalMicroseconds": 2239000000.0,
+                    "TotalNanoseconds": 2239000000000.0,
+                    "TotalMinutes": 37.31666666666667,
+                    "TotalSeconds": 2239.0
                 },
                 "Milliseconds": {
-                    "Ticks": 22410000,
+                    "Ticks": 22390000,
                     "Days": 0,
                     "Hours": 0,
-                    "Milliseconds": 241,
+                    "Milliseconds": 239,
                     "Microseconds": 0,
                     "Nanoseconds": 0,
                     "Minutes": 0,
                     "Seconds": 2,
-                    "TotalDays": 2.59375E-05,
-                    "TotalHours": 0.0006225,
-                    "TotalMilliseconds": 2241.0,
-                    "TotalMicroseconds": 2241000.0,
-                    "TotalNanoseconds": 2241000000.0,
-                    "TotalMinutes": 0.03735,
-                    "TotalSeconds": 2.241
+                    "TotalDays": 2.5914351851851853E-05,
+                    "TotalHours": 0.0006219444444444445,
+                    "TotalMilliseconds": 2239.0,
+                    "TotalMicroseconds": 2239000.0,
+                    "TotalNanoseconds": 2239000000.0,
+                    "TotalMinutes": 0.037316666666666665,
+                    "TotalSeconds": 2.239
                 }
             }
         },
@@ -439,463 +903,6 @@
                     "TotalSeconds": 0.0
                 }
             }
-        }
-    ],
-    "apps": [
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "7zip",
-            "Version": "25.01",
-            "Updated": "2025-11-12T08:51:02.7890749-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "azcopy",
-            "Version": "10.31.0",
-            "Updated": "2025-11-12T09:13:09.9931282-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "azure-cli",
-            "Version": "2.81.0",
-            "Updated": "2025-12-02T19:53:43.9760781-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "bat",
-            "Version": "0.26.1",
-            "Updated": "2025-12-02T19:53:45.6722898-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "gildas",
-            "Name": "bitbucket-cli",
-            "Version": "0.16.1",
-            "Updated": "2025-12-19T12:32:52.0738496-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "bzip2",
-            "Version": "1.0.8.0",
-            "Updated": "2025-11-12T09:13:36.5589295-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "carapace-bin",
-            "Version": "1.5.7",
-            "Updated": "2025-12-29T18:34:33.0116568-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "chezmoi",
-            "Version": "2.68.1",
-            "Updated": "2025-12-10T14:36:22.7834071-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "cht",
-            "Version": "0.7.2",
-            "Updated": "2025-11-12T09:13:39.8818965-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "clink",
-            "Version": "1.9.7",
-            "Updated": "2025-12-29T15:44:23.6701238-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "delta",
-            "Version": "0.18.2",
-            "Updated": "2025-11-12T09:13:42.7066095-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "difftastic",
-            "Version": "0.67.0",
-            "Updated": "2025-11-18T22:32:12.7345486-06:00"
-        },
-        {
-            "Info": "Held package",
-            "Source": "extras",
-            "Name": "discord",
-            "Version": "1.0.9208-23",
-            "Updated": "2025-11-12T09:13:52.8294991-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "diskspd",
-            "Version": "2.2",
-            "Updated": "2025-11-12T09:13:54.2398835-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "echoargs",
-            "Version": "3.2.0",
-            "Updated": "2025-11-12T09:13:55.4393137-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "edit",
-            "Version": "1.2.1",
-            "Updated": "2025-11-12T09:13:56.7451965-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "exiftool",
-            "Version": "13.45",
-            "Updated": "2025-12-29T15:44:28.9310463-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "eza",
-            "Version": "0.23.4",
-            "Updated": "2025-11-12T09:14:02.4950881-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "fastfetch",
-            "Version": "2.56.1",
-            "Updated": "2025-12-19T12:33:02.3138596-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "fd",
-            "Version": "10.3.0",
-            "Updated": "2025-11-12T09:14:05.3961439-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "ffmpeg",
-            "Version": "8.0.1",
-            "Updated": "2025-11-25T18:42:43.9633025-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "fzf",
-            "Version": "0.67.0",
-            "Updated": "2025-11-18T22:32:20.4062453-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "gawk",
-            "Version": "5.3.2",
-            "Updated": "2025-11-12T09:14:19.0698558-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "gh",
-            "Version": "2.83.2",
-            "Updated": "2025-12-10T14:36:25.0193559-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "git",
-            "Version": "2.52.0",
-            "Updated": "2025-11-18T22:34:58.7663259-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "git-credential-manager",
-            "Version": "2.6.1",
-            "Updated": "2025-11-12T09:14:24.3601216-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "git-tfs",
-            "Version": "0.34.0",
-            "Updated": "2025-11-12T09:14:28.5226717-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "gitui",
-            "Version": "0.28.0",
-            "Updated": "2025-12-15T09:52:34.593492-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "glow",
-            "Version": "2.1.1",
-            "Updated": "2025-11-12T09:14:31.7687477-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "go",
-            "Version": "1.25.5",
-            "Updated": "2025-12-02T19:54:31.9627635-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "gpg",
-            "Version": "2.5.16",
-            "Updated": "2025-12-30T14:20:04.2681159-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "gping",
-            "Version": "1.20.1",
-            "Updated": "2025-11-12T09:15:26.9195351-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "gsudo",
-            "Version": "2.6.1",
-            "Updated": "2025-11-12T09:15:29.0139504-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "gzip",
-            "Version": "1.3.12",
-            "Updated": "2025-11-12T09:15:31.9144276-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "hexyl",
-            "Version": "0.16.0",
-            "Updated": "2025-11-12T09:15:33.261599-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "innounp",
-            "Version": "2.66.1",
-            "Updated": "2025-11-25T18:42:45.37488-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "jq",
-            "Version": "1.8.1",
-            "Updated": "2025-11-12T09:15:35.6947001-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "lazygit",
-            "Version": "0.57.0",
-            "Updated": "2025-12-09T10:46:05.0918367-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "less",
-            "Version": "685",
-            "Updated": "2025-11-12T09:15:38.5406254-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "lessmsi",
-            "Version": "2.11.3",
-            "Updated": "2025-12-29T15:44:31.1771775-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "lf",
-            "Version": "r40",
-            "Updated": "2025-12-10T14:36:26.829579-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "make",
-            "Version": "4.4.1",
-            "Updated": "2025-11-12T09:15:47.7417539-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "miktex",
-            "Version": "25.12",
-            "Updated": "2025-12-31T11:18:01.3603146-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "mongosh",
-            "Version": "2.5.10",
-            "Updated": "2025-11-28T13:26:16.8599805-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "mysql-workbench",
-            "Version": "8.0.45",
-            "Updated": "2025-11-25T18:44:38.8785072-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "neo-cowsay",
-            "Version": "2.0.4",
-            "Updated": "2025-11-12T09:18:46.0850503-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "neovim",
-            "Version": "0.11.5",
-            "Updated": "2025-11-12T09:18:56.4556718-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "nu",
-            "Version": "0.109.1",
-            "Updated": "2025-12-02T19:54:37.4939457-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "oh-my-posh",
-            "Version": "28.9.0",
-            "Updated": "2025-12-31T11:18:05.7215669-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "onefetch",
-            "Version": "2.26.1",
-            "Updated": "2025-12-21T13:16:28.0051837-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "openssl-light",
-            "Version": "3.6.0",
-            "Updated": "2025-11-12T09:19:07.2411571-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "orca",
-            "Version": "5.0.18362.1",
-            "Updated": "2025-11-12T09:19:09.2168446-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "osquery",
-            "Version": "5.20.0",
-            "Updated": "2025-11-18T22:35:06.5375715-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "pandoc",
-            "Version": "3.8.3",
-            "Updated": "2025-12-01T09:35:42.8053069-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "poppler",
-            "Version": "25.12.0-0",
-            "Updated": "2025-12-09T10:46:13.7075914-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "putty",
-            "Version": "0.83",
-            "Updated": "2025-11-12T09:19:25.6735318-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "rga",
-            "Version": "0.10.9",
-            "Updated": "2025-11-12T09:19:28.718079-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "rio",
-            "Version": "0.2.37",
-            "Updated": "2025-12-21T13:16:31.067685-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "ripgrep",
-            "Version": "15.1.0",
-            "Updated": "2025-11-12T09:19:27.8156053-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "sfsu",
-            "Version": "1.17.2",
-            "Updated": "2025-11-12T09:19:33.9418302-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "main",
-            "Name": "speedtest-cli",
-            "Version": "1.2.0",
-            "Updated": "2025-11-12T09:19:35.2605837-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "vscode",
-            "Version": "1.107.1",
-            "Updated": "2025-12-19T12:33:19.612421-06:00"
-        },
-        {
-            "Info": "Held package",
-            "Source": "extras",
-            "Name": "wezterm",
-            "Version": "20240203-110809-5046fc22",
-            "Updated": "2025-11-12T09:19:55.6436325-06:00"
-        },
-        {
-            "Info": "Held package",
-            "Source": "extras",
-            "Name": "windows-terminal",
-            "Version": "1.23.12811.0",
-            "Updated": "2025-11-12T09:19:58.2773139-06:00"
-        },
-        {
-            "Info": "",
-            "Source": "extras",
-            "Name": "winscp",
-            "Version": "6.5.5",
-            "Updated": "2025-11-19T18:25:39.4953647-06:00"
         }
     ],
     "config": {

@@ -43,7 +43,6 @@ end {
     $argCompFiles = [System.Collections.Generic.List[psobject]]@()
 
     #region carapace completers first.
-    # Prefer software made completions first
     $env:CARAPACE_ENV = 0 # Don't add environment helper functions
     $env:CARAPACE_EXCLUDES = 'ls,bat,rg,fd,gh,chezmoi,glow,bb,dotnet,winget,get-env,set-env,unset-env' # Exclude completions that conflict or already exist from software creator.
     # Need to add this to the path before running script because there is logic in the script to add this to the process. Need to make the script more consistent
@@ -64,6 +63,7 @@ end {
     $argCompFiles.Add( ( New-ArgCompleterObject -Script (chezmoi.exe completion powershell | Out-String) -Comment 'chezmoi dotfile management Prompt Completions' ) )
     $argCompFiles.Add( ( New-ArgCompleterObject -Script (glow.exe completion powershell | Out-String) -Comment 'glow Markdown Viewer Prompt Completions' ) ) 
     $argCompFiles.Add( ( New-ArgCompleterObject -Script (bb.exe completion powershell | Out-String) -Comment 'bb Bitbucket Prompt Completions' ) ) 
+    $argCompFiles.Add( ( New-ArgCompleterObject -Script (ov.exe --completion powershell | Out-String) -Comment 'ov Pager Prompt Completions' ) ) 
 
     # Any custom hand written completers add to argcompleter.ps1
     #endregion
