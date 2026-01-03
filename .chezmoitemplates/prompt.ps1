@@ -13,9 +13,7 @@ Import-Module @ZLocationParam#>
 # OhMyPosh prompt
 # executiontime postfix invisible spacing character for bug in wt.exe (https://github.com/JanDeDobbeleer/oh-my-posh/discussions/668)
 # Had to change the hourglass icon
-$OhMyPoshConfig = "$env:USERPROFILE\.config\oh-my-posh\night-owl_mac.omp.json"
-if ($IsCoreCLR) { oh-my-posh.exe init pwsh --config $OhMyPoshConfig | Invoke-Expression }
-else { oh-my-posh.exe init powershell --config $OhMyPoshConfig | Invoke-Expression }
+oh-my-posh.exe init pwsh --config "$env:USERPROFILE\.config\oh-my-posh\night-owl_mac.omp.json" | Invoke-Expression
 
 # Custom OMP Prompt Context
 function Set-MyOmpContext {
@@ -63,7 +61,3 @@ New-Alias -Name 'Set-PoshContext' -Value 'Set-MyOmpContext' -Description 'oh-my-
 
 # Import last to avoid interference with `$?` variable and `$LASTEXITCODE`
 Import-Module ZLocation2
-
-# Prevent variable clutter in Get-Variable Output
-# Remove-Variable -Name OhMyPoshConfig, ZLocationParam
-Remove-Variable -Name OhMyPoshConfig
