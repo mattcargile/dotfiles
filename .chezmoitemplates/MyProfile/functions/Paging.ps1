@@ -10,7 +10,8 @@ function Out-Paging {
         [psobject] $InputObject
     )
     begin {
-        $pipe = { Out-AnsiFormatting -Stream | less @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)
+        # For some reason, `$env:LESS` config isn't propagating
+        $pipe = { Out-AnsiFormatting -Stream | less $env:LESS @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)
         $pipe.Begin($PSCmdlet)
     }
     process {
