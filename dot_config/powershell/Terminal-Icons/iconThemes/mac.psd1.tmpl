@@ -29,8 +29,8 @@
                 music                                = 'nf-md-music_box_multiple'
                 songs                                = 'nf-md-music_box_multiple'
                 onedrive                             = 'nf-md-microsoft_onedrive'
-                'onedrive - general health system'   = 'nf-md-microsoft_onedrive'
-                'general health system'              = 'nf-md-microsoft_onedrive'
+                {{ if ne .workOneDriveBusinessName "" }}'onedrive - {{ lower .workOneDriveBusinessName -}}'   = 'nf-md-microsoft_onedrive'{{ end }}
+                {{ if ne .workOneDriveBusinessName "" }}'{{- lower .workOneDriveBusinessName -}}'              = 'nf-md-microsoft_onedrive'{{ end }}
                 downloads                            = 'nf-md-folder_download'
                 src                                  = 'nf-oct-terminal'
                 development                          = 'nf-oct-terminal'

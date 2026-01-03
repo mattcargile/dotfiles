@@ -27,8 +27,8 @@
                 music                                       = 'DB7093'
                 songs                                       = 'DB7093'
                 onedrive                                    = 'D3D3D3'
-                'onedrive - general health system'          = 'D3D3D3'
-                'general health system'                     = 'D3D3D3'
+                {{ if ne .workOneDriveBusinessName "" }}'onedrive - {{ lower .workOneDriveBusinessName -}}'          = 'D3D3D3'{{ end }}
+                {{ if ne .workOneDriveBusinessName "" }}'{{- lower .workOneDriveBusinessName -}}'                     = 'D3D3D3'{{ end }}
                 downloads                                   = 'D3D3D3'
                 src                                         = '00FF7F'
                 development                                 = '00FF7F'
