@@ -60,10 +60,10 @@ if ($cmsSqlInstance) {
   $PSDefaultParameterValues['Get-DbaRegServer:SqlInstance'] = $cmsSqlInstance
 }
 if ($vCenterComputerName) {
-  $PSDefaultParameterValues['Connect-VIServer:Server'] = $cmsSqlInstance 
+  $PSDefaultParameterValues['Connect-VIServer:Server'] = $vCenterComputerName 
 }
 if ($workKeepassName) {
-    $PSDefaultParameterValues['Unlock-SecretVault:Name'] = $workKeepassName 
+  $PSDefaultParameterValues['Unlock-SecretVault:Name'] = $workKeepassName 
 }
 
 $rmVar = @(
