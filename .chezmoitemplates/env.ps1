@@ -79,7 +79,7 @@ $env:VISUAL = 'code' # Read by less.exe. Otherwise vi is the default. EDITOR is 
 $env:LESSEDIT = '%E ?l--goto %g\:%l:%g.' # If line number is known, go to it. Otherwise open the file.
 
 # Read by git.exe. If not set, `$env:VISUAL` is used instead and 'code.cmd' exits prematurely with an empty commit.
-$env:GIT_EDITOR = 'vim'
+$env:GIT_EDITOR = 'nvim'
 
 # lf.exe Terminal File Manager
 $env:EDITOR = 'code' # e key mapping
