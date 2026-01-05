@@ -6,7 +6,7 @@
 $modulesToImport = @(
     'ClassExplorer'
     'PowerShellHumanizer'
-    'Terminal-Icons'
+    'Terminal-Icons' # Need to import first so I can override the default formatter further downstream
     if ($PSEdition -eq 'Core') { 'PowerShellRun' }
     "$env:USERPROFILE\.config\powershell\MyProfile\MyProfile.psd1"
 )
