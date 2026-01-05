@@ -17,6 +17,10 @@ Import-Module -Name $modulesToImport
 if ($PSEdition -eq 'Core') {
     Set-PSRunActionKeyBinding -FirstActionKey 'Shift+Enter' -SecondActionKey 'Enter'
     Set-PSRunPSReadLineKeyHandler -PSReadLineHistoryChord 'Ctrl+r' -TabCompletionChord 'Ctrl+8,Tab'
+    Get-PSRunDefaultSelectorOption | ForEach-Object -Process {
+        $_.Theme.PreviewTextWrapMode = 'Character'
+        $_
+    } | Set-PSRunDefaultSelectorOption -Option { $_ }
 }
 
 # Helper Visual Studio Code Command Palette operations ( i.e. EditorServicesCommandSuite )
