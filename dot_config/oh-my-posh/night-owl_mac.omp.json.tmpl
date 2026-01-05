@@ -44,8 +44,8 @@
             "mapped_locations": {
               {{- if ne .workOneDriveBusinessName "" }}
               "~/{{ .workOneDriveBusinessName }}": "\uf0c2 ",
-              "~/OneDrive - {{ .workOneDriveBusinessName -}}{{- "\": \"\\uf0c2 \"," }}
-              {{ end -}}
+              "~/OneDrive - {{ .workOneDriveBusinessName -}}": "\uf0c2 ",
+              {{ end }}
               "~/OneDrive": "\uf0c2 "
             },
             "mapped_locations_enabled": true,
