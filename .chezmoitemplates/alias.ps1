@@ -142,9 +142,14 @@ New-Alias -Name 'git.exe' -Value 'git' # Hack for autocomplete.
 # Use `py -m pip list` instead of `pip`
 
 # Additional exe's
-# $ssmsPath = Convert-Path -Path "$prgFiles\Microsoft SQL Server Management Studio *\Release\Common7\IDE\Ssms.exe" | Sort-Object -Descending | Select-Object -First 1
-$ssmsPath = Convert-Path -Path "$prgFiles\Microsoft SQL Server Management Studio *\Common7\IDE\Ssms.exe" | Sort-Object -Descending | Select-Object -First 1
-if ($ssmsPath) {New-Alias -Name 'ssms' -Value $ssmsPath}
+$ssms86Path = Convert-Path -Path "$prg86\Microsoft SQL Server Management Studio *\Common7\IDE\Ssms.exe" | Sort-Object -Descending | Select-Object -First 1
+$ssmsPath = Convert-Path -Path "$prgFiles\Microsoft SQL Server Management Studio *\Release\Common7\IDE\Ssms.exe" | Sort-Object -Descending | Select-Object -First 1
+if ($ssmsPath) {
+  New-Alias -Name 'ssms' -Value $ssmsPath
+}
+elseif ($ssms86Path) {
+  New-Alias -Name 'ssms' -Value $ssms86Path
+}
 New-Alias -Name 'npp' -Value "$prgFiles\Notepad++\notepad++.exe"
 New-Alias -Name 'ostress' -Value "$prgFiles\Microsoft Corporation\RMLUtils\ostress.exe"
 # Helper vs variables
@@ -206,6 +211,7 @@ $rmVar = @(
   'senOnePath'
   'spcSnif'
   'ssmsPath'
+  'ssms86Path'
   'ciscoPaths'
   'currentCiscoPath'
 )
