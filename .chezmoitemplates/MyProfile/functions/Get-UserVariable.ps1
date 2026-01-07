@@ -57,6 +57,8 @@ function Get-UserVariable {
                 '_ompPoshGit'
                 <# Az Module #>
                 'AzPSPolicyCachedLocations'
+                <# ov.exe Page completer #>
+                '__ovCompleterBlock'
                 <# carapace.exe various completer #>
                 '_carapace_completer'
                 <# gh.exe GitHub CLI Arg Completer #>
