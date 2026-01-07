@@ -143,7 +143,7 @@ New-Alias -Name 'git.exe' -Value 'git' # Hack for autocomplete.
 
 # Additional exe's
 # $ssmsPath = Convert-Path -Path "$prgFiles\Microsoft SQL Server Management Studio *\Release\Common7\IDE\Ssms.exe" | Sort-Object -Descending | Select-Object -First 1
-$ssmsPath = Convert-Path -Path "$prg86\Microsoft SQL Server Management Studio *\Common7\IDE\Ssms.exe" | Sort-Object -Descending | Select-Object -First 1
+$ssmsPath = Convert-Path -Path "$prgFiles\Microsoft SQL Server Management Studio *\Common7\IDE\Ssms.exe" | Sort-Object -Descending | Select-Object -First 1
 if ($ssmsPath) {New-Alias -Name 'ssms' -Value $ssmsPath}
 New-Alias -Name 'npp' -Value "$prgFiles\Notepad++\notepad++.exe"
 New-Alias -Name 'ostress' -Value "$prgFiles\Microsoft Corporation\RMLUtils\ostress.exe"
