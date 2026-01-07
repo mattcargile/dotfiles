@@ -45,8 +45,11 @@ New-Alias -Name 'ipxl' -Value 'Import-Excel'
 # https://github.com/PowershellFrameworkCollective/PSUtil/issues/67
 New-Alias -Name 'add' -Value 'string\Add-String'
 New-Alias -Name 'format' -Value 'string\Format-String'
-# Can't use string\Join-String because the module doesn't expose it in the `psd1` file.
-New-Alias -Name 'join' -Value 'Join-String'
+# Using proxy Join-String command for Core edition.
+# Join-String only exposed in the `psd1` for the Desktop edition 
+if ($PSEdition -eq 'Desktop') {
+  New-Alias -Name 'join' -Value 'string\Join-String'
+}
 New-Alias -Name 'replace' -Value 'string\Set-String'
 New-Alias -Name 'split' -Value 'string\Split-String'
 New-Alias -Name 'trim' -Value 'string\Get-SubString'

@@ -12,6 +12,9 @@ $modulesToImport = @(
 )
 Import-Module -Name $modulesToImport 
 
+<# string module configuration #>
+$StringModule_DontInjectJoinString = $true
+
 # Fuzzy Finder for completion and history
 # Need to reset action keys or else an `Enter` will automatically execute the command from the history. Muscle memory is already too strong.
 if ($PSEdition -eq 'Core') {

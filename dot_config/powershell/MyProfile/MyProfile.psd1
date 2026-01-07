@@ -126,6 +126,7 @@ FunctionsToExport = @(
     }
     elseif ($PSEdition -eq 'Core') {
         'Get-FileProcess'
+        'Join-String'
     }
 )
 
@@ -182,6 +183,7 @@ AliasesToExport = @(
     }
     elseif ($PSEdition -eq 'Core') {
         'gfilp'
+        'join'
     }
 ) 
 
