@@ -145,8 +145,8 @@ function Get-UserVariable {
                 'completion_Name'
                 'options'
                 <# VSCode Shell Integration #>
-		'__VSCodeState' # New single state variable. Remove below after PR #251114
-		'__vscode_shell_env_reporting'
+		        '__VSCodeState' # New single state variable. Remove below after PR #251114
+		        '__vscode_shell_env_reporting'
                 '__LastHistoryId'
                 '__VSCodeOriginalPrompt'
                 '__VSCodeOriginalPSConsoleHostReadLine'
@@ -213,17 +213,14 @@ function Get-UserVariable {
         }
     }
 
-    <# New clean Block Note:
-     # Not available in PowerShell Desktop
-     # Not currently used in `Get-Variable` as of 4/4/2023
-     # https://github.com/PowerShell/PowerShell/blob/master/src/Microsoft.PowerShell.Commands.Utility/commands/utility/Var.cs
-     #>
-    # clean
-    # {
-    #     if ($null -ne $steppablePipeline) {
-    #         $steppablePipeline.Clean()
-    #     }
-    # }
+{{ if eq .isPSCore true }}
+    clean
+    {
+        if ($null -ne $steppablePipeline) {
+            $steppablePipeline.Clean()
+        }
+    }
+{{ end }}
 
 <#
 .ForwardHelpTargetName Microsoft.PowerShell.Utility\Get-Variable
