@@ -5,11 +5,26 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $profileFilePath = "$env:USERPROFILE\.config\powershell\profile.ps1"
-if ($env:OneDriveCommercial) {
-    Copy-Item -Path $profileFilePath -Destination "$env:OneDriveCommercial\Documents\PowerShell\profile.ps1"
-    Copy-Item -Path $profileFilePath -Destination "$env:OneDriveCommercial\Documents\WindowsPowerShell\profile.ps1"
+$myDocumentsParentPath = Split-Path -Path $( [Environment]::GetFolderPath('MyDocuments') ) -Parent
+$oneDriveRedirectPathWildcard = "$( Join-Path -Path $env:USERPROFILE -ChildPath 'OneDrive' )*"
+$isOneDriveRedirect =
+    if ($myDocumentsParentPath -like $oneDriveRedirectPathWildcard) {
+        $true
+    }
+    else {
+        $false
+    }
+if ($isOneDriveRedirect) {
+    if ($env:OneDriveCommercial) {
+        Copy-Item -Path $profileFilePath -Destination "$env:OneDriveCommercial\Documents\PowerShell\profile.ps1"
+        Copy-Item -Path $profileFilePath -Destination "$env:OneDriveCommercial\Documents\WindowsPowerShell\profile.ps1"
+    }
+    if ($env:OneDriveConsumer) {
+        Copy-Item -Path $profileFilePath -Destination "$env:OneDriveConsumer\Documents\PowerShell\profile.ps1"
+        Copy-Item -Path $profileFilePath -Destination "$env:OneDriveConsumer\Documents\WindowsPowerShell\profile.ps1"
+    }
 }
-if ($env:OneDriveConsumer) {
-    Copy-Item -Path $profileFilePath -Destination "$env:OneDriveConsumer\Documents\PowerShell\profile.ps1"
-    Copy-Item -Path $profileFilePath -Destination "$env:OneDriveConsumer\Documents\WindowsPowerShell\profile.ps1"
+else {
+    Copy-Item -Path $profileFilePath -Destination "$env:USERPROFILE\Documents\PowerShell\profile.ps1"
+    Copy-Item -Path $profileFilePath -Destination "$env:USERPROFILE\Documents\WindowsPowerShell\profile.ps1"
 }
