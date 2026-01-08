@@ -1,0 +1,4 @@
+# case insensitive on all lowercase
+--smart-case
+# use PCRE2 ( lookaround ) only if needed
+--auto-hybrid-regex

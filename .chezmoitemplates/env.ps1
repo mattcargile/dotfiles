@@ -22,7 +22,7 @@ $FzfIconTheme = "--color='prompt:#00897b,pointer:#c386f1,marker:#ff479c'"
 # powershell.exe doesn't handle the raw UTF-8 character because of $OutputEncoding and [Console]::OutputEncoding/InputEncoding
 $FzfIcons = "--prompt='$([char]0xF054) ' --pointer='$([char]0xDB81)$([char]0xDF0B) ' --marker='$([char]0xF444)'"
 $FzfLayout = '--border=rounded --padding=1 --margin=1'
-$FzfHistory = "--history='$env:OneDrive\Documents\.fzf_history'"
+$FzfHistory = "--history='$env:USERPROFILE\.config\fzf\.fzf_history'"
 # Go to first item upon key entry change
 $FzfBind = '--bind change:first'
 $env:FZF_DEFAULT_OPTS = "$FzfTheme $FzfIconTheme $FzfIcons $FzfLayout $FzfHistory $FzfBind"
@@ -86,7 +86,7 @@ $env:EDITOR = 'code' # e key mapping
 $env:SHELL = 'cmd.exe' # w key mapping. Need to use cmd.exe for fzf DEFAULT_COMMAND to work.
 
 # rg.exe (ripgrep) path to default flags
-$env:RIPGREP_CONFIG_PATH = "$env:OneDrive\Documents\.ripgreprc"
+$env:RIPGREP_CONFIG_PATH = "$env:USERPROFILE\.config\ripgrep\.ripgreprc"
 
 # pretty pager batcat theme
 $env:BAT_THEME = 'Visual Studio Dark+'
