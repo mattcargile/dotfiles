@@ -61,7 +61,7 @@ function Invoke-Mstsc {
                 $ips = $ComputerName
             }
             else {
-                $ips = (Resolve-DnsName -Name $ComputerName -ErrorAction 'Stop').IPAddress # DEBUG outputs seemingly random number
+                $ips = (Resolve-DnsName -Name $ComputerName -ErrorAction 'Stop' -Debug:$false -Verbose:$false).IPAddress # DEBUG outputs query options. VERBOSE outputs input value 
             }
             Write-Verbose "Computer Name IPAddress List: $($ips -join ', ')"
 
