@@ -7,17 +7,21 @@ $modulesToImport = @(
     'ClassExplorer'
     'PowerShellHumanizer'
     'Terminal-Icons' # Need to import first so I can override the default formatter further downstream
-    if ($PSEdition -eq 'Core') { 'PowerShellRun' }
+    if ($IsCoreCLR) { 'PowerShellRun' }
     "$env:USERPROFILE\.config\powershell\MyProfile\MyProfile.psd1"
 )
 Import-Module -Name $modulesToImport 
 
 <# string module configuration #>
-$StringModule_DontInjectJoinString = $true
+if ($IsCoreCLR) {
+    # Prefer core's implementation of join and have a proxied command
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments","StringModule_DontInjectJoinString",Justification="Variable required in session for future implicit string module load.")]
+    $StringModule_DontInjectJoinString = $true
+}
 
 # Fuzzy Finder for completion and history
 # Need to reset action keys or else an `Enter` will automatically execute the command from the history. Muscle memory is already too strong.
-if ($PSEdition -eq 'Core') {
+if ($IsCoreCLR) {
     Set-PSRunActionKeyBinding -FirstActionKey 'Shift+Enter' -SecondActionKey 'Enter'
     Set-PSRunPSReadLineKeyHandler -PSReadLineHistoryChord 'Ctrl+r' -TabCompletionChord 'Ctrl+8,Tab'
     Get-PSRunDefaultSelectorOption | ForEach-Object -Process {

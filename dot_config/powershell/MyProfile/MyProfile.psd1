@@ -121,12 +121,12 @@ FunctionsToExport = @(
     'Skip-Object'
     'Split-ExeArgument'
     'Write-FileContent'
-    if ($PSEdition -eq 'Desktop') {
-        'Get-PowershellDesktopHelp'
-    }
-    elseif ($PSEdition -eq 'Core') {
+    if ($PSEdition -eq 'Core') {
         'Get-FileProcess'
         'Join-String'
+    }
+    else {
+        'Get-PowershellDesktopHelp'
     }
 )
 
@@ -178,12 +178,12 @@ AliasesToExport = @(
     'smyticn'
     'srgif'
     'top'
-    if ($PSEdition -eq 'Desktop') {
-        'help'
-    }
-    elseif ($PSEdition -eq 'Core') {
+    if ($PSEdition -eq 'Core') {
         'gfilp'
         'join'
+    }
+    else {
+        'help'
     }
 ) 
 
