@@ -9,6 +9,42 @@ end {
     #region Generate formatter
     $formatList = [System.Collections.Generic.List[string]]::new()
 
+    #region CimInstance
+    $writeFormatViewSplat = @{
+        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessNonSystem'
+        Property = 'CSName', 'Pid', 'User', 'Name', 'WSMb', 'CPUSec', 'PathTrunc'
+        Width = 15, 5, 25, 48, 8, 8, 80
+        VirtualProperty = @{
+            WSMb = { [Math]::Round( $_.WS / 1MB, 2 )}
+            CPUSec = { [Math]::Round( ( $_.UserModeTime + $_.KernelModeTime ) / 100000000, 2 ) }
+            User = { $_ | Invoke-CimMethod -MethodName GetOwner | ForEach-Object -MemberName User }
+            PathTrunc = { $_.Path.Truncate( 65, 'Characters', '...', 'Left' ) }
+            Pid = { $_.ProcessId }
+        }
+    }
+    $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
+    $writeFormatViewSplat = @{
+        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ServiceNonSystem'
+        Property = 'SystemName', 'Name', 'DisplayName', 'Started', 'StartName', 'PathNameTrunc'
+        Width = 15, 30, 30, 8, 30, 80
+        VirtualProperty = @{
+            PathNameTrunc = { $_.PathName.Truncate( 65, 'Characters', '...', 'Left' ) }
+        }
+    }
+    $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
+
+    $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
+    $writeFormatViewSplat = @{
+        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_OperatingSystem'
+        Property = 'CSName', 'Caption', 'Uptime'
+        Width = 15, 45, 30
+        VirtualProperty = @{
+            Uptime = { (Get-Date) - $_.LastBootUpTime }
+        }
+    }
+    $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
+    #endregion
+
     #region DbaInstanceParameter
     $writeFormatViewSplat = @{
         TypeName = 'DataplatMac.RegisteredServer.DbaInstanceParameter'

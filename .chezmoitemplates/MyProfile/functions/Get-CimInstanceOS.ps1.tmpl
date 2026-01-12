@@ -1,5 +1,5 @@
-function Get-CimInstanceProcess {
-    [Alias('gcimp')]
+function Get-CimInstanceOS {
+    [Alias('gcimos')]
     [CmdletBinding(DefaultParameterSetName = 'ClassNameComputerSet', HelpUri = 'https://go.microsoft.com/fwlink/?LinkId=227961')]
     param(
         [Parameter(ParameterSetName = 'CimInstanceSessionSet', Mandatory = $true, ValueFromPipeline = $true)]
@@ -12,7 +12,7 @@ function Get-CimInstanceProcess {
         [Parameter(ParameterSetName = 'ClassNameSessionSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
         [Parameter(ParameterSetName = 'ClassNameComputerSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
         [string]
-        ${ClassName} = 'Win32_Process',
+        ${ClassName} = 'Win32_OperatingSystem',
 
         [Parameter(ParameterSetName = 'ResourceUriSessionSet', Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [Parameter(ParameterSetName = 'ResourceUriComputerSet', Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -82,7 +82,6 @@ function Get-CimInstanceProcess {
         [Parameter(ParameterSetName = 'ClassNameComputerSet', ValueFromPipelineByPropertyName = $true)]
         [Parameter(ParameterSetName = 'ResourceUriSessionSet', ValueFromPipelineByPropertyName = $true)]
         [Parameter(ParameterSetName = 'ResourceUriComputerSet', ValueFromPipelineByPropertyName = $true)]
-{{ if eq .isPSCore true }}        [ValidateNotNullOrWhiteSpace()]{{ else }}        [ValidateNotNullOrEmpty()]{{ end }}
         [string]
         ${Filter},
 
@@ -102,55 +101,6 @@ function Get-CimInstanceProcess {
                 $PSBoundParameters['OutBuffer'] = 1
             }
 
-            $customExcludeFilter = @(
-                "NOT ExecutablePath LIKE '%windows%media%player%'"
-                "NOT ExecutablePath LIKE '%trustedinstaller%'"
-                "NOT ExecutablePath LIKE '%microsoft.net%'"
-                "NOT ExecutablePath LIKE '%google%google%'"
-                "NOT ExecutablePath LIKE '%microsoft%edge%'"
-                "NOT ExecutablePath LIKE '%veeam%'"
-                "NOT ExecutablePath LIKE '%windows%defend%'"
-                "NOT ExecutablePath LIKE '%vmware%tool%'"
-                "NOT ExecutablePath LIKE '%sysmon64%'"
-                "NOT ExecutablePath LIKE '%SentinelOne%'"
-                "NOT ExecutablePath LIKE '%Arctic Wolf%'"
-                "NOT ExecutablePath LIKE '%windows\\systemapps%'"
-                "NOT ExecutablePath LIKE '%logmein%'"
-                "NOT ExecutablePath LIKE '%securelink%'"
-                "NOT ExecutablePath LIKE '%ManageEngine\\UEMS_Agent%'"
-                "NOT ExecutablePath LIKE '%Common Files\\Microsoft Shared%'"
-                "NOT Name = 'smartscreen.exe'"
-                "NOT Name = 'wmiprvse.exe'"
-                "NOT Name = 'conhost.exe'"
-                "NOT Name = 'vm3dservice.exe'"
-                "NOT Name = 'fontdrvhost.exe'"
-                "NOT Name = 'spoolsv.exe'"
-                "NOT Name = 'wudfhost.exe'"
-                "NOT Name = 'dwm.exe'"
-                "NOT Name = 'msdtc.exe'"
-                "NOT Name = 'winlogon.exe'"
-                "NOT Name = 'wmiapsrv.exe'"
-                "NOT Name = 'logonui.exe'"
-                "NOT Name = 'aggregatorhost.exe'"
-                "NOT Name = 'MicrosoftSearchInBing.exe'"
-                "NOT Name = 'OfficeClickToRun.exe'"
-                "NOT Name = 'svchost.exe'"
-                "NOT Name = 'mmc.exe'"
-                "NOT Name = 'RuntimeBroker.exe'"
-                "NOT Name = 'rdpclip.exe'"
-                "NOT Name = 'sihost.exe'"
-                "NOT Name = 'vds.exe'"
-                "NOT Name = 'ServerManager.exe'"
-                "NOT Name = 'taskhostw.exe'"
-                "NOT Name = 'ctfmon.exe'"
-            ) -join ' AND '
-            if ($PSBoundParameters.ContainsKey('Filter')) {
-                $customExcludeFilter = " AND ( $customExcludeFilter )"
-            }
-            else {
-                $customExcludeFilter = "( $customExcludeFilter )"
-            }
-            $PSBoundParameters['Filter'] += $customExcludeFilter
             $PSBoundParameters['ClassName'] = $ClassName
 
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('CimCmdlets\Get-CimInstance', [System.Management.Automation.CommandTypes]::Cmdlet)
@@ -160,12 +110,11 @@ function Get-CimInstanceProcess {
                         if ( $_.psobject.Properties.Name -contains 'PSShowComputerName') {
                             $_.PSShowComputerName = $false
                         }
-                        $_.PSTypeNames.Insert( 0, 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessNonSystem' )
+                        $_.PSTypeNames.Insert( 0, 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_OperatingSystem' )
                         $_
                     }
                 }
             }
-
             $steppablePipeline = $scriptCmd.GetSteppablePipeline($MyInvocation.CommandOrigin)
             $steppablePipeline.Begin($PSCmdlet)
         }
@@ -205,3 +154,4 @@ function Get-CimInstanceProcess {
 .ForwardHelpCategory Cmdlet
 
 #>
+

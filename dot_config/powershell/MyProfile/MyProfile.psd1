@@ -19,7 +19,7 @@ RootModule = $(
 ) 
 
 # Version number of this module.
-ModuleVersion = '0.0.1'
+ModuleVersion = '0.0.4'
 
 # Supported PSEditions
 CompatiblePSEditions = @( 'Desktop', 'Core' )
@@ -79,6 +79,7 @@ PowerShellVersion = '5.1'
 FunctionsToExport = @(
     'Add-ForcedWindowsCapability'
     'Add-TfsItem'
+    'ConvertTo-ComputerName'
     'Enter-PSSessionBusy'
     'Expand-Property'
     'Format-CSharp'
@@ -90,7 +91,9 @@ FunctionsToExport = @(
     'Get-ArgumentCompleter'
     'Get-CharUtfHex'
     'Get-ChildItemWide'
+    'Get-CimInstanceOS'
     'Get-CimInstanceProcess'
+    'Get-CimInstanceService'
     'Get-CiscoAnyConnectState'
     'Get-CommandParameter'
     'Get-DbaRegServerInstanceParameter'
@@ -141,6 +144,7 @@ VariablesToExport = @()
 AliasesToExport = @(
     'at'
     'atfi'
+    'ctcn'
     'dirw'
     'enp'
     'etsnb'
@@ -152,7 +156,9 @@ AliasesToExport = @(
     'fsql'
     'fxml'
     'gargc'
+    'gcimos'
     'gcimp'
+    'gcims'
     'gcp'
     'gpp'
     'gregparm'

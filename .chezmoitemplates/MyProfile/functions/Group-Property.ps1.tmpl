@@ -71,7 +71,7 @@ function Group-Property {
                 $null = $PSBoundParameters.Remove("InputObject")
                 Write-Verbose "Group by $($PSBoundParameters["Property"] -join ', ')"
                 $scriptCmd = { & $wrappedCmd @PSBoundParameters | ForEach-Object { $_.Group[0].$Name = $_.Group.$Name; $_.Group[0] } }
-                $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
+                $steppablePipeline = $scriptCmd.GetSteppablePipeline($MyInvocation.CommandOrigin)
                 $steppablePipeline.Begin($PSCmdlet)
             }
 
