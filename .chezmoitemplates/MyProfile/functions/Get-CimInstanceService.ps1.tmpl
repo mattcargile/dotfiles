@@ -120,6 +120,7 @@ function Get-CimInstanceService {
                 "NOT PathName LIKE '%Arctic Wolf%'"
                 "NOT PathName LIKE '%Common Files\\Microsoft Shared%'"
                 "NOT PathName LIKE '%ManageEngine\\UEMS_Agent%'"
+                "NOT PathName LIKE '%Tanium\\Tanium Client%'"
             ) -join ' AND '
             if ($PSBoundParameters.ContainsKey('Filter')) {
                 $customExcludeFilter = " AND ( $customExcludeFilter )"
