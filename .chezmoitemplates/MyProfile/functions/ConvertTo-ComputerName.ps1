@@ -40,7 +40,10 @@ function ConvertTo-ComputerName {
             return WriteComputerNameObject -Name $_.DNSHostName
         }
         if ('VMware.VimAutomation.ViCore.Impl.V1.VM.UniversalVirtualMachineImpl' -as [type] -and
-            $_ -is [VMware.VimAutomation.ViCore.Impl.V1.VM.UniversalVirtualMachineImpl]
+            (
+                $_ -is [VMware.VimAutomation.ViCore.Impl.V1.VM.UniversalVirtualMachineImpl] -or
+                $_ -is [VMware.VimAutomation.ViCore.Impl.V1.Inventory.VirtualMachineImpl] # -Tag outputs different type
+            )
         ) {
             return WriteComputerNameObject -Name $_.Name
         }
@@ -49,13 +52,14 @@ function ConvertTo-ComputerName {
         ) {
             return WriteComputerNameObject -Name $_.HostName
         }
-        if ('Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer' -as [type] ) {
-            if ( $_ -is [Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer] -or
+        if ('Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer' -as [type] -and
+            (
+                $_ -is [Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer] -or
                 $_ -is [Microsoft.SqlServer.Management.Smo.Server]
-            ) {
-                $dbaInst = [Dataplat.Dbatools.Parameter.DbaInstanceParameter]::new($_)
-                return WriteComputerNameObject -Name $dbaInst.ComputerName
-            }
+            )
+        ) {
+            $dbaInst = [Dataplat.Dbatools.Parameter.DbaInstanceParameter]::new($_)
+            return WriteComputerNameObject -Name $dbaInst.ComputerName
         }
     }
 }

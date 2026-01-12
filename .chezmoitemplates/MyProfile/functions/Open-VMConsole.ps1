@@ -21,7 +21,9 @@ function Open-VMConsole {
                         continue
                     }
                 }
-                elseif ($vm -is [VMware.VimAutomation.ViCore.Impl.V1.VM.UniversalVirtualMachineImpl]) {
+                elseif ($vm -is [VMware.VimAutomation.ViCore.Impl.V1.VM.UniversalVirtualMachineImpl] -or
+                    $vm -is [VMware.VimAutomation.ViCore.Impl.V1.Inventory.VirtualMachineImpl] # -Tag outputs different type
+                ) {
                     $vm
                 }
                 else {
