@@ -25,11 +25,7 @@ function Get-ChildItemWide {
         [switch]
         ${Recurse},
 
-        {{ if eq .isPSCore true }}
-        [uint]
-        {{ else }}
-        [uint32]
-        {{ end }}
+        {{ if eq .isPSCore true -}}[uint]{{ else }}[uint32]{{ end }}
         ${Depth},
 
         [switch]
