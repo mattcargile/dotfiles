@@ -68,7 +68,7 @@ function Get-PowershellDesktopHelp {
         {
             $help
         }
-        elseif ($help -ne $null)
+        elseif ($null -ne $help)
         {
             # Always on Windows. Powershell 5.1
             $pagerCommand = 'more.com'
@@ -103,7 +103,7 @@ function Get-PowershellDesktopHelp {
             }
 
             $pagerCommandInfo = Get-Command -Name $pagerCommand -ErrorAction Ignore
-            if ($pagerCommandInfo -eq $null) {
+            if ($null -eq $pagerCommandInfo) {
                 $help
             }
             elseif ($pagerCommandInfo.CommandType -eq 'Application') {
