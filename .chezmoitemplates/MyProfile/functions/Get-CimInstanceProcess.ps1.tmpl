@@ -1,0 +1,185 @@
+function Get-CimInstanceProcess {
+    [Alias('gcimp')]
+    [CmdletBinding(DefaultParameterSetName = 'ClassNameComputerSet', HelpUri = 'https://go.microsoft.com/fwlink/?LinkId=227961')]
+    param(
+        [Parameter(ParameterSetName = 'CimInstanceSessionSet', Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(ParameterSetName = 'QuerySessionSet', Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(ParameterSetName = 'ClassNameSessionSet', Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet', Mandatory = $true, ValueFromPipeline = $true)]
+        [CimSession[]]
+        ${CimSession},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
+        [string]
+        ${ClassName} = 'Win32_Process',
+
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet', Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet', Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'CimInstanceComputerSet')]
+        [Parameter(ParameterSetName = 'CimInstanceSessionSet')]
+        [Parameter(ParameterSetName = 'QueryComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'QuerySessionSet', ValueFromPipelineByPropertyName = $true)]
+        [uri]
+        ${ResourceUri},
+
+        [Parameter(ParameterSetName = 'ClassNameComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'QueryComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'CimInstanceComputerSet')]
+        [Alias('CN', 'ServerName', 'DNSHostName')]
+        [string[]]
+        ${ComputerName},
+
+        [Parameter(ParameterSetName = 'ClassNameComputerSet')]
+        [Parameter(ParameterSetName = 'ClassNameSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
+        [switch]
+        ${KeyOnly},
+
+        [Parameter(ParameterSetName = 'ClassNameComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ClassNameSessionSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'QueryComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'QuerySessionSet', ValueFromPipelineByPropertyName = $true)]
+        [string]
+        ${Namespace},
+
+        [Alias('OT')]
+        [uint]
+        ${OperationTimeoutSec},
+
+        [Parameter(ParameterSetName = 'CimInstanceComputerSet', Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [Parameter(ParameterSetName = 'CimInstanceSessionSet', Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [Alias('CimInstance')]
+        [ciminstance]
+        ${InputObject},
+
+        [Parameter(ParameterSetName = 'QueryComputerSet', Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'QuerySessionSet', Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [string]
+        ${Query},
+
+        [Parameter(ParameterSetName = 'QueryComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'QuerySessionSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ClassNameSessionSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [string]
+        ${QueryDialect},
+
+        [Parameter(ParameterSetName = 'ClassNameComputerSet')]
+        [Parameter(ParameterSetName = 'ClassNameSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
+        [Parameter(ParameterSetName = 'QueryComputerSet')]
+        [Parameter(ParameterSetName = 'QuerySessionSet')]
+        [switch]
+        ${Shallow},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet', ValueFromPipelineByPropertyName = $true)]
+{{ if eq .isPSCore true }}        [ValidateNotNullOrWhiteSpace()]{{ else }}        [ValidateNotNullOrEmpty()]{{ end }}
+        [string]
+        ${Filter},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet', ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet', ValueFromPipelineByPropertyName = $true)]
+        [Alias('SelectProperties')]
+        [string[]]
+        ${Property}
+    )
+
+    begin {
+        try {
+            $outBuffer = $null
+            if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer)) {
+                $PSBoundParameters['OutBuffer'] = 1
+            }
+
+            $customExcludeFilter = @(
+                "NOT Name LIKE '%svchost%'"
+                "NOT ExecutablePath LIKE '%windows%media%player%'"
+                "NOT ExecutablePath LIKE '%trustedinstaller%'"
+                "NOT ExecutablePath LIKE '%microsoft.net%'"
+                "NOT ExecutablePath LIKE '%google%google%'"
+                "NOT ExecutablePath LIKE '%microsoft%edge%'"
+                "NOT ExecutablePath LIKE '%veeam%'"
+                "NOT ExecutablePath LIKE '%windows%defend%'"
+                "NOT ExecutablePath LIKE '%vmware%tool%'"
+                "NOT ExecutablePath LIKE '%sysmon64%'"
+                "NOT ExecutablePath LIKE '%SentinelOne%'"
+                "NOT ExecutablePath LIKE '%Arctic Wolf%'"
+                "NOT ExecutablePath LIKE '%windows\\systemapps%'"
+                "NOT ExecutablePath LIKE '%logmein%'"
+                "NOT ExecutablePath LIKE '%securelink%'"
+                "NOT Name = 'smartscreen.exe'"
+                "NOT Name = 'wmiprvse.exe'"
+                "NOT Name = 'conhost.exe'"
+                "NOT Name = 'vm3dservice.exe'"
+                "NOT Name = 'fontdrvhost.exe'"
+                "NOT Name = 'spoolsv.exe'"
+                "NOT Name = 'wudfhost.exe'"
+                "NOT Name = 'dwm.exe'"
+                "NOT Name = 'msdtc.exe'"
+                "NOT Name = 'winlogon.exe'"
+                "NOT Name = 'wmiapsrv.exe'"
+                "NOT Name = 'logonui.exe'"
+                "NOT Name = 'aggregatorhost.exe'"
+            ) -join ' AND '
+            if ($PSBoundParameters.ContainsKey('Filter')) {
+                $customExcludeFilter = " AND ( $customExcludeFilter )"
+            }
+            else {
+                $customExcludeFilter = "( $customExcludeFilter )"
+            }
+            $PSBoundParameters['Filter'] += $customExcludeFilter
+            $PSBoundParameters['ClassName'] = $ClassName
+
+            $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('CimCmdlets\Get-CimInstance', [System.Management.Automation.CommandTypes]::Cmdlet)
+            $scriptCmd = { & $wrappedCmd @PSBoundParameters }
+
+            $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
+            $steppablePipeline.Begin($PSCmdlet)
+        }
+        catch {
+            throw
+        }
+    }
+
+    process {
+        try {
+            $steppablePipeline.Process($_)
+        }
+        catch {
+            throw
+        }
+    }
+
+    end {
+        try {
+            $steppablePipeline.End()
+        }
+        catch {
+            throw
+        }
+    }
+{{ if eq .isPSCore true }}
+    clean {
+        if ($null -ne $steppablePipeline) {
+            $steppablePipeline.Clean()
+        }
+    }
+{{ end }}
+}
+<#
+
+.ForwardHelpTargetName CimCmdlets\Get-CimInstance
+.ForwardHelpCategory Cmdlet
+
+#>
