@@ -151,7 +151,7 @@ function Out-Jq {
         [string[]] $ArgumentList,
 
         [Parameter(ValueFromPipeline)]
-        [string] $InputObject
+        [psobject] $InputObject
     )
     begin {
         $ArgumentList += '--color-output'
@@ -246,7 +246,7 @@ function Format-Json {
         [string[]] $ArgumentList,
 
         [Parameter(ValueFromPipeline)]
-        [string] $InputObject
+        [psobject] $InputObject
     )
     begin {
         if ($ArgumentList.Count -eq 0 -or $null -eq $ArgumentList) {
