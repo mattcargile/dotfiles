@@ -52,7 +52,7 @@ function ConvertTo-ComputerName {
         ) {
             return WriteComputerNameObject -Name $_.HostName
         }
-        if ('Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer' -as [type] -and
+        if ('Dataplat.Dbatools.Parameter.DbaInstanceParameter' -as [type] -and # Assuming dbatools is imported along with below classes
             (
                 $_ -is [Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer] -or
                 $_ -is [Microsoft.SqlServer.Management.Smo.Server]
