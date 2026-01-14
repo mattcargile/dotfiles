@@ -96,7 +96,6 @@ FunctionsToExport = @(
     'Get-CimInstanceService'
     'Get-CiscoAnyConnectState'
     'Get-CommandParameter'
-    'Get-DbaRegServerInstanceParameter'
     'Get-ElementName'
     'Get-FileProcess'
     'Get-InstalledSoftware'
