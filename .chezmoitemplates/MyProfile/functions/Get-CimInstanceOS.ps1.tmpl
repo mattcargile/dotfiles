@@ -111,7 +111,8 @@ function Get-CimInstanceOS {
                             $_.PSShowComputerName = $false
                         }
                         $_.PSTypeNames.Insert( 0, 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_OperatingSystem' )
-                        $_
+                        $_ |
+                            Add-Member -PassThru -MemberType ScriptProperty -Name Uptime -Value { [OutputType('System.TimeSpan')]param() (Get-Date) - $_.LastBootUpTime }
                     }
                 }
             }
