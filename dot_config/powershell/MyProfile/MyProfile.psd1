@@ -161,7 +161,6 @@ AliasesToExport = @(
     'gcims'
     'gcp'
     'gpp'
-    'gregparm'
     'gsmbr'
     'gsoft'
     'guv'
