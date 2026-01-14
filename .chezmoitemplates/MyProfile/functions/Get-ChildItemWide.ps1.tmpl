@@ -1,5 +1,6 @@
 function Get-ChildItemWide {
     [CmdletBinding(DefaultParameterSetName='Items', HelpUri='https://go.microsoft.com/fwlink/?LinkID=2096492')]
+    [OutputType("System.IO.FileInfo", "System.IO.DirectoryInfo")]
     [Alias('lw', 'dirw')]
     param(
         [Parameter(ParameterSetName='Items', Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
