@@ -142,6 +142,29 @@ function Out-Bat {
         $pipe.End()
     }
 }
+function Out-Jq {
+    [Alias('ojq')]
+    [CmdletBinding(PositionalBinding = $false)]
+    [OutputType([string])]
+    param(
+        [Parameter(ValueFromRemainingArguments = $true)]
+        [string[]] $ArgumentList,
+
+        [Parameter(ValueFromPipeline)]
+        [string] $InputObject
+    )
+    begin {
+        $ArgumentList += '--color-output'
+        $pipe = { jq.exe @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)
+        $pipe.Begin($PSCmdlet)
+    }
+    process {
+        $pipe.Process($PSItem)
+    }
+    end {
+        $pipe.End()
+    }
+}
 function Format-PowerShell {
     [Alias('fpsh')]
     [CmdletBinding(PositionalBinding = $false)]
