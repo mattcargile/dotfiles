@@ -28,6 +28,7 @@ New-Alias -Name 'cfclix' -Value 'ConvertFrom-CliXml'
 New-Alias -Name 'ctsecs' -Value 'ConvertTo-SecureString'
 New-Alias -Name 'cfsecs' -Value 'ConvertFrom-SecureString'
 New-Alias -Name 'gscht' -Value 'Get-ScheduledTask'
+New-Alias -Name 'cthtml' -Value 'ConvertTo-Html'
 # NetTCPIP Module
 New-Alias -Name 'gipa' -Value 'Get-NetIPAddress'
 New-Alias -Name 'gtcpc' -Value 'Get-NetTCPConnection'
