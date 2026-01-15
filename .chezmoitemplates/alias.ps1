@@ -130,6 +130,8 @@ New-Alias -Name 'gado' -Value 'Get-ADObject'
 # TerminalSessions Module
 New-Alias -Name 'gwts' -Value 'Get-WTSSession'
 New-Alias -Name 'rwts' -Value 'Remove-WTSSession'
+# PSParseHTML
+New-Alias -Name 'cfhtml' -Value 'PSParseHTML\ConverFrom-HTML'
 # Native Commands
 $prg86 = ${env:ProgramFiles(x86)}
 $prgFiles = $env:ProgramFiles
