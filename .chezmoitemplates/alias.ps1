@@ -218,8 +218,7 @@ $rmVar = @(
   'ciscoPaths'
   'currentCiscoPath'
 )
-# Sometimes the above variables are not defined, so we need to ignore the error.
-Remove-Variable -Name $rmVar -ErrorAction Ignore
+Remove-Variable -Name $rmVar
 
 # scoop aliases
 # scoop alias add fsearch 'scoop-search.exe $args[0]' 'Fast search with scoop-search.exe'
