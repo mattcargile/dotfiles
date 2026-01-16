@@ -6,12 +6,21 @@ end {
     $ErrorActionPreference = 'Stop'
     Set-StrictMode -Version Latest
 
-    #region Generate formatter
+    #region Collect formatter Xml
     $formatList = [System.Collections.Generic.List[string]]::new()
 
     #region CimInstance
     $writeFormatViewSplat = @{
         TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessNonSystem'
+        Property = 'CSName', 'Pid', 'Name', 'WSMb', 'CPUSec', 'Path'
+        Width = 15, 5, 48, 8, 8, 80
+        VirtualProperty = @{
+            Path = { $_.Path.Truncate( 65, 'Characters', '...', 'Left' ) }
+        }
+    }
+    $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
+    $writeFormatViewSplat = @{
+        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessNonSystem#IncludeUser'
         Property = 'CSName', 'Pid', 'User', 'Name', 'WSMb', 'CPUSec', 'Path'
         Width = 15, 5, 25, 48, 8, 8, 80
         VirtualProperty = @{
@@ -396,8 +405,9 @@ end {
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat))
     #endregion
+    #endregion
 
+    #region Output Format Xml
     $formatList | Out-FormatData
-
     #endregion
 }

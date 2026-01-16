@@ -100,7 +100,15 @@ function Get-CimInstanceProcess {
         [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
         [Alias('sf', 'All')]
         [switch]
-        ${SkipFilter}
+        ${SkipFilter},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet')]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet')]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
+        [Alias('iu')]
+        [switch]
+        ${IncludeUser}
     )
 
     begin {
@@ -166,7 +174,14 @@ function Get-CimInstanceProcess {
             }
             # SkipFilter doesn't exist on proxied command
             $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found
+            $PSBoundParameters.Remove('IncludeUser') | Out-Null
             $PSBoundParameters['ClassName'] = $ClassName
+            $customPSTypeNameBase = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessNonSystem'
+            $customPSTypeNameUser = "$customPSTypeNameBase#IncludeUser"
+            $cimProcessIncludeUser = $false
+            if ($IncludeUser) {
+                $cimProcessIncludeUser = $true
+            }
 
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('CimCmdlets\Get-CimInstance', [System.Management.Automation.CommandTypes]::Cmdlet)
             $scriptCmd = {
@@ -175,12 +190,11 @@ function Get-CimInstanceProcess {
                         if ( $_.psobject.Properties.Name -contains 'PSShowComputerName') {
                             $_.PSShowComputerName = $false
                         }
-                        $_.PSTypeNames.Insert( 0, 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessNonSystem' )
-                        $_ |
-                            Add-Member -PassThru -MemberType ScriptProperty -Name WSMb -Value { [OutputType('double')]param() [Math]::Round( $_.WS / 1MB, 2 ) } |
-                            Add-Member -PassThru -MemberType ScriptProperty -Name CPUSec -Value { [OutputType('double')]param() [Math]::Round( ( $_.UserModeTime + $_.KernelModeTime ) / 100000000, 2 ) } |
-                            Add-Member -PassThru -MemberType ScriptProperty -Name User -Value { [OutputType('string')]param() $_ | Invoke-CimMethod -MethodName GetOwner | ForEach-Object -MemberName User } |
-                            Add-Member -PassThru -MemberType AliasProperty -Name Pid -Value ProcessId
+                        $_.PSTypeNames.Insert( 0, $customPSTypeNameBase )
+                        if ($cimProcessIncludeUser) {
+                            $_.PSTypeNames.Insert( 0, $customPSTypeNameUser)
+                        }
+                        $_
                     }
                 }
             }
