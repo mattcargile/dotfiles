@@ -158,9 +158,9 @@ New-Alias -Name 'ostress' -Value "$prgFiles\Microsoft Corporation\RMLUtils\ostre
 # Helper vs variables
 $vsVer = '2022'
 $vsPrefix = "$prgFiles\Microsoft Visual Studio\$vsVer\Community"
+$vsIDE = "$vsPrefix\Common7\IDE"
+$vsMsBldBin = "$vsPrefix\MSBuild\Current\Bin"
 if ($vsPrefix) {
-  $vsIDE = "$vsPrefix\Common7\IDE"
-  $vsMsBldBin = "$vsPrefix\MSBuild\Current\Bin"
   # For VS 2019 launching. Sometimes Invoke-Item will launch older versions.
   New-Alias -Name 'devenv' -Value "$vsIDE\devenv.exe"
   # For tf.exe TFS source control. This may change with new versions.
