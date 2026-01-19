@@ -29,6 +29,9 @@ New-Alias -Name 'ctsecs' -Value 'ConvertTo-SecureString'
 New-Alias -Name 'cfsecs' -Value 'ConvertFrom-SecureString'
 New-Alias -Name 'gscht' -Value 'Get-ScheduledTask'
 New-Alias -Name 'cthtml' -Value 'ConvertTo-Html'
+# ScheduledTasks
+New-Alias -Name 'gscht' -Value 'ScheduledTasks\Get-ScheduledTask'
+New-Alias -Name 'gschti' -Value 'ScheduledTasks\Get-ScheduledTaskInfo'
 # NetTCPIP Module
 New-Alias -Name 'gipa' -Value 'Get-NetIPAddress'
 New-Alias -Name 'gtcpc' -Value 'Get-NetTCPConnection'
