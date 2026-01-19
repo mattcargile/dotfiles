@@ -27,7 +27,8 @@ $PSDefaultParameterValues = @{
       'msDS-AllowedToDelegateTo'
       'whenCreated'
       'whenChanged' # isn't replicated because of the high rate of change.
-    ) + $companyProp
+      $companyProp
+    )
     'Get-AdGroup:Properties' = [string[]]@(
       'Description'
       'DisplayName'
