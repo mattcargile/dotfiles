@@ -6,6 +6,7 @@ $workKeepassName = {{ .workKeepassName | squote }}
 $credAdmSbk = { Get-Secret -Name da -Vault dp } 
 $credSspAdmSbk = { if ($args.BoundParameters -contains 'Authentication') { Get-Secret -Name da -Vault dp } }
 
+$companyProp = [string[]]@()
 if ($Env:OneDriveCommercial) {
   $companyProp = [string[]]@(
     'extensionAttribute2'
