@@ -20,7 +20,7 @@ function ConvertTo-ComputerName {
     )
     
     begin {
-        function WriteComputerNameObject {
+        function Write-ComputerNameObject {
             [CmdletBinding()]
             param (
                 [string]
@@ -37,7 +37,7 @@ function ConvertTo-ComputerName {
 
     process {
         if ('Microsoft.ActiveDirectory.Management.ADComputer' -as [type] -and $_ -is [Microsoft.ActiveDirectory.Management.ADComputer]) {
-            return WriteComputerNameObject -Name $_.DNSHostName
+            return Write-ComputerNameObject -Name $_.DNSHostName
         }
         if ('VMware.VimAutomation.ViCore.Impl.V1.VM.UniversalVirtualMachineImpl' -as [type] -and
             (
@@ -45,12 +45,12 @@ function ConvertTo-ComputerName {
                 $_ -is [VMware.VimAutomation.ViCore.Impl.V1.Inventory.VirtualMachineImpl] # -Tag outputs different type
             )
         ) {
-            return WriteComputerNameObject -Name $_.Name
+            return Write-ComputerNameObject -Name $_.Name
         }
         if ('VMware.VimAutomation.ViCore.Impl.V1.VM.Guest.VMGuestImpl' -as [type] -and
             $_ -is [VMware.VimAutomation.ViCore.Impl.V1.VM.Guest.VMGuestImpl]
         ) {
-            return WriteComputerNameObject -Name $_.HostName
+            return Write-ComputerNameObject -Name $_.HostName
         }
         if ('Dataplat.Dbatools.Parameter.DbaInstanceParameter' -as [type] -and # Assuming dbatools is imported along with below classes
             (
@@ -59,7 +59,26 @@ function ConvertTo-ComputerName {
             )
         ) {
             $dbaInst = [Dataplat.Dbatools.Parameter.DbaInstanceParameter]::new($_)
-            return WriteComputerNameObject -Name $dbaInst.ComputerName
+            return Write-ComputerNameObject -Name $dbaInst.ComputerName
         }
+        if ($_.psobject.Properties.Name -contains 'PSComputerName') {
+            return Write-ComputerNameObject -Name $_.PSComputerName
+        }
+        if ($_.psobject.Properties.Name -contains 'DNSHostName') {
+            return Write-ComputerNameObject -Name $_.DNSHostName
+        }
+        if ($_.psobject.Properties.Name -contains 'HostName') {
+            return Write-ComputerNameObject -Name $_.HostName
+        }
+        if ($_.psobject.Properties.Name -contains 'ComputerName') {
+            return Write-ComputerNameObject -Name $_.ComputerName
+        }
+        if ($_.psobject.Properties.Name -contains 'ServerName') {
+            return Write-ComputerNameObject -Name $_.ServerName
+        }
+        if ($_.psobject.Properties.Name -contains 'Name') {
+            return Write-ComputerNameObject -Name $_.Name
+        }
+        return Write-ComputerNameObject -Name ([string]$_)
     }
 }
