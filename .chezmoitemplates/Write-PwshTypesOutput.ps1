@@ -19,7 +19,7 @@ end {
     $typesList.Add( ( Write-TypeView @writeTypeViewSplat ) )
 
     $writeTypeViewSplat = @{
-        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessNonSystem'
+        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
         ScriptProperty = @{
             WSMb = { [OutputType('double')]param() [Math]::Round( $this.WorkingSetSize / 1MB, 2 ) }
             CPUSec = { [OutputType('double')]param() [Math]::Round( ( $this.UserModeTime + $this.KernelModeTime ) / 100000000, 2 ) }

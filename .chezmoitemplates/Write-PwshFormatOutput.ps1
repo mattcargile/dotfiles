@@ -11,27 +11,27 @@ end {
 
     #region CimInstance
     $writeFormatViewSplat = @{
-        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessNonSystem'
+        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
         Property = 'CSName', 'Pid', 'Name', 'WSMb', 'CPUSec', 'Path'
         Width = 15, 5, 48, 8, 8, 80
         VirtualProperty = @{
-            Path = { $_.Path.Truncate( 65, 'Characters', '...', 'Left' ) }
+            Path = { $_.ExecutablePath.Truncate( 65, 'Characters', '...', 'Left' ) }
         }
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
     $writeFormatViewSplat = @{
-        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessNonSystem#IncludeUser'
+        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process#IncludeUser'
         Property = 'CSName', 'Pid', 'User', 'Name', 'WSMb', 'CPUSec', 'Path'
         Width = 15, 5, 25, 48, 8, 8, 80
         VirtualProperty = @{
-            Path = { $_.Path.Truncate( 65, 'Characters', '...', 'Left' ) }
+            Path = { $_.ExecutablePath.Truncate( 65, 'Characters', '...', 'Left' ) }
         }
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
     $writeFormatViewSplat = @{
-        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ServiceNonSystem'
-        Property = 'SystemName', 'Name', 'DisplayName', 'Started', 'StartName', 'PathName'
-        Width = 15, 30, 30, 8, 30, 80
+        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Service'
+        Property = 'SystemName', 'Name', 'DisplayName', 'StartMode', 'Started', 'StartName', 'PathName'
+        Width = 15, 30, 30, 9, 7, 30, 80
         VirtualProperty = @{
             PathName = { $_.PathName.Truncate( 65, 'Characters', '...', 'Left' ) }
         }

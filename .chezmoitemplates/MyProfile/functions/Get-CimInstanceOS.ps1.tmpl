@@ -1,3 +1,57 @@
+<#
+.SYNOPSIS
+Proxy helper function for Get-CimInstance Win32_OperatingSystem
+
+.DESCRIPTION
+Proxy function to make accessing the Win32_OperatingSystem class with Get-CimInstance easier.
+
+.PARAMETER CimSession
+See help on Get-CimInstance
+
+.PARAMETER ClassName
+See help on Get-CimInstance. Defaults to Win32_OperatingSystem. Mandatory parameter attribute removed
+
+.PARAMETER ResourceUri
+See help on Get-CimInstance
+
+.PARAMETER ComputerName
+See help on Get-CimInstance
+
+.PARAMETER KeyOnly
+See help on Get-CimInstance
+
+.PARAMETER Namespace
+See help on Get-CimInstance
+
+.PARAMETER OperationTimeoutSec
+See help on Get-CimInstance
+
+.PARAMETER InputObject
+See help on Get-CimInstance
+
+.PARAMETER Query
+See help on Get-CimInstance
+
+.PARAMETER QueryDialect
+See help on Get-CimInstance
+
+.PARAMETER Shallow
+See help on Get-CimInstance
+
+.PARAMETER Filter
+See help on Get-CimInstance.
+
+.PARAMETER Property
+See help on Get-CimInstance
+
+.EXAMPLE
+Get-CimInstanceOS
+Gets the local computers operating system class
+
+.NOTES
+Had to mark the ClassName parameter as not mandatory so the help doesn't appear to be included. Marked the Filter parameter
+with a validate parameter attribute.
+#>
 function Get-CimInstanceOS {
     [Alias('gcimos')]
     [CmdletBinding(DefaultParameterSetName = 'ClassNameComputerSet', HelpUri = 'https://go.microsoft.com/fwlink/?LinkId=227961')]

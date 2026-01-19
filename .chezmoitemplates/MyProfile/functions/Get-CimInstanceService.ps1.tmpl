@@ -1,3 +1,71 @@
+<#
+.SYNOPSIS
+Proxy helper function for Get-CimInstance Win32_Service
+
+.DESCRIPTION
+Proxy function to make accessing the Win32_Service class with Get-CimInstance easier. Be default, it filters out system-y type processes
+
+.PARAMETER CimSession
+See help on Get-CimInstance
+
+.PARAMETER ClassName
+See help on Get-CimInstance. Defaults to Win32_Service. Mandatory parameter attribute removed
+
+.PARAMETER ResourceUri
+See help on Get-CimInstance
+
+.PARAMETER ComputerName
+See help on Get-CimInstance
+
+.PARAMETER KeyOnly
+See help on Get-CimInstance
+
+.PARAMETER Namespace
+See help on Get-CimInstance
+
+.PARAMETER OperationTimeoutSec
+See help on Get-CimInstance
+
+.PARAMETER InputObject
+See help on Get-CimInstance
+
+.PARAMETER Query
+See help on Get-CimInstance
+
+.PARAMETER QueryDialect
+See help on Get-CimInstance
+
+.PARAMETER Shallow
+See help on Get-CimInstance
+
+.PARAMETER Filter
+See help on Get-CimInstance. Also by default usage of this will be incorporated in the default exclusion filter.
+Handles generating a valid filter with parens and using AND.
+
+.PARAMETER Property
+See help on Get-CimInstance
+
+.PARAMETER SkipFilter
+New parameter for the proxy function. Allows falling back to standard usage of Get-CimInstance.
+Won't pre-populate the Filter parameter.
+
+.PARAMETER EscapeProxyFilterParameter
+Impacts new parameters related to the filter like Name, Path, etc. Perform the single quote and backslash escaping. The backslash is the escape character in WQL.
+
+.PARAMETER Name
+Win32_Service.Name filter using LIKE. Required to escape characters by default. Consider EscapeProxyFilterParameter otherwise.
+
+.PARAMETER PathName
+Win32_Process.PathName filter using LIKE. Required to escape characters by default. Consider EscapeProxyFilterParameter otherwise.
+
+.EXAMPLE
+Get-CimInstanceService
+Gets the local computers non system type processes
+
+.NOTES
+Had to mark the ClassName parameter as not mandatory so the help doesn't appear to be included. Marked the Filter parameter
+with a validate parameter attribute.
+#>
 function Get-CimInstanceService {
     [Alias('gcims')]
     [CmdletBinding(DefaultParameterSetName = 'ClassNameComputerSet', HelpUri = 'https://go.microsoft.com/fwlink/?LinkId=227961')]
@@ -100,7 +168,31 @@ function Get-CimInstanceService {
         [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
         [Alias('sf', 'All')]
         [switch]
-        ${SkipFilter}
+        ${SkipFilter},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet')]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet')]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
+        [Alias('EscapeCharacters', 'ec', 'epfp')]
+        [switch]
+        ${EscapeProxyFilterParameter},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet')]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet')]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
+        [Alias('nm')]
+        [string]
+        ${Name},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet')]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet')]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
+        [Alias('pt', 'pn')]
+        [string]
+        ${PathName}
     )
 
     begin {
@@ -139,8 +231,17 @@ function Get-CimInstanceService {
                 }
                 $PSBoundParameters['Filter'] += $customExcludeFilter
             }
+            if ($Name) {
+                $PSBoundParameters['Filter'] += " AND Name LIKE '$($Name | Invoke-EscapeProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
+            }
+            if ($PathName) {
+                $PSBoundParameters['Filter'] += " AND PathName LIKE '$($PathName | Invoke-EscapeProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
+            }
             # SkipFilter doesn't exist on proxied command
             $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found
+            $PSBoundParameters.Remove('EscapeProxyFilterParameter') | Out-Null
+            $PSBoundParameters.Remove('Name') | Out-Null
+            $PSBoundParameters.Remove('PathName') | Out-Null
             $PSBoundParameters['ClassName'] = $ClassName
 
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('CimCmdlets\Get-CimInstance', [System.Management.Automation.CommandTypes]::Cmdlet)
@@ -150,7 +251,7 @@ function Get-CimInstanceService {
                         if ( $_.psobject.Properties.Name -contains 'PSShowComputerName') {
                             $_.PSShowComputerName = $false
                         }
-                        $_.PSTypeNames.Insert( 0, 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ServiceNonSystem' )
+                        $_.PSTypeNames.Insert( 0, 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Service' )
                         $_
                     }
                 }

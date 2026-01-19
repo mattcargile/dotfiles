@@ -1,3 +1,76 @@
+<#
+.SYNOPSIS
+Proxy helper function for Get-CimInstance Win32_Process
+
+.DESCRIPTION
+Proxy function to make accessing the Win32_Process class with Get-CimInstance easier. Be default, it filters out system-y type processes
+
+.PARAMETER CimSession
+See help on Get-CimInstance
+
+.PARAMETER ClassName
+See help on Get-CimInstance. Defaults to Win32_Process. Mandatory parameter attribute removed
+
+.PARAMETER ResourceUri
+See help on Get-CimInstance
+
+.PARAMETER ComputerName
+See help on Get-CimInstance
+
+.PARAMETER KeyOnly
+See help on Get-CimInstance
+
+.PARAMETER Namespace
+See help on Get-CimInstance
+
+.PARAMETER OperationTimeoutSec
+See help on Get-CimInstance
+
+.PARAMETER InputObject
+See help on Get-CimInstance
+
+.PARAMETER Query
+See help on Get-CimInstance
+
+.PARAMETER QueryDialect
+See help on Get-CimInstance
+
+.PARAMETER Shallow
+See help on Get-CimInstance
+
+.PARAMETER Filter
+See help on Get-CimInstance. Also by default usage of this will be incorporated in the default exclusion filter.
+Handles generating a valid filter with parens and using AND.
+
+.PARAMETER Property
+See help on Get-CimInstance
+
+.PARAMETER SkipFilter
+New parameter for the proxy function. Allows falling back to standard usage of Get-CimInstance.
+Won't pre-populate the Filter parameter.
+
+.PARAMETER IncludeUser
+New parameter for the proxy function. Allows the process owner user to be displayed in the formatter by
+populating another PSTypeName. Switch includes because this is a slower operation as `Invoke-CimMethod`
+must be called for each object.
+
+.PARAMETER EscapeProxyFilterParameter
+Impacts new parameters related to the filter like Name, Path, etc. Perform the single quote and backslash escaping. The backslash is the escape character in WQL.
+
+.PARAMETER Name
+Win32_Process.Name filter using LIKE. Required to escape characters by default. Consider EscapeProxyFilterParameter otherwise.
+
+.PARAMETER Path
+Win32_Process.Path filter using LIKE. Required to escape characters by default. Consider EscapeProxyFilterParameter otherwise.
+
+.EXAMPLE
+Get-CimInstanceProcess
+Gets the local computers non system type processes
+
+.NOTES
+Had to mark the ClassName parameter as not mandatory so the help doesn't appear to be included. Marked the Filter parameter
+with a validate parameter attribute.
+#>
 function Get-CimInstanceProcess {
     [Alias('gcimp')]
     [CmdletBinding(DefaultParameterSetName = 'ClassNameComputerSet', HelpUri = 'https://go.microsoft.com/fwlink/?LinkId=227961')]
@@ -108,7 +181,31 @@ function Get-CimInstanceProcess {
         [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
         [Alias('iu')]
         [switch]
-        ${IncludeUser}
+        ${IncludeUser},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet')]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet')]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
+        [Alias('EscapeCharacters', 'ec', 'epfp')]
+        [switch]
+        ${EscapeProxyFilterParameter},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet')]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet')]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
+        [Alias('nm')]
+        [string]
+        ${Name},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet')]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet')]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
+        [Alias('pt')]
+        [string]
+        ${Path}
     )
 
     begin {
@@ -172,11 +269,20 @@ function Get-CimInstanceProcess {
                 }
                 $PSBoundParameters['Filter'] += $customExcludeFilter
             }
+            if ($Name) {
+                $PSBoundParameters['Filter'] += " AND Name LIKE '$($Name | Invoke-EscapeProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
+            }
+            if ($Path) {
+                $PSBoundParameters['Filter'] += " AND ExecutablePath LIKE '$($Path | Invoke-EscapeProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
+            }
             # SkipFilter doesn't exist on proxied command
             $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found
             $PSBoundParameters.Remove('IncludeUser') | Out-Null
+            $PSBoundParameters.Remove('EscapeProxyFilterParameter') | Out-Null
+            $PSBoundParameters.Remove('Name') | Out-Null
+            $PSBoundParameters.Remove('Path') | Out-Null
             $PSBoundParameters['ClassName'] = $ClassName
-            $customPSTypeNameBase = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_ProcessNonSystem'
+            $customPSTypeNameBase = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
             $customPSTypeNameUser = "$customPSTypeNameBase#IncludeUser"
             $cimProcessIncludeUser = $false
             if ($IncludeUser) {
