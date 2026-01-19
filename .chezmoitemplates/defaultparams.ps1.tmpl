@@ -17,7 +17,7 @@ if ($Env:OneDriveCommercial) {
   )
 }
 $PSDefaultParameterValues = @{
-    'Get-AdUser:Properties' = [string[]]@(
+    'Get-ADUser:Properties' = [string[]]@(
       'Description'
       'DisplayName'
       'LockedOut'
@@ -30,7 +30,7 @@ $PSDefaultParameterValues = @{
       'whenChanged' # isn't replicated because of the high rate of change.
       $companyProp
     )
-    'Get-AdGroup:Properties' = [string[]]@(
+    'Get-ADGroup:Properties' = [string[]]@(
       'Description'
       'DisplayName'
       'whenCreated'
@@ -75,9 +75,7 @@ $rmVar = @(
   'credSspAdmSbk'
   # 'veeamComputerName'
   'cmsSqlInstance'
-  if ($env:OneDriveCommercial) {
-    'companyProp'
-  }
+  'companyProp'
   'vCenterComputerName'
   'workKeepassName'
 )
