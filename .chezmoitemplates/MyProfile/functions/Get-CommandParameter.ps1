@@ -108,27 +108,25 @@ function Get-CommandParameter {
 }
 
 # Mainly just for Get-CommandParameter completers
-function GetInferredCommand {
+function Get-CommandFromString ([string]$cmd) {
+    if (-not $cmd) {
+        return $null
+    }
+    $commandInfo = Get-Command ([WildcardPattern]::Escape($cmd)) | Select-Object -First 1
+    while ($commandInfo -is [System.Management.Automation.AliasInfo]) {
+        $commandInfo = Get-Command ([WildcardPattern]::Escape($commandInfo.Definition)) | Select-Object -First 1
+    }
+    if ($commandInfo -is [System.Management.Automation.CommandInfo]) {
+        return $commandInfo
+    }
+}
+function Get-InferredCommand {
     [CmdletBinding()]
     param(
         [System.Collections.IDictionary] $FakeBoundParameters,
 
         [System.Management.Automation.Language.CommandAst] $CommandAst
     )
-    begin {
-        function Get-CommandFromString ([string]$cmd) {
-            if (-not $cmd) {
-                return $null
-            }
-            $commandInfo = Get-Command ([WildcardPattern]::Escape($cmd)) | Select-Object -First 1
-            while ($commandInfo -is [System.Management.Automation.AliasInfo]) {
-                $commandInfo = Get-Command ([WildcardPattern]::Escape($commandInfo.Definition)) | Select-Object -First 1
-            }
-            if ($commandInfo -is [System.Management.Automation.CommandInfo]) {
-                return $commandInfo
-            }
-        }
-    }
     end {
         $command = $FakeBoundParameters['Command']
         if ($command = Get-CommandFromString $command) {
@@ -183,7 +181,7 @@ Register-ArgumentCompleter -CommandName Get-CommandParameter -ParameterName Name
             $wordToComplete += '*'
         }
 
-        $command = GetInferredCommand -FakeBoundParameters $fakeBoundParameters -CommandAst $commandAst
+        $command = Get-InferredCommand -FakeBoundParameters $fakeBoundParameters -CommandAst $commandAst
         if (-not $command) {
             return
         }
