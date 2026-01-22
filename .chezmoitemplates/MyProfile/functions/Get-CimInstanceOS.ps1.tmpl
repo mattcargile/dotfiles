@@ -63,11 +63,6 @@ function Get-CimInstanceOS {
         [CimSession[]]
         ${CimSession},
 
-        [Parameter(ParameterSetName = 'ClassNameSessionSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
-        [Parameter(ParameterSetName = 'ClassNameComputerSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
-        [string]
-        ${ClassName} = 'Win32_OperatingSystem',
-
         [Parameter(ParameterSetName = 'ResourceUriSessionSet', Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [Parameter(ParameterSetName = 'ResourceUriComputerSet', Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [Parameter(ParameterSetName = 'CimInstanceComputerSet')]
@@ -77,10 +72,10 @@ function Get-CimInstanceOS {
         [uri]
         ${ResourceUri},
 
-        [Parameter(ParameterSetName = 'ClassNameComputerSet', ValueFromPipelineByPropertyName = $true)]
-        [Parameter(ParameterSetName = 'ResourceUriComputerSet', ValueFromPipelineByPropertyName = $true)]
-        [Parameter(ParameterSetName = 'QueryComputerSet', ValueFromPipelineByPropertyName = $true)]
-        [Parameter(ParameterSetName = 'CimInstanceComputerSet')]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'QueryComputerSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'CimInstanceComputerSet', Position = 0)]
         [Alias('CN', 'ServerName')]
         [string[]]
         ${ComputerName},
@@ -105,8 +100,8 @@ function Get-CimInstanceOS {
         [uint]
         ${OperationTimeoutSec},
 
-        [Parameter(ParameterSetName = 'CimInstanceComputerSet', Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
-        [Parameter(ParameterSetName = 'CimInstanceSessionSet', Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [Parameter(ParameterSetName = 'CimInstanceComputerSet', Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(ParameterSetName = 'CimInstanceSessionSet', Mandatory = $true, ValueFromPipeline = $true)]
         [Alias('CimInstance')]
         [ciminstance]
         ${InputObject},
@@ -155,7 +150,7 @@ function Get-CimInstanceOS {
                 $PSBoundParameters['OutBuffer'] = 1
             }
 
-            $PSBoundParameters['ClassName'] = $ClassName
+            $PSBoundParameters['ClassName'] = 'Win32_OperatingSystem'
 
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('CimCmdlets\Get-CimInstance', [System.Management.Automation.CommandTypes]::Cmdlet)
             $scriptCmd = {

@@ -82,11 +82,6 @@ function Get-CimInstanceProcess {
         [CimSession[]]
         ${CimSession},
 
-        [Parameter(ParameterSetName = 'ClassNameSessionSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
-        [Parameter(ParameterSetName = 'ClassNameComputerSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
-        [string]
-        ${ClassName} = 'Win32_Process',
-
         [Parameter(ParameterSetName = 'ResourceUriSessionSet', Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [Parameter(ParameterSetName = 'ResourceUriComputerSet', Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [Parameter(ParameterSetName = 'CimInstanceComputerSet')]
@@ -96,10 +91,10 @@ function Get-CimInstanceProcess {
         [uri]
         ${ResourceUri},
 
-        [Parameter(ParameterSetName = 'ClassNameComputerSet', ValueFromPipelineByPropertyName = $true)]
-        [Parameter(ParameterSetName = 'ResourceUriComputerSet', ValueFromPipelineByPropertyName = $true)]
-        [Parameter(ParameterSetName = 'QueryComputerSet', ValueFromPipelineByPropertyName = $true)]
-        [Parameter(ParameterSetName = 'CimInstanceComputerSet')]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'QueryComputerSet', Position = 0, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'CimInstanceComputerSet', Position = 0)]
         [Alias('CN', 'ServerName')]
         [string[]]
         ${ComputerName},
@@ -124,8 +119,8 @@ function Get-CimInstanceProcess {
         [uint]
         ${OperationTimeoutSec},
 
-        [Parameter(ParameterSetName = 'CimInstanceComputerSet', Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
-        [Parameter(ParameterSetName = 'CimInstanceSessionSet', Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+        [Parameter(ParameterSetName = 'CimInstanceComputerSet', Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(ParameterSetName = 'CimInstanceSessionSet', Mandatory = $true, ValueFromPipeline = $true)]
         [Alias('CimInstance')]
         [ciminstance]
         ${InputObject},
@@ -281,7 +276,7 @@ function Get-CimInstanceProcess {
             $PSBoundParameters.Remove('EscapeProxyFilterParameter') | Out-Null
             $PSBoundParameters.Remove('Name') | Out-Null
             $PSBoundParameters.Remove('Path') | Out-Null
-            $PSBoundParameters['ClassName'] = $ClassName
+            $PSBoundParameters['ClassName'] = 'Win32_Process'
             $customPSTypeNameBase = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
             $customPSTypeNameUser = "$customPSTypeNameBase#IncludeUser"
             $cimProcessIncludeUser = $false

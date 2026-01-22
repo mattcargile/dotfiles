@@ -64,6 +64,7 @@ end {
     $argCompFiles.Add( ( New-ArgCompleterObject -Script (glow.exe completion powershell | Out-String) -Comment 'glow Markdown Viewer Prompt Completions' ) ) 
     $argCompFiles.Add( ( New-ArgCompleterObject -Script (bb.exe completion powershell | Out-String) -Comment 'bb Bitbucket Prompt Completions' ) ) 
     $argCompFiles.Add( ( New-ArgCompleterObject -Script (ov.exe --completion powershell | Out-String) -Comment 'ov Pager Prompt Completions' ) ) 
+    $argCompFiles.Add( ( New-ArgCompleterObject -Script (dotnet.exe completions script pwsh | Out-String) -Comment 'dotnet Prompt Completions' ) )
 
     # Any custom hand written completers add to argcompleter.ps1
     #endregion
