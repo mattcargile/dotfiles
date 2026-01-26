@@ -24,11 +24,11 @@ $splat = @{
     HistorySavePath = "$env:USERPROFILE\.config\PSReadLine\All$($Host.Name)_history.txt"
     MaximumHistoryCount = 500000
     HistoryNoDuplicates = $true
-    # By default PSReadline removes "password","cred",etc items from history. This forces save of all commands to history.
+    # By default PSReadline removes "password", "cred", etc items from history. This forces save of all commands to history.
     AddToHistoryHandler = {
         param([string]$line)
-        # Do not save any command line unless it has more than 3 characters.  Prevents storing gci, gps, etc.
-        return $line.Length -gt 3
+        # Do not save any command line unless it has more than 4 characters.  Prevents storing gci, gps, etc.
+        return $line.Length -gt 4
     }
 }
 $psReadLnVersion = (Get-Module -Name PSReadLine).Version
