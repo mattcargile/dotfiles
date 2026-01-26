@@ -66,15 +66,6 @@ end {
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
     #endregion
 
-    #region DbaInstanceParameter
-    $writeFormatViewSplat = @{
-        TypeName = 'DataplatMac.RegisteredServer.DbaInstanceParameter'
-        Property = 'SqlInstance', 'ComputerName', 'Description'
-        Width = 30, 24, 60
-    }
-    $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
-    #endregion
-
     #region Installed Software
     $writeFormatViewSplat = @{
         TypeName = 'Utility.InstalledSoftware'
