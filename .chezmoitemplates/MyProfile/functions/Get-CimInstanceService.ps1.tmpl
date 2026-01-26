@@ -227,10 +227,16 @@ function Get-CimInstanceService {
                 $PSBoundParameters['Filter'] += $customExcludeFilter
             }
             if ($Name) {
-                $PSBoundParameters['Filter'] += " AND Name LIKE '$($Name | Invoke-EscapeProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
+                if ($PSBoundParameters.ContainsKey('Filter')) {
+                    $PSBoundParameters['Filter'] += ' AND '
+                }
+                $PSBoundParameters['Filter'] += "Name LIKE '$($Name | Invoke-EscapeCimProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
             }
             if ($PathName) {
-                $PSBoundParameters['Filter'] += " AND PathName LIKE '$($PathName | Invoke-EscapeProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
+                if ($PSBoundParameters.ContainsKey('Filter')) {
+                    $PSBoundParameters['Filter'] += ' AND '
+                }
+                $PSBoundParameters['Filter'] += " AND PathName LIKE '$($PathName | Invoke-EscapeCimProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
             }
             # SkipFilter doesn't exist on proxied command
             $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found
