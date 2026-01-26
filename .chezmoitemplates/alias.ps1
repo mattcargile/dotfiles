@@ -149,7 +149,7 @@ New-Alias -Name 'gado' -Value 'Get-ADObject'
 New-Alias -Name 'gwts' -Value 'Get-WTSSession'
 New-Alias -Name 'rwts' -Value 'Remove-WTSSession'
 # PSParseHTML
-New-Alias -Name 'cfhtml' -Value 'PSParseHTML\ConverFrom-HTML'
+New-Alias -Name 'cfhtml' -Value 'PSParseHTML\ConvertFrom-HTML'
 # Native Commands
 $prg86 = ${env:ProgramFiles(x86)}
 $prgFiles = $env:ProgramFiles
