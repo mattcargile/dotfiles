@@ -1,0 +1,128 @@
+<#
+.SYNOPSIS
+Helper proxy function for Get-ADUser
+
+.DESCRIPTION
+Proxy function to make accessing the -Filter searches easier for common searches on Get-ADUser.
+
+.NOTES
+Had to mark the Filter parameter as not mandatory so the help doesn't appear to be included. See Help on
+Get-ADComputer for the full scope of help.
+
+.EXAMPLE
+Get-ADUser -DisplayName User*
+Gets all users with a displayName beginning with User.
+#>
+function Get-ADUserProxy {
+    [CmdletBinding(DefaultParameterSetName = 'Filter', HelpUri = 'http://go.microsoft.com/fwlink/?LinkId=301397')]
+    [Alias('gadu')]
+    param(
+        # Uses -Filter with * wildcard support on samAccountName Property
+        [Parameter(ParameterSetName = 'Filter', Position = 0)]
+        [Alias('sam')]
+        [string]
+        $SamAccountName,
+        # Uses -Filter with * wildcard support on displayName property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias('dn', 'nm')]
+        [string]
+        $DisplayName,
+        # See help on Get-ADUser. Same as -Filter on main command but without the Mandatory Attribute
+        [Parameter(ParameterSetName = 'Filter')]
+        [string]
+        $Filter
+    )
+
+
+    dynamicparam {
+        try {
+            # Need to remove non-default bound parameters otherwise `GetCommand` doesn't return `.Parameters`
+            $PSBoundParameters.Remove('SamAccountName') | Out-Null # Returns true or false if it removed or didn't remove the key
+            $PSBoundParameters.Remove('DisplayName') | Out-Null
+            $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADUser', [System.Management.Automation.CommandTypes]::Cmdlet, $PSBoundParameters)
+            $dynamicParams = @($targetCmd.Parameters.GetEnumerator() | Microsoft.PowerShell.Core\Where-Object { $_.Value.IsDynamic })
+            if ($dynamicParams.Length -gt 0) {
+                $paramDictionary = [Management.Automation.RuntimeDefinedParameterDictionary]::new()
+                foreach ($param in $dynamicParams) {
+                    $param = $param.Value
+
+                    if (-not $MyInvocation.MyCommand.Parameters.ContainsKey($param.Name)) {
+                        $dynParam = [Management.Automation.RuntimeDefinedParameter]::new($param.Name, $param.ParameterType, $param.Attributes)
+                        $paramDictionary.Add($param.Name, $dynParam)
+                    }
+                }
+
+                return $paramDictionary
+            }
+        }
+        catch {
+            throw
+        }
+    }
+
+    begin {
+        try {
+            $outBuffer = $null
+            if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer)) {
+                $PSBoundParameters['OutBuffer'] = 1
+            }
+            if (-not $SamAccountName -and -not $DisplayName -and -not $Filter) {
+                throw 'Must provider at least SamAccountName, DisplayName or Filter parameter.'
+            }
+
+            if ($SamAccountName) {
+                if ($PSBoundParameters.ContainsKey('Filter')) {
+                    $PSBoundParameters['Filter'] += ' -and '
+                }
+                $PSBoundParameters['Filter'] += "samAccountName -like `$SamAccountName"
+            }
+            if ($DisplayName) {
+                if ($PSBoundParameters.ContainsKey('Filter')) {
+                    $PSBoundParameters['Filter'] += ' -and '
+                }
+                $PSBoundParameters['Filter'] += "displayName -like `$DisplayName"
+            }
+            Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
+
+            # Removing parameters not included on proxied command
+            $PSBoundParameters.Remove('SamAccountName') | Out-Null
+            $PSBoundParameters.Remove('DisplayName') | Out-Null
+
+            $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADUser', [System.Management.Automation.CommandTypes]::Cmdlet)
+            $scriptCmd = { & $wrappedCmd @PSBoundParameters }
+
+            $steppablePipeline = $scriptCmd.GetSteppablePipeline($MyInvocation.CommandOrigin)
+            $steppablePipeline.Begin($PSCmdlet)
+        }
+        catch {
+            throw
+        }
+    }
+
+    process {
+        try {
+            $steppablePipeline.Process($_)
+        }
+        catch {
+            throw
+        }
+    }
+
+    end {
+        try {
+            $steppablePipeline.End()
+        }
+        catch {
+            throw
+        }
+    }
+
+{{ if eq .isPSCore true }}
+    clean
+    {
+        if ($null -ne $steppablePipeline) {
+            $steppablePipeline.Clean()
+        }
+    }
+{{ end }}
+}

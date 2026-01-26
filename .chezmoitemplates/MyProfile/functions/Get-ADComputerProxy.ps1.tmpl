@@ -1,0 +1,120 @@
+<#
+.SYNOPSIS
+Proxy helper function for Get-ADComputer
+
+.DESCRIPTION
+Proxy function to make accessing the -Filter searches easier for common searches on Get-ADComputer.
+
+.EXAMPLE
+Get-ADComputer -Name computer
+Gets computer with name of computer
+
+.NOTES
+Had to mark the Filter parameter as not mandatory so the help doesn't appear to be included. See Help on
+Get-ADComputer for the full scope of help.
+#>
+function Get-ADComputerProxy {
+    [CmdletBinding(DefaultParameterSetName='Filter', HelpUri='http://go.microsoft.com/fwlink/?LinkId=301396')]
+    [Alias('gadc')]
+    param(
+        # -Filter with Computer Name property supporting only * wildcard
+        [Parameter(ParameterSetName = 'Filter', Position = 0)]
+        [Alias('nm')]
+        [string]
+        $Name,
+        # -Filter on Get-ADComputer without mandatory attribute to handle dynamic parameter and -Name.
+        # See help on Get-ADComputer for additional information.
+        [Parameter(ParameterSetName = 'Filter')]
+        [string]
+        $Filter
+    )
+
+
+    dynamicparam
+    {
+        try {
+            # Need to remove non-default bound parameters otherwise `GetCommand` doesn't return `.Parameters`
+            $PSBoundParameters.Remove('Name') | Out-Null # Returns true or false if it removed or didn't remove the key
+            $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADComputer', [System.Management.Automation.CommandTypes]::Cmdlet, $PSBoundParameters)
+            $dynamicParams = @($targetCmd.Parameters.GetEnumerator() | Microsoft.PowerShell.Core\Where-Object { $_.Value.IsDynamic })
+            if ($dynamicParams.Length -gt 0)
+            {
+                $paramDictionary = [Management.Automation.RuntimeDefinedParameterDictionary]::new()
+                foreach ($param in $dynamicParams)
+                {
+                    $param = $param.Value
+
+                    if(-not $MyInvocation.MyCommand.Parameters.ContainsKey($param.Name))
+                    {
+                        $dynParam = [Management.Automation.RuntimeDefinedParameter]::new($param.Name, $param.ParameterType, $param.Attributes)
+                        $paramDictionary.Add($param.Name, $dynParam)
+                    }
+                }
+
+                return $paramDictionary
+            }
+        } catch {
+            throw
+        }
+    }
+
+    begin
+    {
+        try {
+            $outBuffer = $null
+            if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer))
+            {
+                $PSBoundParameters['OutBuffer'] = 1
+            }
+            if (-not $Name -and -not $Filter) {
+                throw 'Must provide at least Name or Filter parameter.'
+            }
+
+            if ($Name) {
+                if ($PSBoundParameters.ContainsKey('Filter')) {
+                    $PSBoundParameters['Filter'] += ' -and '
+                }
+                $PSBoundParameters['Filter'] += "Name -like `$Name"
+            }
+            Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
+
+            # Removing parameters not included on proxied command
+            $PSBoundParameters.Remove('Name') | Out-Null
+
+            $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADComputer', [System.Management.Automation.CommandTypes]::Cmdlet)
+            $scriptCmd = {& $wrappedCmd @PSBoundParameters }
+
+            $steppablePipeline = $scriptCmd.GetSteppablePipeline($MyInvocation.CommandOrigin)
+            $steppablePipeline.Begin($PSCmdlet)
+        } catch {
+            throw
+        }
+    }
+
+    process
+    {
+        try {
+            $steppablePipeline.Process($_)
+        } catch {
+            throw
+        }
+    }
+
+    end
+    {
+        try {
+            $steppablePipeline.End()
+        } catch {
+            throw
+        }
+    }
+
+{{ if eq .isPSCore true }}
+    clean
+    {
+        if ($null -ne $steppablePipeline) {
+            $steppablePipeline.Clean()
+        }
+    }
+{{ end }}
+}
