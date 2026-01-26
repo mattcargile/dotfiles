@@ -9,6 +9,22 @@ end {
     #region Collect formatter Xml
     $formatList = [System.Collections.Generic.List[string]]::new()
 
+    #region ActiveDirectory
+    $writeFormatViewSplat = @{
+        TypeName = 'Microsoft.ActiveDirectory.Management.ADUser'
+        Property = 'SamAccountName', 'DisplayName', 'Enabled', 'LockedOut', 'PasswordExpired', 'Title', 'physicalDeliveryOfficeName'
+        Width = 15, 25, 10, 10, 15, 25, 30
+    }
+    $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
+    $writeFormatViewSplat = @{
+        TypeName = 'Microsoft.ActiveDirectory.Management.ADComputer'
+        Property = 'Name', 'Enabled', 'DistinguishedName'
+        Width = 15, 10, 40
+    }
+    $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
+
+    #endregion
+
     #region CimInstance
     $writeFormatViewSplat = @{
         TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
