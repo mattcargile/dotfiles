@@ -47,11 +47,13 @@ if ($psReadLnVersion -ge '2.0.4' ) {
         $splat.Colors.InlinePrediction = "$esc[38;5;243m" # Bumped up from 238 to make it easier to read on laptop ( e.g. smaller screens )
     }
 
-    if ($PSVersionTable.PSVersion -ge [version]'7.2') {
-        $splat.PredictionSource = 'HistoryAndPlugin'
-    }
-    else {
-        $splat.PredictionSource = 'History'
+    if (-not [Console]::IsOutputRedirected) {
+        if ($PSVersionTable.PSVersion -ge [version]'7.2') {
+            $splat.PredictionSource = 'HistoryAndPlugin'
+        }
+        else {
+            $splat.PredictionSource = 'History'
+        }
     }
 }
 Set-PSReadLineOption @splat
