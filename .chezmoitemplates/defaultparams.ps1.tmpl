@@ -49,7 +49,6 @@ $PSDefaultParameterValues = @{
     'Import-InvokePSSession:Credential' = $credSbk#>
     'Invoke-DbaWhoIsActive:FormatOutput' = 2 # Not perfect. This does line up the output better. Using 0 removes the default first column for time spent.
     'Invoke-Mstsc:Credential' = $credAdmSbk
-    'Unlock-SecretVault:Password' = { Get-Secret -Name dbakey -Vault dp }
     'Invoke-Command:Credential' = $credSspAdmSbk
     'Enter-PSSession:Credential' = $credSspAdmSbk
     'New-PSSession:Credential' = $credSspAdmSbk
@@ -66,6 +65,7 @@ if ($vCenterComputerName) {
 }
 if ($workKeepassName) {
   $PSDefaultParameterValues['Unlock-SecretVault:Name'] = $workKeepassName 
+  $PSDefaultParameterValues['Unlock-SecretVault:Password'] = { Get-Secret -Name dbakey -Vault dp }
 }
 
 $rmVar = @(
