@@ -1,13 +1,9 @@
-# Necessary Modules
-# 1. Helps with exploration of libraries and objects
-# 2. Used for File and Directory time and length formatting
-# 3. Used for icons of File and Directory 
-# 4. Custom "MyProfile" module
 $modulesToImport = @(
-    'ClassExplorer'
-    'PowerShellHumanizer'
-    'Terminal-Icons' # Need to import first so I can override the default formatter further downstream
-    if ($IsCoreCLR) { 'PowerShellRun' }
+    'ClassExplorer' # Helps with exploration of libraries and objects
+    'PowerShellHumanizer' # Used for File and Directory time and length formatting. Need to import because libraries are used.
+    'Terminal-Icons' # Need to import first so I can override the default formatter further downstream. Used for icons of File and Directory 
+    'ZLocation2' # Forked z-cd jumper. Original repo isn't active.
+    if ($IsCoreCLR) { 'PowerShellRun' } # Fuzzy Finger and filter like `fzf`.
     "$env:USERPROFILE\.config\powershell\MyProfile\MyProfile.psd1"
 )
 Import-Module -Name $modulesToImport 
@@ -27,7 +23,7 @@ if ($IsCoreCLR) {
     Get-PSRunDefaultSelectorOption | ForEach-Object -Process {
         $_.Theme.PreviewTextWrapMode = 'Character'
         $_
-    } | Set-PSRunDefaultSelectorOption -Option { $_ }
+    } | Set-PSRunDefaultSelectorOption
 }
 
 # Helper Visual Studio Code Command Palette operations ( i.e. EditorServicesCommandSuite )
