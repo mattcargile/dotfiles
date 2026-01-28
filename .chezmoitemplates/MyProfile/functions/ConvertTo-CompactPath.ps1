@@ -66,8 +66,8 @@ function ConvertTo-CompactPath {
                 $PSCmdlet.WriteError($err)
                 continue
             }
-            # Null 0 character managles Out-Pager output
-            [string]::new($outCharArray).Trim("`0")
+            # Null 0 character at end managles Out-Pager output
+            [string]::new($outCharArray, 0, $outCharArray.Length - 1)
         }
         
     }
