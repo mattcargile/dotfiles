@@ -23,7 +23,10 @@ function ConvertTo-CompactPath {
         $Path,
         # Length of the final string.
         # Defaults to 80 as max formatter table column width in EZOut.
+        # Minimum to display is the three ellipses. Max is the
+        # maximum of a command line.
         [Parameter()]
+        [ValidateRange(3, 32768)]
         [int]
         $Length = 80,
         # Convert unresolved PS Paths to provider paths
@@ -49,8 +52,21 @@ function ConvertTo-CompactPath {
                 Write-Error -ErrorRecord $_
                 continue
             }
+
+            if ($currentPath.Length -lt $Length) {
+                Write-Verbose "Path ($currentPath) is shorter than Length ($Length). Returning Path as is."
+                $currentPath
+                continue
+            }
+            # Single null character always added to end
+            # And null characters are used as padding
+            else {
+                $Length += 1
+            }
+            
             $outCharArray = [char[]]::new($Length)
-            $res = $shl.CharSet('Unicode').SetLastError().Returns([bool]).PathCompactPathEx( $outCharArray, $currentPath, $Length, 0)
+            # Not setting last error as it returns a bool
+            $res = $shl.CharSet('Unicode').Returns([bool]).PathCompactPathExW( $outCharArray, $currentPath, $Length, 0)
 
             if (-not $res) {
                 $exp = [System.ComponentModel.Win32Exception]::new($shl.LastError)
