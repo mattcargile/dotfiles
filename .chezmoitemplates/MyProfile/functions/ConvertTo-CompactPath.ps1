@@ -25,7 +25,13 @@ function ConvertTo-CompactPath {
         # Defaults to 80 as max formatter table column width in EZOut.
         [Parameter()]
         [int]
-        $Length = 80
+        $Length = 80,
+        # Convert unresolved PS Paths to provider paths
+        # Uses `GetUnresolvedProviderPathFromPSPath`
+        [Parameter()]
+        [Alias('pp', 'ppfp')]
+        [switch]
+        $ProviderPathFromPSPath
     )
     
     begin {
@@ -34,9 +40,17 @@ function ConvertTo-CompactPath {
     
     process {
         foreach ($currentPath in $Path) {
-            $currentProviderPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath( $currentPath )
+            try {
+                if ($ProviderPathFromPSPath) {
+                    $currentPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath( $currentPath )
+                }
+            }
+            catch {
+                Write-Error -ErrorRecord $_
+                continue
+            }
             $outCharArray = [char[]]::new($Length)
-            $res = $shl.CharSet('Unicode').SetLastError().Returns([bool]).PathCompactPathEx( $outCharArray, $currentProviderPath, $Length, 0)
+            $res = $shl.CharSet('Unicode').SetLastError().Returns([bool]).PathCompactPathEx( $outCharArray, $currentPath, $Length, 0)
 
             if (-not $res) {
                 $exp = [System.ComponentModel.Win32Exception]::new($shl.LastError)
@@ -52,7 +66,8 @@ function ConvertTo-CompactPath {
                 $PSCmdlet.WriteError($err)
                 continue
             }
-            [string]::new($outCharArray)
+            # Null 0 character managles Out-Pager output
+            [string]::new($outCharArray).Trim("`0")
         }
         
     }
