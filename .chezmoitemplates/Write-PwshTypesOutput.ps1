@@ -18,15 +18,22 @@ end {
     }
     $typesList.Add( ( Write-TypeView @writeTypeViewSplat ) )
 
+    $cimCustomWin32ProcessClassBase = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
     $writeTypeViewSplat = @{
-        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
+        TypeName = $cimCustomWin32ProcessClassBase
         ScriptProperty = @{
             WSMb = { [OutputType('double')]param() [Math]::Round( $this.WorkingSetSize / 1MB, 2 ) }
             CPUSec = { [OutputType('double')]param() [Math]::Round( ( $this.UserModeTime + $this.KernelModeTime ) / 100000000, 2 ) }
-            User = { [OutputType('string')]param() $this | Invoke-CimMethod -MethodName GetOwner | ForEach-Object -MemberName User } 
         }
         AliasProperty = @{
             Pid = 'ProcessId'
+        }
+    }
+    $typesList.Add( ( Write-TypeView @writeTypeViewSplat ) )
+    $writeTypeViewSplat = @{
+        TypeName = "$cimCustomWin32ProcessClassBase#IncludeUser"
+        ScriptProperty = @{
+            User = { [OutputType('string')]param() $this | Invoke-CimMethod -MethodName GetOwner | ForEach-Object -MemberName User } 
         }
     }
     $typesList.Add( ( Write-TypeView @writeTypeViewSplat ) )
