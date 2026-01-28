@@ -33,7 +33,9 @@ end {
     $writeTypeViewSplat = @{
         TypeName = "$cimCustomWin32ProcessClassBase#IncludeUser"
         ScriptProperty = @{
-            User = { [OutputType('string')]param() $this | Invoke-CimMethod -MethodName GetOwner | ForEach-Object -MemberName User } 
+            Owner = { [OutputType('string')]param() $this | Invoke-CimMethod -MethodName GetOwner } 
+            User = { [OutputType('string')]param() $this.Owner.User } 
+            UserDomain = { [OutputType('string')]param() $this.Owner.Domain } 
         }
     }
     $typesList.Add( ( Write-TypeView @writeTypeViewSplat ) )
