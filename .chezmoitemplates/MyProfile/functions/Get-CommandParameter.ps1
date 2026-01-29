@@ -26,6 +26,20 @@ $typeAccel = [ref].Assembly.GetType('System.Management.Automation.TypeAccelerato
 $typeAccel::Add('CommandInfoArgumentConverterAttribute', [CommandInfoArgumentConverterAttribute])
 $typeAccel::Add('CommandInfoArgumentConverter', [CommandInfoArgumentConverterAttribute])
 Remove-Variable -Name typeAccel
+class UtilityCommandParameterInfo {
+    [string]$Set
+    [System.Collections.ObjectModel.ReadOnlyCollection[string]]$Aliases
+    [int]$Position
+    [bool]$IsDynamic
+    [bool]$IsMandatory
+    [bool]$ValueFromPipeline
+    [bool]$ValueFromPipelineByPropertyName
+    [bool]$ValueFromRemainingArguments
+    [type]$Type
+    [string]$Name
+    [System.Collections.ObjectModel.ReadOnlyCollection[System.Attribute]]$Attributes
+    [bool]$IsDefaultSet
+}
 function Get-CommandParameter {
     [Alias('gcp')]
     [CmdletBinding(PositionalBinding = $false)]
@@ -54,8 +68,6 @@ function Get-CommandParameter {
         if (-not $targetParameters) {
             $targetParameters = [WildcardPattern]::Get('*', [System.Management.Automation.WildcardOptions]::IgnoreCase -bor 'CultureInvariant')
         }
-
-        $isHiddenProp = [psnoteproperty].GetProperty('IsHidden', 60)
     }
     process {
         # Without importing module the parameter sets may be empty on FunctionInfo
@@ -75,8 +87,7 @@ function Get-CommandParameter {
 
                 foreach ($target in $targetParameters) {
                     if ($target.IsMatch($param.Name)) {
-                        $result = [PSCustomObject]@{
-                            PSTypeName = 'Utility.CommandParameterInfo'
+                        $result = [UtilityCommandParameterInfo]@{
                             Set = $set.Name
                             Aliases = $param.Aliases
                             Position = $param.Position
@@ -88,17 +99,9 @@ function Get-CommandParameter {
                             Type = $param.ParameterType
                             Name = $param.Name
                             Attributes = $param.Attributes
+                            IsDefaultSet = $set.IsDefault
                         }
 
-                        $_set = [psnoteproperty]::new('_set', $set)
-                        $isHiddenProp.SetValue($_set, $true)
-                        $result.psobject.Properties.Add($_set)
-
-                        $_parameter = [psnoteproperty]::new('_parameter', $param)
-                        $isHiddenProp.SetValue($_parameter, $true)
-                        $result.psobject.Properties.Add($_parameter)
-
-                        # yield
                         $result
                     }
                 }

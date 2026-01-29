@@ -99,13 +99,13 @@ end {
     #endregion
 
     #region Command Parameter
-    $grpSetCtrlName = 'Utility.CommandParameterInfo.GrpSetCtrl'
+    $grpSetCtrlName = 'UtilityCommandParameterInfo.GrpSetCtrl'
     $writeFormatControlSplat = @{
         Name = $grpSetCtrlName
         Action = {
             Write-FormatViewExpression -Text '    Set: '
             Write-FormatViewExpression -ScriptBlock {
-                if ($_._set.IsDefault) {
+                if ($_.IsDefaultSet) {
                     return [ClassExplorer.Internal._Format]::Variable($_.Set) + ' (Default)'
                 }
                 return [ClassExplorer.Internal._Format]::Variable($_.Set)
@@ -118,8 +118,8 @@ end {
     $formatList.Add( (Write-FormatControl @writeFormatControlSplat) )
 
     $writeFormatViewSplat = @{
-        TypeName = 'Utility.CommandParameterInfo'
-        Name = 'Utility.CommandParameterInfo'
+        TypeName = 'UtilityCommandParameterInfo'
+        Name = 'UtilityCommandParameterInfo'
         GroupByProperty = 'Set'
         GroupAction = $grpSetCtrlName
         Width = 2, 1, 1, 14, 25, 40
@@ -158,8 +158,7 @@ end {
                     # $reset = "$([char]0x1b)[0m"
                     $reset = ''
 
-                    $sb.Append([ClassExplorer.Internal._Format]::Variable($_.Name)).
-                        Append($reset).Append(' (')
+                    $sb.Append([ClassExplorer.Internal._Format]::Variable($_.Name)).Append($reset).Append(' (')
 
                     $sb.Append([ClassExplorer.Internal._Format]::Variable($_.Aliases[0]))
                     for ($i = 1; $i -lt $_.Aliases.Count; $i++) {
