@@ -66,14 +66,19 @@ function Get-ADUserProxy {
             if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer)) {
                 $PSBoundParameters['OutBuffer'] = 1
             }
-            if (-not $SamAccountName -and -not $DisplayName -and -not $Filter) {
-                throw 'Must provider at least SamAccountName, DisplayName or Filter parameter.'
+            if ($PSCmdlet.ParameterSetName -eq 'Filter') {
+                if (-not $SamAccountName -and -not $DisplayName -and -not $Filter) {
+                    throw 'Must provider at least SamAccountName, DisplayName or Filter parameter.'
+                }
             }
 
             $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
                 Write-ADAndFilter SamAccountName $SamAccountName -Verbose:$false |
                 Write-ADAndFilter DisplayName $DisplayName -Verbose:$false
             Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
+            if ($null -eq $PSBoundParameters['Filter']) {
+                $PSBoundParameters.Remove('Filter') | Out-Null
+            }
 
             # Removing parameters not included on proxied command
             $PSBoundParameters.Remove('SamAccountName') | Out-Null

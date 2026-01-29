@@ -66,13 +66,18 @@ function Get-ADComputerProxy {
             {
                 $PSBoundParameters['OutBuffer'] = 1
             }
-            if (-not $Name -and -not $Filter) {
-                throw 'Must provide at least Name or Filter parameter.'
+            if ($PSCmdlet.ParameterSetName -eq 'Filter') {
+                if (-not $Name -and -not $Filter) {
+                    throw 'Must provide at least Name or Filter parameter.'
+                }
             }
 
             $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
                 Write-ADAndFilter Name $Name -Verbose:$false
             Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
+            if ($null -eq $PSBoundParameters['Filter']) {
+                $PSBoundParameters.Remove('Filter') | Out-Null
+            }
 
             # Removing parameters not included on proxied command
             $PSBoundParameters.Remove('Name') | Out-Null

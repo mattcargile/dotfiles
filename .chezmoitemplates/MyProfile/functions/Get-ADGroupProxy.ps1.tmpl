@@ -74,8 +74,10 @@ function Get-ADGroupProxy {
             if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer)) {
                 $PSBoundParameters['OutBuffer'] = 1
             }
-            if (-not $SamAccountName -and -not $Name -and -not $Description -and -not $DisplayName -and -not $Filter) {
-                throw 'Must provider at least SamAccountName, Name, Description, DisplayName or Filter parameter.'
+            if ($PSCmdlet.ParameterSetName -eq 'Filter') {
+                if (-not $SamAccountName -and -not $Name -and -not $Description -and -not $DisplayName -and -not $Filter) {
+                    throw 'Must provider at least SamAccountName, Name, Description, DisplayName or Filter parameter.'
+                }
             }
 
             $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
@@ -84,6 +86,9 @@ function Get-ADGroupProxy {
                 Write-ADAndFilter Description $Description -Verbose:$false |
                 Write-ADAndFilter DisplayName $DisplayName -Verbose:$false
             Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
+            if ($null -eq $PSBoundParameters['Filter']) {
+                $PSBoundParameters.Remove('Filter') | Out-Null
+            }
 
             $PSBoundParameters.Remove('SamAccountName') | Out-Null
             $PSBoundParameters.Remove('Name') | Out-Null
