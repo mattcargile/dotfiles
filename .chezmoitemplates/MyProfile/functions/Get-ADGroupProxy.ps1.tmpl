@@ -1,30 +1,36 @@
 <#
 .SYNOPSIS
-Helper proxy function for Get-ADUser
+Helper proxy function for `Get-ADGroup`
 
 .DESCRIPTION
-Proxy function to make accessing the -Filter searches easier for common searches on Get-ADUser.
-
-.NOTES
-Had to mark the Filter parameter as not mandatory so the help doesn't appear to be included. See Help on
-Get-ADComputer for the full scope of help.
+Helpder proxy function for `Get-ADGroup` with default parameter filters and formatter
 
 .EXAMPLE
-Get-ADUser -DisplayName User*
-Gets all users with a displayName beginning with User.
+Get-ADGroup -Name Group
+Get AD Group that has the property Name of `Group`
 #>
-function Get-ADUserProxy {
-    [CmdletBinding(DefaultParameterSetName = 'Filter', HelpUri = 'http://go.microsoft.com/fwlink/?LinkId=301397')]
-    [Alias('gadu')]
+function Get-ADGroupProxy {
+    [CmdletBinding(DefaultParameterSetName = 'Filter', HelpUri = 'http://go.microsoft.com/fwlink/?LinkId=219302')]
+    [Alias('gadg')]
     param(
         # Uses -Filter with * wildcard support on samAccountName Property
         [Parameter(ParameterSetName = 'Filter', Position = 0)]
         [Alias('sam')]
         [string]
         $SamAccountName,
+        # Uses -Filter with * wildcard support on Name property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias('nm')]
+        [string]
+        $Name,
+        # Uses -Filter with * wildcard support on Description property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias('dp')]
+        [string]
+        $Description,
         # Uses -Filter with * wildcard support on displayName property
         [Parameter(ParameterSetName = 'Filter')]
-        [Alias('dn', 'nm')]
+        [Alias('dn')]
         [string]
         $DisplayName,
         # See help on Get-ADUser. Same as -Filter on main command but without the Mandatory Attribute
@@ -38,8 +44,10 @@ function Get-ADUserProxy {
         try {
             # Need to remove non-default bound parameters otherwise `GetCommand` doesn't return `.Parameters`
             $PSBoundParameters.Remove('SamAccountName') | Out-Null # Returns true or false if it removed or didn't remove the key
+            $PSBoundParameters.Remove('Name') | Out-Null
+            $PSBoundParameters.Remove('Description') | Out-Null
             $PSBoundParameters.Remove('DisplayName') | Out-Null
-            $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADUser', [System.Management.Automation.CommandTypes]::Cmdlet, $PSBoundParameters)
+            $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADGroup', [System.Management.Automation.CommandTypes]::Cmdlet, $PSBoundParameters)
             $dynamicParams = @($targetCmd.Parameters.GetEnumerator() | Microsoft.PowerShell.Core\Where-Object { $_.Value.IsDynamic })
             if ($dynamicParams.Length -gt 0) {
                 $paramDictionary = [Management.Automation.RuntimeDefinedParameterDictionary]::new()
@@ -66,23 +74,25 @@ function Get-ADUserProxy {
             if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer)) {
                 $PSBoundParameters['OutBuffer'] = 1
             }
-            if (-not $SamAccountName -and -not $DisplayName -and -not $Filter) {
-                throw 'Must provider at least SamAccountName, DisplayName or Filter parameter.'
+            if (-not $SamAccountName -and -not $Name -and -not $Description -and -not $DisplayName -and -not $Filter) {
+                throw 'Must provider at least SamAccountName, Name, Description, DisplayName or Filter parameter.'
             }
 
             $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
                 Write-ADAndFilter SamAccountName $SamAccountName -Verbose:$false |
+                Write-ADAndFilter Name $Name -Verbose:$false |
+                Write-ADAndFilter Description $Description -Verbose:$false |
                 Write-ADAndFilter DisplayName $DisplayName -Verbose:$false
             Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
 
-            # Removing parameters not included on proxied command
             $PSBoundParameters.Remove('SamAccountName') | Out-Null
+            $PSBoundParameters.Remove('Name') | Out-Null
+            $PSBoundParameters.Remove('Description') | Out-Null
             $PSBoundParameters.Remove('DisplayName') | Out-Null
-
-            $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADUser', [System.Management.Automation.CommandTypes]::Cmdlet)
+            $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADGroup', [System.Management.Automation.CommandTypes]::Cmdlet)
             $scriptCmd = { & $wrappedCmd @PSBoundParameters }
 
-            $steppablePipeline = $scriptCmd.GetSteppablePipeline($MyInvocation.CommandOrigin)
+            $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
             $steppablePipeline.Begin($PSCmdlet)
         }
         catch {

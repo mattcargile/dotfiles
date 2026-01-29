@@ -19,7 +19,19 @@ end {
     $writeFormatViewSplat = @{
         TypeName = 'Microsoft.ActiveDirectory.Management.ADComputer'
         Property = 'Name', 'Enabled', 'DistinguishedName'
-        Width = 15, 10, 40
+        Width = 15, 10, 80
+    }
+    $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
+    $writeFormatViewSplat = @{
+        TypeName = 'Microsoft.ActiveDirectory.Management.ADGroup'
+        Property = 'SamAccountName', 'Name', 'GroupCategory', 'GroupScope', 'whenCreated', 'Description'
+        Width = 30, 30, 13, 15, 24, 80
+    }
+    $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
+    $writeFormatViewSplat = @{
+        TypeName = 'Microsoft.ActiveDirectory.Management.ADPrincipal'
+        Property = 'ADGroup', 'SamAccountName', 'Name', 'objectClass', 'DistinguishedName'
+        Width = 30, 30, 30, 13, 80
     }
     $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
 

@@ -140,9 +140,7 @@ New-Alias -Name 'gsci' -Value 'Get-SecretInfo'
 New-Alias -Name 'gsc' -Value 'Get-Secret'
 New-Alias -Name 'ukv' -Value 'Unlock-SecretVault'
 # ActiveDirectory Module
-# gadc and gadu are proxy functions in MyProfile module
-New-Alias -Name 'gadg' -Value 'Get-ADGroup'
-New-Alias -Name 'gadgm' -Value 'Get-ADGroupMember'
+# Other AD aliases are proxy functions in MyProfile module
 New-Alias -Name 'gado' -Value 'Get-ADObject'
 # TerminalSessions Module
 New-Alias -Name 'gwts' -Value 'Get-WTSSession'
