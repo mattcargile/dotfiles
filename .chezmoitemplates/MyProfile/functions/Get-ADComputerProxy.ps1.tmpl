@@ -70,17 +70,13 @@ function Get-ADComputerProxy {
                 if (-not $Name -and -not $Filter) {
                     throw 'Must provide at least Name or Filter parameter.'
                 }
+                $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
+                    Write-ADAndFilter Name $Name -Verbose:$false
+                Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
+                # Removing parameters not included on proxied command
+                $PSBoundParameters.Remove('Name') | Out-Null
             }
 
-            $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
-                Write-ADAndFilter Name $Name -Verbose:$false
-            Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
-            if ($null -eq $PSBoundParameters['Filter']) {
-                $PSBoundParameters.Remove('Filter') | Out-Null
-            }
-
-            # Removing parameters not included on proxied command
-            $PSBoundParameters.Remove('Name') | Out-Null
 
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADComputer', [System.Management.Automation.CommandTypes]::Cmdlet)
             $scriptCmd = {& $wrappedCmd @PSBoundParameters }

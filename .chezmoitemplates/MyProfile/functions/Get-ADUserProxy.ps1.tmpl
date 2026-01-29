@@ -70,19 +70,15 @@ function Get-ADUserProxy {
                 if (-not $SamAccountName -and -not $DisplayName -and -not $Filter) {
                     throw 'Must provider at least SamAccountName, DisplayName or Filter parameter.'
                 }
-            }
+                $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
+                    Write-ADAndFilter SamAccountName $SamAccountName -Verbose:$false |
+                    Write-ADAndFilter DisplayName $DisplayName -Verbose:$false
+                Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
 
-            $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
-                Write-ADAndFilter SamAccountName $SamAccountName -Verbose:$false |
-                Write-ADAndFilter DisplayName $DisplayName -Verbose:$false
-            Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
-            if ($null -eq $PSBoundParameters['Filter']) {
-                $PSBoundParameters.Remove('Filter') | Out-Null
+                # Removing parameters not included on proxied command
+                $PSBoundParameters.Remove('SamAccountName') | Out-Null
+                $PSBoundParameters.Remove('DisplayName') | Out-Null
             }
-
-            # Removing parameters not included on proxied command
-            $PSBoundParameters.Remove('SamAccountName') | Out-Null
-            $PSBoundParameters.Remove('DisplayName') | Out-Null
 
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADUser', [System.Management.Automation.CommandTypes]::Cmdlet)
             $scriptCmd = { & $wrappedCmd @PSBoundParameters }

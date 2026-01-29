@@ -78,22 +78,19 @@ function Get-ADGroupProxy {
                 if (-not $SamAccountName -and -not $Name -and -not $Description -and -not $DisplayName -and -not $Filter) {
                     throw 'Must provider at least SamAccountName, Name, Description, DisplayName or Filter parameter.'
                 }
+                $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
+                    Write-ADAndFilter SamAccountName $SamAccountName -Verbose:$false |
+                    Write-ADAndFilter Name $Name -Verbose:$false |
+                    Write-ADAndFilter Description $Description -Verbose:$false |
+                    Write-ADAndFilter DisplayName $DisplayName -Verbose:$false
+                Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
+
+                $PSBoundParameters.Remove('SamAccountName') | Out-Null
+                $PSBoundParameters.Remove('Name') | Out-Null
+                $PSBoundParameters.Remove('Description') | Out-Null
+                $PSBoundParameters.Remove('DisplayName') | Out-Null
             }
 
-            $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
-                Write-ADAndFilter SamAccountName $SamAccountName -Verbose:$false |
-                Write-ADAndFilter Name $Name -Verbose:$false |
-                Write-ADAndFilter Description $Description -Verbose:$false |
-                Write-ADAndFilter DisplayName $DisplayName -Verbose:$false
-            Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
-            if ($null -eq $PSBoundParameters['Filter']) {
-                $PSBoundParameters.Remove('Filter') | Out-Null
-            }
-
-            $PSBoundParameters.Remove('SamAccountName') | Out-Null
-            $PSBoundParameters.Remove('Name') | Out-Null
-            $PSBoundParameters.Remove('Description') | Out-Null
-            $PSBoundParameters.Remove('DisplayName') | Out-Null
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADGroup', [System.Management.Automation.CommandTypes]::Cmdlet)
             $scriptCmd = { & $wrappedCmd @PSBoundParameters }
 
