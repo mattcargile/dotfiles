@@ -13,7 +13,7 @@ end {
     $writeFormatViewSplat = @{
         TypeName = 'Microsoft.ActiveDirectory.Management.ADUser'
         Property = 'SamAccountName', 'DisplayName', 'Enabled', 'LockedOut', 'PasswordExpired', 'Title', 'physicalDeliveryOfficeName'
-        Width = 15, 25, 10, 10, 15, 25, 30
+        Width = 20, 25, 10, 10, 15, 25, 30
     }
     $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
     $writeFormatViewSplat = @{
