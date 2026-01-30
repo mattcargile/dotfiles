@@ -43,7 +43,7 @@ end {
         Property = 'CSName', 'Pid', 'Name', 'WSMb', 'CPUSec', 'Path'
         Width = 15, 5, 48, 8, 8, 80
         VirtualProperty = @{
-            Path = { ConvertTo-CompactPath -Path $_.ExecutablePath -Length 80 }
+            Path = { ConvertTo-CompactPath -Path $_.ExecutablePath -Length 80 -Verbose:$false }
         }
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
@@ -52,7 +52,7 @@ end {
         Property = 'CSName', 'Pid', 'User', 'Name', 'WSMb', 'CPUSec', 'Path'
         Width = 15, 5, 25, 48, 8, 8, 80
         VirtualProperty = @{
-            Path = { ConvertTo-CompactPath -Path $_.ExecutablePath -Length 80 }
+            Path = { ConvertTo-CompactPath -Path $_.ExecutablePath -Length 80 -Verbose:$false }
         }
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
@@ -61,7 +61,7 @@ end {
         Property = 'SystemName', 'Name', 'DisplayName', 'StartMode', 'Started', 'StartName', 'PathName'
         Width = 15, 30, 30, 9, 7, 30, 80
         VirtualProperty = @{
-            PathName = { ConvertTo-CompactPath -Path $_.PathName -Length 80 }
+            PathName = { ConvertTo-CompactPath -Path $_.PathName -Length 80 -Verbose:$false }
         }
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
