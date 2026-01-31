@@ -191,15 +191,15 @@ function Get-CimInstanceProcess {
         [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
         [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
         [Alias('nm')]
-        [string]
+        [string[]]
         ${Name},
 
         [Parameter(ParameterSetName = 'ClassNameSessionSet')]
         [Parameter(ParameterSetName = 'ClassNameComputerSet')]
         [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
         [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
-        [Alias('pt')]
-        [string]
+        [Alias('pt', 'ExecutablePath')]
+        [string[]]
         ${Path}
     )
 
@@ -210,79 +210,71 @@ function Get-CimInstanceProcess {
                 $PSBoundParameters['OutBuffer'] = 1
             }
 
-            if (-not $SkipFilter) {
-                $customExcludeFilter = @(
-                    "NOT ExecutablePath LIKE '%windows%media%player%'"
-                    "NOT ExecutablePath LIKE '%trustedinstaller%'"
-                    "NOT ExecutablePath LIKE '%microsoft.net%'"
-                    "NOT ExecutablePath LIKE '%google%google%'"
-                    "NOT ExecutablePath LIKE '%microsoft%edge%'"
-                    "NOT ExecutablePath LIKE '%veeam%'"
-                    "NOT ExecutablePath LIKE '%windows%defend%'"
-                    "NOT ExecutablePath LIKE '%vmware%tool%'"
-                    "NOT ExecutablePath LIKE '%sysmon64%'"
-                    "NOT ExecutablePath LIKE '%SentinelOne%'"
-                    "NOT ExecutablePath LIKE '%Arctic Wolf%'"
-                    "NOT ExecutablePath LIKE '%windows\\systemapps%'"
-                    "NOT ExecutablePath LIKE '%\\LogMeIn\\%'"
-                    "NOT ExecutablePath LIKE '%securelink%'"
-                    "NOT ExecutablePath LIKE '%ManageEngine\\UEMS_Agent%'"
-                    "NOT ExecutablePath LIKE '%Common Files\\Microsoft Shared%'"
-                    "NOT ExecutablePath LIKE '%Tanium\\Tanium Client%'"
-                    "NOT ExecutablePath LIKE '%\\Common Files\\Adobe\\%'"
-                    "NOT Name = 'smartscreen.exe'"
-                    "NOT Name = 'wmiprvse.exe'"
-                    "NOT Name = 'conhost.exe'"
-                    "NOT Name = 'vm3dservice.exe'"
-                    "NOT Name = 'fontdrvhost.exe'"
-                    "NOT Name = 'spoolsv.exe'"
-                    "NOT Name = 'wudfhost.exe'"
-                    "NOT Name = 'dwm.exe'"
-                    "NOT Name = 'msdtc.exe'"
-                    "NOT Name = 'winlogon.exe'"
-                    "NOT Name = 'wmiapsrv.exe'"
-                    "NOT Name = 'unsecapp.exe'"
-                    "NOT Name = 'logonui.exe'"
-                    "NOT Name = 'aggregatorhost.exe'"
-                    "NOT Name = 'MicrosoftSearchInBing.exe'"
-                    "NOT Name = 'OfficeClickToRun.exe'"
-                    "NOT Name = 'svchost.exe'"
-                    "NOT Name = 'mmc.exe'"
-                    "NOT Name = 'RuntimeBroker.exe'"
-                    "NOT Name = 'rdpclip.exe'"
-                    "NOT Name = 'sihost.exe'"
-                    "NOT Name = 'vds.exe'"
-                    "NOT Name = 'ServerManager.exe'"
-                    "NOT Name = 'taskhostw.exe'"
-                    "NOT Name = 'ctfmon.exe'"
-                    "NOT Name = 'OpenWith.exe'"
-                ) -join ' AND '
-                if ($PSBoundParameters.ContainsKey('Filter')) {
-                    $customExcludeFilter = " AND ( $customExcludeFilter )"
+            if ($PSCmdlet.ParameterSetName -match '^(ClassName|ResourceUri)') {
+                if (-not $SkipFilter) {
+                    $notExecutablePath = @(
+                        '%windows%media%player%'
+                        '%trustedinstaller%'
+                        '%microsoft.net%'
+                        '%google%google%'
+                        '%microsoft%edge%'
+                        '%veeam%'
+                        '%windows%defend%'
+                        '%vmware%tool%'
+                        '%sysmon64%'
+                        '%SentinelOne%'
+                        '%Arctic Wolf%'
+                        '%windows\\systemapps%'
+                        '%\\LogMeIn\\%'
+                        '%securelink%'
+                        '%ManageEngine\\UEMS_Agent%'
+                        '%Common Files\\Microsoft Shared%'
+                        '%Tanium\\Tanium Client%'
+                        '%\\Common Files\\Adobe\\%'
+                    )
+                    $notName = @(
+                        'smartscreen.exe'
+                        'wmiprvse.exe'
+                        'conhost.exe'
+                        'vm3dservice.exe'
+                        'fontdrvhost.exe'
+                        'spoolsv.exe'
+                        'wudfhost.exe'
+                        'dwm.exe'
+                        'msdtc.exe'
+                        'winlogon.exe'
+                        'wmiapsrv.exe'
+                        'unsecapp.exe'
+                        'logonui.exe'
+                        'aggregatorhost.exe'
+                        'MicrosoftSearchInBing.exe'
+                        'OfficeClickToRun.exe'
+                        'svchost.exe'
+                        'mmc.exe'
+                        'RuntimeBroker.exe'
+                        'rdpclip.exe'
+                        'sihost.exe'
+                        'vds.exe'
+                        'ServerManager.exe'
+                        'taskhostw.exe'
+                        'ctfmon.exe'
+                        'OpenWith.exe'
+                    )
+                    $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
+                        Write-CimFilter ExecutablePath $notExecutablePath -Not -Verbose:$false |
+                        Write-CimFilter Name $notName -Not -Verbose:$false
                 }
-                else {
-                    $customExcludeFilter = "( $customExcludeFilter )"
-                }
-                $PSBoundParameters['Filter'] += $customExcludeFilter
+                $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
+                    Write-CimFilter Name $Name -Escape:$EscapeCimProxyFilterParameter -Verbose:$false |
+                    Write-CimFilter ExecutablePath $Path -Escape:$EscapeCimProxyFilterParameter -Verbose:$false
+
+                # Remove parameters not on proxied command
+                $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found
+                $PSBoundParameters.Remove('IncludeUser') | Out-Null
+                $PSBoundParameters.Remove('EscapeProxyFilterParameter') | Out-Null
+                $PSBoundParameters.Remove('Name') | Out-Null
+                $PSBoundParameters.Remove('Path') | Out-Null
             }
-            if ($Name) {
-                if ($PSBoundParameters.ContainsKey('Filter')) {
-                    $PSBoundParameters['Filter'] += ' AND '
-                }
-                $PSBoundParameters['Filter'] += "Name LIKE '$($Name | Invoke-EscapeCimProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
-            }
-            if ($Path) {
-                if ($PSBoundParameters.ContainsKey('Filter')) {
-                    $PSBoundParameters['Filter'] += ' AND '
-                }
-                $PSBoundParameters['Filter'] += "ExecutablePath LIKE '$($Path | Invoke-EscapeCimProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
-            }
-            # SkipFilter doesn't exist on proxied command
-            $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found
-            $PSBoundParameters.Remove('IncludeUser') | Out-Null
-            $PSBoundParameters.Remove('EscapeProxyFilterParameter') | Out-Null
-            $PSBoundParameters.Remove('Name') | Out-Null
-            $PSBoundParameters.Remove('Path') | Out-Null
             $PSBoundParameters['ClassName'] = 'Win32_Process'
             $customPSTypeNameBase = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
             $customPSTypeNameUser = "$customPSTypeNameBase#IncludeUser"

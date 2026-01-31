@@ -178,16 +178,16 @@ function Get-CimInstanceService {
         [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
         [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
         [Alias('nm')]
-        [string]
+        [string[]]
         ${Name},
 
         [Parameter(ParameterSetName = 'ClassNameSessionSet')]
         [Parameter(ParameterSetName = 'ClassNameComputerSet')]
         [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
         [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
-        [Alias('pt', 'pn')]
-        [string]
-        ${PathName}
+        [Alias('pt', 'pn', 'PathName')]
+        [string[]]
+        ${Path}
     )
 
     begin {
@@ -197,58 +197,47 @@ function Get-CimInstanceService {
                 $PSBoundParameters['OutBuffer'] = 1
             }
 
-            if (-not $SkipFilter) {
-                $customExcludeFilter = @(
-                    "NOT PathName LIKE '%zohomeeting%'"
-                    "NOT PathName LIKE '%windows%media%player%'"
-                    "NOT PathName LIKE '%trustedinstaller%'"
-                    "NOT PathName LIKE '%microsoft.net%'"
-                    "NOT PathName LIKE '%google\\chrome%'"
-                    "NOT PathName LIKE '%google%google%'"
-                    "NOT PathName LIKE '%microsoft%edge%'"
-                    "NOT PathName LIKE '%veeam%'"
-                    "NOT PathName LIKE '%windows%defend%'"
-                    "NOT PathName LIKE '%vmware%tool%'"
-                    "NOT PathName LIKE '%sysmon64%'"
-                    "NOT PathName LIKE '%syswow64%'"
-                    "NOT PathName LIKE '%system32%'"
-                    "NOT PathName LIKE '%SentinelOne%'"
-                    "NOT PathName LIKE '%Arctic Wolf%'"
-                    "NOT PathName LIKE '%Common Files\\Microsoft Shared%'"
-                    "NOT PathName LIKE '%ManageEngine\\UEMS_Agent%'"
-                    "NOT PathName LIKE '%Tanium\\Tanium Client%'"
-                    "NOT PathName LIKE '%\\LogMeIn\\%'"
-                    "NOT PathName LIKE '%\\Common Files\\Adobe\\%'"
-                    "NOT PathName LIKE '%\\Microsoft\\Microsoft Search in Bing\\%'"
-                    "NOT PathName LIKE '%\\Microsoft OneDrive\\%'"
-                ) -join ' AND '
-                if ($PSBoundParameters.ContainsKey('Filter')) {
-                    $customExcludeFilter = " AND ( $customExcludeFilter )"
+            if ($PSCmdlet.ParameterSetName -match '^(ClassName|ResourceUri)') {
+                if (-not $SkipFilter) {
+                    $notPathName = @(
+                        '%zohomeeting%'
+                        '%windows%media%player%'
+                        '%trustedinstaller%'
+                        '%microsoft.net%'
+                        '%google\\chrome%'
+                        '%google%google%'
+                        '%microsoft%edge%'
+                        '%veeam%'
+                        '%windows%defend%'
+                        '%vmware%tool%'
+                        '%sysmon64%'
+                        '%syswow64%'
+                        '%system32%'
+                        '%SentinelOne%'
+                        '%Arctic Wolf%'
+                        '%Common Files\\Microsoft Shared%'
+                        '%ManageEngine\\UEMS_Agent%'
+                        '%Tanium\\Tanium Client%'
+                        '%\\LogMeIn\\%'
+                        '%\\Common Files\\Adobe\\%'
+                        '%\\Microsoft\\Microsoft Search in Bing\\%'
+                        '%\\Microsoft OneDrive\\%'
+                    )
+                    $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
+                        Write-CimFilter PathName $notPathName -Not -Verbose:$false
                 }
-                else {
-                    $customExcludeFilter = "( $customExcludeFilter )"
-                }
-                $PSBoundParameters['Filter'] += $customExcludeFilter
-            }
-            if ($Name) {
-                if ($PSBoundParameters.ContainsKey('Filter')) {
-                    $PSBoundParameters['Filter'] += ' AND '
-                }
-                $PSBoundParameters['Filter'] += "Name LIKE '$($Name | Invoke-EscapeCimProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
-            }
-            if ($PathName) {
-                if ($PSBoundParameters.ContainsKey('Filter')) {
-                    $PSBoundParameters['Filter'] += ' AND '
-                }
-                $PSBoundParameters['Filter'] += "PathName LIKE '$($PathName | Invoke-EscapeCimProxyFilterParameter -Escape:$EscapeProxyFilterParameter)'"
-            }
-            # SkipFilter doesn't exist on proxied command
-            $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found
-            $PSBoundParameters.Remove('EscapeProxyFilterParameter') | Out-Null
-            $PSBoundParameters.Remove('Name') | Out-Null
-            $PSBoundParameters.Remove('PathName') | Out-Null
-            $PSBoundParameters['ClassName'] = 'Win32_Service'
+                $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
+                    Write-CimFilter Name $Name -Escape:$EscapeCimProxyFilterParameter -Verbose:$false |
+                    Write-CimFilter PathName $Path -Escape:$EscapeCimProxyFilterParameter -Verbose:$false
 
+                # Remove parameters not on proxied command
+                $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found
+                $PSBoundParameters.Remove('EscapeProxyFilterParameter') | Out-Null
+                $PSBoundParameters.Remove('Name') | Out-Null
+                $PSBoundParameters.Remove('Path') | Out-Null
+            }
+
+            $PSBoundParameters['ClassName'] = 'Win32_Service'
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('CimCmdlets\Get-CimInstance', [System.Management.Automation.CommandTypes]::Cmdlet)
             $scriptCmd = {
                 & $wrappedCmd @PSBoundParameters | & {
