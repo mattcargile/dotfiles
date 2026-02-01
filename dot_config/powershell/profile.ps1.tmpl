@@ -20,9 +20,11 @@
 {{ includeTemplate "defaultparams.ps1.tmpl" . }}
 #endregion
 
-#region ArgumentCompleter
-{{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir ".chezmoitemplates" "Write-ArgCompleterOutput.ps1" ) }}
+#region ArgumentCompleter Generated
+# chezmoi outputList args {{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir ".chezmoitemplates" "Write-ArgCompleterOutput.ps1" ) }}
 {{ outputList "pwsh" $argCompleterArgList }}
+#endregion
+#region argcompleter.ps1
 {{ includeTemplate "argcompleter.ps1" . }}
 #endregion
 
@@ -34,10 +36,6 @@
 {{ includeTemplate "readline.ps1" . }}
 #endregion
 
-#region Custom Formatters
-Update-FormatData -PrependPath "$env:USERPROFILE\.config\powershell\profile.format.ps1xml"
-#endregion
-
-#region Custom Types
-Update-TypeData -PrependPath "$env:USERPROFILE\.config\powershell\profile.types.ps1xml"
+#region Custom Types and Format
+{{ includeTemplate "typesandformat.ps1" . }}
 #endregion

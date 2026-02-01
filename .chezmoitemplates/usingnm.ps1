@@ -1,4 +1,3 @@
-# Quick interactive type declarations. Must be last in the $PROFILE execution
 using namespace System
 using namespace System.Collections
 using namespace System.Collections.Generic

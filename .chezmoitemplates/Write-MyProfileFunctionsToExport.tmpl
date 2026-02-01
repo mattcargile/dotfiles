@@ -15,10 +15,12 @@
 {{- $functionsCorePaths = append $functionsCorePaths $file -}}
 {{- continue -}}
 {{- end -}}
-{{- /* Output the functions related to both core and desktop */}}    {{ base $file | trimSuffix ".tmpl" | trimSuffix ".ps1" | squote }}
+{{- /* Output the functions related to both core and desktop */}}
+    {{ base $file | trimSuffix ".tmpl" | trimSuffix ".ps1" | squote -}}
 {{ end -}}
 {{- /* Handle Core only functions */ -}}
-{{- if $functionsCorePaths }}    if ($PSEdition -eq 'Core') {
+{{- if $functionsCorePaths }}
+    if ($PSEdition -eq 'Core') {
 {{- range $coreFile := $functionsCorePaths -}}
 {{- /* Output the functions related to core */}}
         {{ base $coreFile | trimSuffix $functionsCoreSuffix | squote }}
