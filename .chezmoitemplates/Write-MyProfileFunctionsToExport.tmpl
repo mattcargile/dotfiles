@@ -1,0 +1,36 @@
+{{- /* Retrive all the public functions */ -}}
+{{- $functionsToExportPaths := glob ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "MyProfile" "functions" "*ps1*" ) -}}
+{{- $functionsDesktopPaths := list -}}
+{{- $functionsDesktopSuffix := ".ps1.desktop.tmpl" -}}
+{{- $functionsCorePaths := list -}}
+{{- $functionsCoreSuffix := ".ps1.core.tmpl" -}}
+{{- range $file := $functionsToExportPaths -}}
+{{- /*- Exclude the desktop related public functions and add to another list */ -}}
+{{- if eq ( hasSuffix $functionsDesktopSuffix $file ) true -}}
+{{- $functionsDesktopPaths = append $functionsDesktopPaths $file -}}
+{{- continue -}}
+{{- end -}}
+{{- /* Exclude the core related public functions and add to another list */ -}}
+{{- if eq ( hasSuffix $functionsCoreSuffix $file ) true -}}
+{{- $functionsCorePaths = append $functionsCorePaths $file -}}
+{{- continue -}}
+{{- end -}}
+{{- /* Output the functions related to both core and desktop */}}    {{ base $file | trimSuffix ".tmpl" | trimSuffix ".ps1" | squote }}
+{{ end -}}
+{{- /* Handle Core only functions */ -}}
+{{- if $functionsCorePaths }}    if ($PSEdition -eq 'Core') {
+{{- range $coreFile := $functionsCorePaths -}}
+{{- /* Output the functions related to core */}}
+        {{ base $coreFile | trimSuffix $functionsCoreSuffix | squote }}
+{{- end }}
+    }
+{{- end -}}
+{{- /* Handle Desktop only functions */ -}}
+{{- if $functionsDesktopPaths }}
+    else {
+{{- range $desktopFile := $functionsDesktopPaths -}}
+{{- /* Output the functions related to desktop */}}
+        {{ base $desktopFile | trimSuffix $functionsDesktopSuffix | squote }}
+{{- end }}
+    }
+{{- end }}

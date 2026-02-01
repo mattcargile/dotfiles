@@ -97,12 +97,12 @@ function Get-ADGroupMemberProxy {
         }
     }
 
-{{ if eq .isPSCore true }}
+# chezmoi clean if block {{ if eq .isPSCore true }}
     clean
     {
         if ($null -ne $steppablePipeline) {
             $steppablePipeline.Clean()
         }
     }
-{{ end }}
+# end {{ end }}
 }

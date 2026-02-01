@@ -1,4 +1,5 @@
-Function Get-FileProcess {
+# Get-FileProcess chezmoi if block {{ if eq .isPSCore true }}
+function Get-FileProcess {
     <#
     .SYNOPSIS
     Get the process that has opened the requested file.
@@ -30,7 +31,7 @@ Function Get-FileProcess {
     output.
     #>
     [CmdletBinding(DefaultParameterSetName = "Path")]
-    [Alias('gfilp','test')]
+    [Alias('gfilp')]
     param (
         [Parameter(
             Position = 0,
@@ -186,3 +187,4 @@ Function Get-FileProcess {
         }
     }
 }
+# end {{ end }}

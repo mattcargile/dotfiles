@@ -1,10 +1,5 @@
-#Requires -PSEdition Desktop
-#Requires -Version 5.1
-<#
-.FORWARDHELPTARGETNAME Get-Help
-.FORWARDHELPCATEGORY Cmdlet
-#>
-function Get-PowershellDesktopHelp {
+# Get-PowerShellDesktopHelp chezmoi if block {{ if eq .isPSCore false }}
+function Get-PowerShellDesktopHelp {
     [Alias('help')]
     [CmdletBinding(DefaultParameterSetName='AllUsersView', HelpUri='https://go.microsoft.com/fwlink/?LinkID=113316')]
     param(
@@ -131,4 +126,9 @@ function Get-PowershellDesktopHelp {
                 $help | & $pagerCommand $pagerArgs
             }
         }
+<#
+.FORWARDHELPTARGETNAME Get-Help
+.FORWARDHELPCATEGORY Cmdlet
+#>
 }
+# end {{ end }}

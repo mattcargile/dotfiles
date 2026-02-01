@@ -1,3 +1,4 @@
+# Join-String chezmoi if block {{ if eq .isPSCore true }}
 function Join-String {
     [CmdletBinding(DefaultParameterSetName = 'default', RemotingCapability = 'None')]
     [Alias('join')]
@@ -88,3 +89,4 @@ function Join-String {
 .ForwardHelpCategory Cmdlet
 
 #>
+# end {{ end }}

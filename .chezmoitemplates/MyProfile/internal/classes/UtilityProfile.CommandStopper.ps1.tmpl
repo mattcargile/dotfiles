@@ -1,0 +1,5 @@
+if ( -not ('UtilityProfile.CommandStopper' -as [type] ) ) {
+    Add-Type -TypeDefinition @'
+{{ include ( joinPath ".chezmoitemplates" "MyProfile" "internal" "classes" "UtilityProfile.CommandStopper.cs" ) -}}
+'@
+}

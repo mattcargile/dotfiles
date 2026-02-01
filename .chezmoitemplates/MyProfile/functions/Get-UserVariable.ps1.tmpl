@@ -214,31 +214,18 @@ function Get-UserVariable {
         }
     }
 
-{{ if eq .isPSCore true }}
+# chezmoi if clean block {{ if eq .isPSCore true }}
     clean
     {
         if ($null -ne $steppablePipeline) {
             $steppablePipeline.Clean()
         }
     }
-{{ end }}
+# end {{ end }}
 
 <#
 .ForwardHelpTargetName Microsoft.PowerShell.Utility\Get-Variable
 .ForwardHelpCategory Cmdlet
 #>
 
-}
-
-Register-ArgumentCompleter -CommandName 'Get-UserVariable' -ParameterName 'Name' -ScriptBlock {
-    param(
-        [string] $commandName,
-        [string] $parameterName,
-        [string] $wordToComplete,
-        [System.Management.Automation.Language.CommandAst] $commandAst,
-        [System.Collections.IDictionary] $fakeBoundParameters
-    )
-    Get-UserVariable -Name "$wordToComplete*" -Exclude 'commandName', 'parameterName', 'wordToComplete', 'commandAst', 'fakeBoundParameters' | ForEach-Object {
-        [System.Management.Automation.CompletionResult]::new($_.Name, $_.Name, 'ParameterValue', $_.Visibility)
-    }
 }

@@ -145,7 +145,9 @@ function Get-CimInstanceService {
         [Parameter(ParameterSetName = 'ClassNameComputerSet', ValueFromPipelineByPropertyName = $true)]
         [Parameter(ParameterSetName = 'ResourceUriSessionSet', ValueFromPipelineByPropertyName = $true)]
         [Parameter(ParameterSetName = 'ResourceUriComputerSet', ValueFromPipelineByPropertyName = $true)]
-{{ if eq .isPSCore true }}        [ValidateNotNullOrWhiteSpace()]{{ else }}        [ValidateNotNullOrEmpty()]{{ end }}
+        # chezmoi if validate block {{ if eq .isPSCore true }}        
+        [ValidateNotNullOrWhiteSpace()]
+        # else and end {{ else }}{{ if eq .isWindows true }}{{ "\r\n" }}{{ else }}{{ "\n" }}{{ end }}        [ValidateNotNullOrEmpty()]{{ end }}
         [string]
         ${Filter},
 
@@ -275,12 +277,12 @@ function Get-CimInstanceService {
             throw
         }
     }
-{{ if eq .isPSCore true }}
+# chezmoi if clean block {{ if eq .isPSCore true }}
     clean {
         if ($null -ne $steppablePipeline) {
             $steppablePipeline.Clean()
         }
     }
-{{ end }}
+# end {{ end }}
 # Cannot forward help because the parameter set is a bit different
 }

@@ -88,11 +88,11 @@ function Group-Property {
             throw
         }
     }
-{{ if eq .isPSCore true }}
+# chezmoi if clean block {{ if eq .isPSCore true }}
     clean {
         if ($null -ne $steppablePipeline) {
             $steppablePipeline.Clean()
         }
     }
-{{ end }}
+# end {{ end }}
 }

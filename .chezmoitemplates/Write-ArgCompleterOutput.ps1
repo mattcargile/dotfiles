@@ -83,7 +83,7 @@ end {
             continue
         }
         if ($ast.BeginBlock -or $ast.CleanBlock -or $ast.DynamicParamBlock -or $ast.ProcessBlock -or $ast.ParamBlock -or $ast.ScriptRequirements) {
-            Write-Warning -Message "[$($ac.Comment)] Ast in a form that isn't expected and includes more code blocks than only End Block. Continuing to next item."
+            Write-Error -Message "[$($ac.Comment)] Ast in a form that isn't expected and includes more code blocks than only End Block. Continuing to next item."
             continue
         }
         Write-Information -MessageData $ast -Tags Ast
