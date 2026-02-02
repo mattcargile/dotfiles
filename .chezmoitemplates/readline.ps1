@@ -306,6 +306,147 @@ $setPSReadLineKeyHandlerSplat = @{
 Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
 #endregion
 
+#region ParenthesizeSelection
+$setPSReadLineKeyHandlerSplat = @{
+    Chord = 'Alt+('
+    BriefDescription = 'ParenthesizeSelection'
+    Description = "Put parenthesis around the selection or entire line and move the cursor to after the closing parenthesis"
+    ScriptBlock = {
+        param($key, $arg)
+
+        $selectionStart = $null
+        $selectionLength = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$selectionStart, [ref]$selectionLength)
+
+        $line = $null
+        $cursor = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+        if ($selectionStart -ne -1)
+        {
+            [Microsoft.PowerShell.PSConsoleReadLine]::Replace($selectionStart, $selectionLength, '(' + $line.SubString($selectionStart, $selectionLength) + ')')
+            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($selectionStart + $selectionLength + 2)
+        }
+        else
+        {
+            [Microsoft.PowerShell.PSConsoleReadLine]::Replace(0, $line.Length, '(' + $line + ')')
+            [Microsoft.PowerShell.PSConsoleReadLine]::EndOfLine()
+        }
+    }
+}
+Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
+#endregion
+
+#region ToggleQuoteArgument
+$setPSReadLineKeyHandlerSplat = @{
+    Chord = "Alt+'"
+    BriefDescription = 'ToggleQuoteArgument'
+    Description = 'Toggle quotes on the argument under the cursor'
+    ScriptBlock = {
+        param($key, $arg)
+
+        $ast = $null
+        $tokens = $null
+        $errors = $null
+        $cursor = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$ast, [ref]$tokens, [ref]$errors, [ref]$cursor)
+
+        $tokenToChange = $null
+        foreach ($token in $tokens)
+        {
+            $extent = $token.Extent
+            if ($extent.StartOffset -le $cursor -and $extent.EndOffset -ge $cursor)
+            {
+                $tokenToChange = $token
+
+                # If the cursor is at the end (it's really 1 past the end) of the previous token,
+                # we only want to change the previous token if there is no token under the cursor
+                if ($extent.EndOffset -eq $cursor -and $foreach.MoveNext())
+                {
+                    $nextToken = $foreach.Current
+                    if ($nextToken.Extent.StartOffset -eq $cursor)
+                    {
+                        $tokenToChange = $nextToken
+                    }
+                }
+                break
+            }
+        }
+
+        if ($tokenToChange -ne $null)
+        {
+            $extent = $tokenToChange.Extent
+            $tokenText = $extent.Text
+            if ($tokenText[0] -eq '"' -and $tokenText[-1] -eq '"')
+            {
+                # Switch to no quotes
+                $replacement = $tokenText.Substring(1, $tokenText.Length - 2)
+            }
+            elseif ($tokenText[0] -eq "'" -and $tokenText[-1] -eq "'")
+            {
+                # Switch to double quotes
+                $replacement = '"' + $tokenText.Substring(1, $tokenText.Length - 2) + '"'
+            }
+            else
+            {
+                # Add single quotes
+                $replacement = "'" + $tokenText + "'"
+            }
+
+            [Microsoft.PowerShell.PSConsoleReadLine]::Replace(
+                $extent.StartOffset,
+                $tokenText.Length,
+                $replacement)
+        }
+    }
+}
+Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
+#endregion
+
+#region ExpandAliases
+$setPSReadLineKeyHandlerSplat = @{
+    Chord = 'Alt+%'
+    BriefDescription = 'ExpandAliases'
+    Description = "Replace all aliases with the full command"
+    ScriptBlock = {
+        param($key, $arg)
+
+        $ast = $null
+        $tokens = $null
+        $errors = $null
+        $cursor = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$ast, [ref]$tokens, [ref]$errors, [ref]$cursor)
+
+        $startAdjustment = 0
+        foreach ($token in $tokens)
+        {
+            if ($token.TokenFlags -band [TokenFlags]::CommandName)
+            {
+                $alias = $ExecutionContext.InvokeCommand.GetCommand($token.Extent.Text, 'Alias')
+                if ($alias -ne $null)
+                {
+                    $resolvedCommand = $alias.ResolvedCommandName
+                    if ($resolvedCommand -ne $null)
+                    {
+                        $extent = $token.Extent
+                        $length = $extent.EndOffset - $extent.StartOffset
+                        [Microsoft.PowerShell.PSConsoleReadLine]::Replace(
+                            $extent.StartOffset + $startAdjustment,
+                            $length,
+                            $resolvedCommand)
+
+                        # Our copy of the tokens won't have been updated, so we need to
+                        # adjust by the difference in length
+                        $startAdjustment += ($resolvedCommand.Length - $length)
+                    }
+                }
+            }
+        }
+    }
+}
+Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
+
+#endregion
+
 Remove-Variable -Name @(
     'setPSReadLineOptionSplat'
     'setPSReadLineKeyHandlerSplat'
