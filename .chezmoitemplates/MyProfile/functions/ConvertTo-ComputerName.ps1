@@ -37,6 +37,9 @@ function ConvertTo-ComputerName {
 
     process {
         if ('Microsoft.ActiveDirectory.Management.ADComputer' -as [type] -and $_ -is [Microsoft.ActiveDirectory.Management.ADComputer]) {
+            if ([string]::IsNullOrWhiteSpace($_.DNSHostName)) {
+                return Write-ComputerNameObject -Name $_.Name
+            }
             return Write-ComputerNameObject -Name $_.DNSHostName
         }
         if ('VMware.VimAutomation.ViCore.Impl.V1.VM.UniversalVirtualMachineImpl' -as [type] -and
@@ -50,6 +53,9 @@ function ConvertTo-ComputerName {
         if ('VMware.VimAutomation.ViCore.Impl.V1.VM.Guest.VMGuestImpl' -as [type] -and
             $_ -is [VMware.VimAutomation.ViCore.Impl.V1.VM.Guest.VMGuestImpl]
         ) {
+            if ([string]::IsNullOrWhiteSpace($_.HostName)) {
+                return Write-ComputerNameObject -Name $_.VM.Name
+            }
             return Write-ComputerNameObject -Name $_.HostName
         }
         if ('Dataplat.Dbatools.Parameter.DbaInstanceParameter' -as [type] -and # Assuming dbatools is imported along with below classes
@@ -61,22 +67,22 @@ function ConvertTo-ComputerName {
             $dbaInst = [Dataplat.Dbatools.Parameter.DbaInstanceParameter]::new($_)
             return Write-ComputerNameObject -Name $dbaInst.ComputerName
         }
-        if ($_.psobject.Properties.Name -contains 'PSComputerName') {
+        if ($_.psobject.Properties.Name -contains 'PSComputerName' -and -not [string]::IsNullOrWhiteSpace($_.PSComputerName)) {
             return Write-ComputerNameObject -Name $_.PSComputerName
         }
-        if ($_.psobject.Properties.Name -contains 'DNSHostName') {
+        if ($_.psobject.Properties.Name -contains 'DNSHostName' -and -not [string]::IsNullOrWhiteSpace($_.DNSHostName)) {
             return Write-ComputerNameObject -Name $_.DNSHostName
         }
-        if ($_.psobject.Properties.Name -contains 'HostName') {
+        if ($_.psobject.Properties.Name -contains 'HostName' -and -not [string]::IsNullOrWhiteSpace($_.HostName)) {
             return Write-ComputerNameObject -Name $_.HostName
         }
-        if ($_.psobject.Properties.Name -contains 'ComputerName') {
+        if ($_.psobject.Properties.Name -contains 'ComputerName' -and -not [string]::IsNullOrWhiteSpace($_.ComputerName)) {
             return Write-ComputerNameObject -Name $_.ComputerName
         }
-        if ($_.psobject.Properties.Name -contains 'ServerName') {
+        if ($_.psobject.Properties.Name -contains 'ServerName' -and -not [string]::IsNullOrWhiteSpace($_.ServerName)) {
             return Write-ComputerNameObject -Name $_.ServerName
         }
-        if ($_.psobject.Properties.Name -contains 'Name') {
+        if ($_.psobject.Properties.Name -contains 'Name' -and -not [string]::IsNullOrWhiteSpace($_.Name)) {
             return Write-ComputerNameObject -Name $_.Name
         }
         return Write-ComputerNameObject -Name ([string]$_)
