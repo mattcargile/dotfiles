@@ -86,7 +86,8 @@ $env:EDITOR = 'code' # e key mapping
 $env:SHELL = 'cmd.exe' # w key mapping. Need to use cmd.exe for fzf DEFAULT_COMMAND to work.
 
 # rg.exe (ripgrep) path to default flags
-$env:RIPGREP_CONFIG_PATH = "$HOME\.config\ripgrep\.ripgreprc"
+$ripGrepConfigPath = Join-Path -Path $HOME -ChildPath '.config' | Join-Path -ChildPath 'ripgrep' | Join-Path -ChildPath '.ripgreprc'
+$env:RIPGREP_CONFIG_PATH = $ripGrepConfigPath
 
 # pretty pager batcat theme
 $env:BAT_THEME = 'Visual Studio Dark+'
@@ -108,4 +109,5 @@ Remove-Variable -Name @(
     'envvarP'
     'envvarEscP'
     'lessDefaultParams'
+    'ripGrepConfigPath'
 )
