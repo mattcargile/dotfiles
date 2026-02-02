@@ -44,12 +44,11 @@ $env:CARAPACE_TOOLTIP = 1 # Powershell tooltip
 
 $envvarPathSeperator = [System.IO.Path]::PathSeparator
 $envvarPathsToAdd = [System.Collections.Generic.List[string]]@(
-    # Custom miscellaneous exe folder
-    "$env:OneDrive\Documents\exe"
-    # For wsdl.exe to handle SOAP endpoints to web services.
-    'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64'
-    # carapace likes to have this in the process path for a feature. The binary does use forward slashes though
-    "$env:APPDATA\carapace\bin"
+    if ($IsWindows -or $PSVersionTable.PSEdition -eq 'Desktop') {
+        "$env:OneDrive\Documents\exe" # Custom miscellaneous exe folder
+        'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64' # For wsdl.exe to handle SOAP endpoints to web services.
+        "$env:APPDATA\carapace\bin" # carapace likes to have this in the process path for a feature. The binary does use forward slashes though
+    }
 ) 
 if (Get-Command py -CommandType Application -ErrorAction Ignore) {
     # Something broke in Windows with py.exe Launcher and oh-my-posh.exe
