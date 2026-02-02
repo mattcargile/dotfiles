@@ -12,9 +12,31 @@
 {{ includeTemplate "prompt.ps1" . }}
 #endregion
 
-#region Modules and Icons
-{{ includeTemplate "module.ps1" . }}
+#region Modules
+Import-Module -Name @(
+    'ClassExplorer' # Helps with exploration of libraries and objects
+    'PowerShellHumanizer' # Used for File and Directory time and length formatting. Need to import because libraries are used.
+    'Terminal-Icons' # Need to import first so I can override the default formatter further downstream. Used for icons of File and Directory 
+    'ZLocation2' # Forked z-cd jumper. Original repo isn't active.
+    "$env:USERPROFILE\.config\powershell\MyProfile\MyProfile.psd1"
+)
+
+# Helper Visual Studio Code Command Palette operations ( i.e. EditorServicesCommandSuite )
+if($env:TERM_PROGRAM -eq 'vscode') {
+    Import-CommandSuite
+}
 #endegion
+
+#region PowerShellRun Fuzzy Finder for completion and history
+# Need to reset action keys or else an `Enter` will automatically execute the command from the history. Muscle memory is already too strong.
+if ($IsCoreCLR) {
+    # Prefer core's implementation of join and have a proxied command
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments","StringModule_DontInjectJoinString",Justification="Variable required in session for future implicit string module load.")]
+    $StringModule_DontInjectJoinString = $true
+
+    {{ includeTemplate "powershellrun.ps1" . }}
+}
+#endregion
 
 #region PSDefaultParameterValues
 {{ includeTemplate "defaultparams.ps1.tmpl" . }}
@@ -37,5 +59,6 @@
 #endregion
 
 #region Custom Types and Format
-{{ includeTemplate "typesandformat.ps1" . }}
+Update-FormatData -PrependPath "$env:USERPROFILE\.config\powershell\profile.format.ps1xml"
+Update-TypeData -PrependPath "$env:USERPROFILE\.config\powershell\profile.types.ps1xml"
 #endregion
