@@ -1,8 +1,6 @@
-# $veeamComputerName = ''
 $cmsSqlInstance = {{ .msSqlMgmtInstance | squote }} 
 $vCenterComputerName = {{ .vCenterComputerName | squote }}
 $workKeepassName = {{ .workKeepassName | squote }}
-# $credSbk = { Get-Secret -Name du -Vault dp } 
 $credAdmSbk = { Get-Secret -Name da -Vault dp } 
 $credSspAdmSbk = { if ($args.BoundParameters -contains 'Authentication') { Get-Secret -Name da -Vault dp } }
 
@@ -68,15 +66,11 @@ if ($workKeepassName) {
   $PSDefaultParameterValues['Unlock-SecretVault:Password'] = { Get-Secret -Name dbakey -Vault dp }
 }
 
-$rmVar = @(
-  'rmVar'
-  # 'credSbk'
+Remove-Variable -Name @(
   'credAdmSbk'
   'credSspAdmSbk'
-  # 'veeamComputerName'
   'cmsSqlInstance'
   'companyProp'
   'vCenterComputerName'
   'workKeepassName'
 )
-Remove-Variable -Name $rmVar

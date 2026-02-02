@@ -217,8 +217,7 @@ if ( $spcSnif = Get-Command -Name 'SpaceSniffer.exe' -CommandType Application -E
 
 $PSDefaultParameterValues.Remove( 'New-Alias:Description' )
 $PSDefaultParameterValues.Remove( 'New-Alias:Force' )
-$rmVar = @(
-  'rmVar'
+Remove-Variable -Name @(
   'prgFiles'
   'prg86'
   'vsVer'
@@ -232,7 +231,6 @@ $rmVar = @(
   'ciscoPaths'
   'currentCiscoPath'
 )
-Remove-Variable -Name $rmVar
 
 # scoop aliases
 # scoop alias add fsearch 'scoop-search.exe $args[0]' 'Fast search with scoop-search.exe'

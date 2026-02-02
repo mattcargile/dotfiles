@@ -95,9 +95,7 @@ $env:BAT_PAGER = "less $lessDefaultParams"
 # Class Explorer Module for pretty output. A fancy check mark in this case.
 $env:CLASS_EXPLORER_TRUE_CHARACTER = [char]0x2713
 
-# Prevent variables from clashing in current session
-$helpRemoveVar = @(
-    'helpRemoveVar'
+Remove-Variable -Name @(
     'FzfGutterColor'
     'FzfTheme'
     'FzfIconTheme'
@@ -111,4 +109,3 @@ $helpRemoveVar = @(
     'envvarEscP'
     'lessDefaultParams'
 )
-Remove-Variable -Name $helpRemoveVar

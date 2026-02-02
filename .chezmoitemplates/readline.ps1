@@ -1,7 +1,8 @@
+#region PSReadLine Option
 $esc = [char]0x1B
 $bg = "$esc[48;2;40;40;40m"
 $underline = "$esc[27m$esc[4m$bg"
-$splat = @{
+$setPSReadLineOptionSplat = @{
     Colors = @{
         # ListPrediction handled further down
         # InlinePrediction handled further down
@@ -38,28 +39,29 @@ if ($psReadLnVersion -ge '2.0.4' ) {
     # When Colors.ListPrediction was added
     # https://devblogs.microsoft.com/powershell/announcing-psreadline-2-1-with-predictive-intellisense/
     if ($psReadLnVersion -ge '2.2.2') {
-        $splat.Colors.ListPrediction = "$esc[38;2;195;100;241m"
-        $splat.Colors.ListPredictionToolTip = "$esc[38;5;243m$esc[3m"
+        $setPSReadLineOptionSplat.Colors.ListPrediction = "$esc[38;2;195;100;241m"
+        $setPSReadLineOptionSplat.Colors.ListPredictionToolTip = "$esc[38;5;243m$esc[3m"
     }
     # When Colors.InlinePrediction was added
     # See above link
     if ($psReadLnVersion -ge '2.1.0') {
-        $splat.Colors.InlinePrediction = "$esc[38;5;243m" # Bumped up from 238 to make it easier to read on laptop ( e.g. smaller screens )
+        $setPSReadLineOptionSplat.Colors.InlinePrediction = "$esc[38;5;243m" # Bumped up from 238 to make it easier to read on laptop ( e.g. smaller screens )
     }
 
     if (-not [Console]::IsOutputRedirected) {
         if ($PSVersionTable.PSVersion -ge [version]'7.2') {
-            $splat.PredictionSource = 'HistoryAndPlugin'
+            $setPSReadLineOptionSplat.PredictionSource = 'HistoryAndPlugin'
         }
         else {
-            $splat.PredictionSource = 'History'
+            $setPSReadLineOptionSplat.PredictionSource = 'History'
         }
     }
 }
-Set-PSReadLineOption @splat
+Set-PSReadLineOption @setPSReadLineOptionSplat
+#endregion
 
-# For part way completion of History PredictionSource
-$splat = @{
+#region For part way completion of History PredictionSource
+$setPSReadLineKeyHandlerSplat = @{
     Chord = 'Ctrl+RightArrow'
     BriefDescription = 'NextWordAndAcceptNextSuggestionWord'
     Description = 'Move cursor one word to the right in the current editing line ' + 
@@ -78,10 +80,11 @@ $splat = @{
         }
     }
 }
-Set-PSReadLineKeyHandler @splat
+Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
+#endregion
 
-# Save current line to history ( without execution ) and clear line.
-$splat = @{
+#region Save current line to history ( without execution ) and clear line.
+$setPSReadLineKeyHandlerSplat = @{
     Key = 'Alt+y'
     BriefDescription = 'SaveInHistory'
     Description = 'Save current line to history ( without execution) and clear line.'
@@ -93,15 +96,221 @@ $splat = @{
         [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
     }
 }
-Set-PSReadLineKeyHandler @splat
+Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
+#endregion
 
-# Prevent variable clutter in Get-Variable Output
-$rmVar = @(
-    'rmVar'
-    'splat'
+#region SmartInsertQuote
+$setPSReadLineKeyHandlerSplat = @{
+    Chord = '"', "'"
+    BriefDescription = 'SmartInsertQuote'
+    Description = "Insert paired quotes if not already on a quote"
+    ScriptBlock = {
+        param($key, $arg)
+
+        $quote = $key.KeyChar
+
+        $selectionStart = $null
+        $selectionLength = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$selectionStart, [ref]$selectionLength)
+
+        $line = $null
+        $cursor = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+
+        # If text is selected, just quote it without any smarts
+        if ($selectionStart -ne -1)
+        {
+            [Microsoft.PowerShell.PSConsoleReadLine]::Replace($selectionStart, $selectionLength, $quote + $line.SubString($selectionStart, $selectionLength) + $quote)
+            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($selectionStart + $selectionLength + 2)
+            return
+        }
+
+        $ast = $null
+        $tokens = $null
+        $parseErrors = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$ast, [ref]$tokens, [ref]$parseErrors, [ref]$null)
+
+        function FindToken
+        {
+            param($tokens, $cursor)
+
+            foreach ($token in $tokens)
+            {
+                if ($cursor -lt $token.Extent.StartOffset) { continue }
+                if ($cursor -lt $token.Extent.EndOffset) {
+                    $result = $token
+                    $token = $token -as [StringExpandableToken]
+                    if ($token) {
+                        $nested = FindToken $token.NestedTokens $cursor
+                        if ($nested) { $result = $nested }
+                    }
+
+                    return $result
+                }
+            }
+            return $null
+        }
+
+        $token = FindToken $tokens $cursor
+
+        # If we're on or inside a **quoted** string token (so not generic), we need to be smarter
+        if ($token -is [StringToken] -and $token.Kind -ne [TokenKind]::Generic) {
+            # If we're at the start of the string, assume we're inserting a new string
+            if ($token.Extent.StartOffset -eq $cursor) {
+                [Microsoft.PowerShell.PSConsoleReadLine]::Insert("$quote$quote ")
+                [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor + 1)
+                return
+            }
+
+            # If we're at the end of the string, move over the closing quote if present.
+            if ($token.Extent.EndOffset -eq ($cursor + 1) -and $line[$cursor] -eq $quote) {
+                [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor + 1)
+                return
+            }
+        }
+
+        if ($null -eq $token -or
+            $token.Kind -eq [TokenKind]::RParen -or $token.Kind -eq [TokenKind]::RCurly -or $token.Kind -eq [TokenKind]::RBracket) {
+            if ($line[0..$cursor].Where{$_ -eq $quote}.Count % 2 -eq 1) {
+                # Odd number of quotes before the cursor, insert a single quote
+                [Microsoft.PowerShell.PSConsoleReadLine]::Insert($quote)
+            }
+            else {
+                # Insert matching quotes, move cursor to be in between the quotes
+                [Microsoft.PowerShell.PSConsoleReadLine]::Insert("$quote$quote")
+                [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor + 1)
+            }
+            return
+        }
+
+        # If cursor is at the start of a token, enclose it in quotes.
+        if ($token.Extent.StartOffset -eq $cursor) {
+            if ($token.Kind -eq [TokenKind]::Generic -or $token.Kind -eq [TokenKind]::Identifier -or 
+                $token.Kind -eq [TokenKind]::Variable -or $token.TokenFlags.hasFlag([TokenFlags]::Keyword)) {
+                $end = $token.Extent.EndOffset
+                $len = $end - $cursor
+                [Microsoft.PowerShell.PSConsoleReadLine]::Replace($cursor, $len, $quote + $line.SubString($cursor, $len) + $quote)
+                [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($end + 2)
+                return
+            }
+        }
+
+        # We failed to be smart, so just insert a single quote
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert($quote)
+    }
+}
+Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
+#endregion
+
+#region InsertPariedBraces
+$setPSReadLineKeyHandlerSplat = @{
+    Chord = '(', '{', '['
+    BriefDescription = 'InsertPairedBraces'
+    Description = "Insert matching braces"
+    ScriptBlock = {
+        param($key, $arg)
+
+        $closeChar = switch ($key.KeyChar)
+        {
+            <#case#> '(' { [char]')'; break }
+            <#case#> '{' { [char]'}'; break }
+            <#case#> '[' { [char]']'; break }
+        }
+
+        $selectionStart = $null
+        $selectionLength = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$selectionStart, [ref]$selectionLength)
+
+        $line = $null
+        $cursor = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+        
+        if ($selectionStart -ne -1)
+        {
+          # Text is selected, wrap it in brackets
+          [Microsoft.PowerShell.PSConsoleReadLine]::Replace($selectionStart, $selectionLength, $key.KeyChar + $line.SubString($selectionStart, $selectionLength) + $closeChar)
+          [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($selectionStart + $selectionLength + 2)
+        } else {
+          # No text is selected, insert a pair
+          [Microsoft.PowerShell.PSConsoleReadLine]::Insert("$($key.KeyChar)$closeChar")
+          [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor + 1)
+        }
+    }
+}
+Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
+#endregion
+
+#region SmartCloseBraces
+$setPSReadLineKeyHandlerSplat = @{
+    Chord = ')', ']', '}'
+    BriefDescription = 'SmartCloseBraces'
+    Description = "Insert closing brace or skip"
+    ScriptBlock = {
+        param($key, $arg)
+
+        $line = $null
+        $cursor = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+
+        if ($line[$cursor] -eq $key.KeyChar)
+        {
+            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor + 1)
+        }
+        else
+        {
+            [Microsoft.PowerShell.PSConsoleReadLine]::Insert("$($key.KeyChar)")
+        }
+    }
+}
+Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
+#endregion
+
+#region SmartBackspace
+$setPSReadLineKeyHandlerSplat = @{
+    Chord = 'Backspace'
+    BriefDescription = 'SmartBackspace'
+    Description = "Delete previous character or matching quotes/parens/braces"
+    ScriptBlock = {
+        param($key, $arg)
+
+        $line = $null
+        $cursor = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+
+        if ($cursor -gt 0)
+        {
+            $toMatch = $null
+            if ($cursor -lt $line.Length)
+            {
+                switch ($line[$cursor])
+                {
+                    <#case#> '"' { $toMatch = '"'; break }
+                    <#case#> "'" { $toMatch = "'"; break }
+                    <#case#> ')' { $toMatch = '('; break }
+                    <#case#> ']' { $toMatch = '['; break }
+                    <#case#> '}' { $toMatch = '{'; break }
+                }
+            }
+
+            if ($toMatch -ne $null -and $line[$cursor-1] -eq $toMatch)
+            {
+                [Microsoft.PowerShell.PSConsoleReadLine]::Delete($cursor - 1, 2)
+            }
+            else
+            {
+                [Microsoft.PowerShell.PSConsoleReadLine]::BackwardDeleteChar($key, $arg)
+            }
+        }
+    }
+}
+Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
+#endregion
+
+Remove-Variable -Name @(
+    'setPSReadLineOptionSplat'
+    'setPSReadLineKeyHandlerSplat'
     'esc'
     'bg'
     'underline'
     'psReadLnVersion'
 )
-Remove-Variable -Name $rmVar
