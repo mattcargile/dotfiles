@@ -1,3 +1,4 @@
+# No Op for *nix {{ if ne .chezmoi.os "windows" }}
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 param()
 # profile.ps1 SHA256: {{ includeTemplate "dot_config/powershell/profile.ps1.tmpl" . | sha256sum }}
@@ -29,3 +30,4 @@ else {
         Copy-Item -Path $profileFilePath -Destination "$env:USERPROFILE\Documents\WindowsPowerShell\profile.ps1"
     }
 }
+# end {{ end }}
