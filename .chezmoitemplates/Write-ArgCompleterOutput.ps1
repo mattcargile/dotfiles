@@ -43,27 +43,47 @@ end {
     $argCompFiles = [System.Collections.Generic.List[psobject]]@()
 
     #region carapace completers first.
-    $env:CARAPACE_ENV = 0 # Don't add environment helper functions
-    $env:CARAPACE_EXCLUDES = 'ls,bat,rg,fd,gh,chezmoi,glow,bb,dotnet,winget,get-env,set-env,unset-env,ov,sudo,cp,ps,cat,rm,mv,mkdir,code,code-insiders' # Exclude completions that conflict or already exist from software creator.
-    # Need to add this to the path before running script because there is logic in the script to add this to the process. Need to make the script more consistent
-    $env:Path += ";$env:APPDATA\carapace\bin" -replace '\\', '/' # carapace golang binary uses forward slashes to check for path
-    $argCompFiles.Add( ( New-ArgCompleterObject -Script (carapace _carapace powershell | Out-String) -Comment 'Carapace Various Completions' ) )
-    Remove-Item Env:\CARAPACE_ENV, Env:\CARAPACE_EXCLUDES
+    if (Get-Command carapace -CommandType Application -ErrorAction Ignore) {
+        $env:CARAPACE_ENV = 0 # Don't add environment helper functions
+        $env:CARAPACE_EXCLUDES = 'ls,bat,rg,fd,gh,chezmoi,glow,bb,dotnet,winget,get-env,set-env,unset-env,ov,sudo,cp,ps,cat,rm,mv,mkdir,code,code-insiders' # Exclude completions that conflict or already exist from software creator.
+        # Need to add this to the path before running script because there is logic in the script to add this to the process. Need to make the script more consistent
+        $env:Path += ";$env:APPDATA\carapace\bin" -replace '\\', '/' # carapace golang binary uses forward slashes to check for path
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (carapace _carapace powershell | Out-String) -Comment 'Carapace Various Completions' ) )
+        Remove-Item Env:\CARAPACE_ENV, Env:\CARAPACE_EXCLUDES
+    }
 
     #endregion
     
     #region Add custom made files and strings for processing
-    $argCompFiles.Add( ( New-ArgCompleterObject -Script (fd --gen-completions powershell | Out-String) -Comment 'fd PSReadline Argument Completer') )
-    $argCompFiles.Add( ( New-ArgCompleterObject -Script (bat --completion ps1 | Out-String) -Comment 'bat PSReadline Argument Completer' ) )
-    $argCompFiles.Add( ( New-ArgCompleterObject -Script (rg --generate complete-powershell | Out-String) -Comment 'ripgrep (rg) PSReadline Argument Completer' ) )
-    $argCompFiles.Add( ( New-ArgCompleterObject -Script (gh completion --shell powershell | Out-String) -Comment 'gh GitHub.com Prompt Completions' ) )
-    $argCompFiles.Add( ( New-ArgCompleterObject -Script (chezmoi completion powershell | Out-String) -Comment 'chezmoi dotfile management Prompt Completions' ) )
-    $argCompFiles.Add( ( New-ArgCompleterObject -Script (glow completion powershell | Out-String) -Comment 'glow Markdown Viewer Prompt Completions' ) ) 
-    $argCompFiles.Add( ( New-ArgCompleterObject -Script (bb completion powershell | Out-String) -Comment 'bb Bitbucket Prompt Completions' ) ) 
-    $argCompFiles.Add( ( New-ArgCompleterObject -Script (ov --completion powershell | Out-String) -Comment 'ov Pager Prompt Completions' ) ) 
-    $env:DOTNET_NOLOGO = 'true' # Avoid welcome message on first run. Confusing output from chezmoi
-    $argCompFiles.Add( ( New-ArgCompleterObject -Script (dotnet completions script pwsh | Out-String) -Comment 'dotnet Prompt Completions' ) )
-    Remove-Item -Path Env:\DOTNET_NOLOGO
+    if (Get-Command fd -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (fd --gen-completions powershell | Out-String) -Comment 'fd PSReadline Argument Completer') )
+    }
+    if (Get-Command bat -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (bat --completion ps1 | Out-String) -Comment 'bat PSReadline Argument Completer' ) )
+    }
+    if (Get-Command rg -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (rg --generate complete-powershell | Out-String) -Comment 'ripgrep (rg) PSReadline Argument Completer' ) )
+    }
+    if (Get-Command gh -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (gh completion --shell powershell | Out-String) -Comment 'gh GitHub.com Prompt Completions' ) )
+    }
+    if (Get-Command chezmoi -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (chezmoi completion powershell | Out-String) -Comment 'chezmoi dotfile management Prompt Completions' ) )
+    }
+    if (Get-Command glow -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (glow completion powershell | Out-String) -Comment 'glow Markdown Viewer Prompt Completions' ) ) 
+    }
+    if (Get-Command bb -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (bb completion powershell | Out-String) -Comment 'bb Bitbucket Prompt Completions' ) ) 
+    }
+    if (Get-Command ov -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (ov --completion powershell | Out-String) -Comment 'ov Pager Prompt Completions' ) ) 
+    }
+    if (Get-Command dotnet -CommandType Application -ErrorAction Ignore) {
+        $env:DOTNET_NOLOGO = 'true' # Avoid welcome message on first run. Confusing output from chezmoi
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (dotnet completions script pwsh | Out-String) -Comment 'dotnet Prompt Completions' ) )
+        Remove-Item -Path Env:\DOTNET_NOLOGO
+    }
 
     # Any custom hand written completers add to argcompleter.ps1
     #endregion
