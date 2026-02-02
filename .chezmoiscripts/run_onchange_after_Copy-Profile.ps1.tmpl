@@ -4,7 +4,7 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$profileFilePath = "$env:USERPROFILE\.config\powershell\profile.ps1"
+$profileFilePath = "$HOME\.config\powershell\profile.ps1"
 $myDocumentsParentPath = Split-Path -Path $( [Environment]::GetFolderPath('MyDocuments') ) -Parent
 Write-Verbose -Message "MyDocuments Parent Path: $myDocumentsParentPath"
 $oneDriveRedirectPathWildcard = "$( Join-Path -Path $env:USERPROFILE -ChildPath 'OneDrive' )*"
