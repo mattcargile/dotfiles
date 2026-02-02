@@ -2,7 +2,8 @@
 # OhMyPosh prompt
 # executiontime postfix invisible spacing character for bug in wt.exe (https://github.com/JanDeDobbeleer/oh-my-posh/discussions/668)
 # Had to change the hourglass icon
-oh-my-posh init pwsh --config "$HOME\.config\oh-my-posh\night-owl_mac.omp.json" | Invoke-Expression
+$ompConfigPath = Join-Path -Path $HOME -ChildPath .config | Join-Path -ChildPath 'oh-my-posh' | Join-Path -ChildPath 'night-owl_mac.omp.json'
+oh-my-posh init pwsh --config $ompConfigPath | Invoke-Expression
 
 # Custom OMP Prompt Context
 function Set-MyOmpContext {
@@ -10,3 +11,5 @@ function Set-MyOmpContext {
     [System.Environment]::CurrentDirectory = (Get-Location -PSProvider FileSystem).ProviderPath
 }
 New-Alias -Name 'Set-PoshContext' -Value 'Set-MyOmpContext' -Description 'oh-my-posh Custom alias override' -Force
+
+Remove-Variable 'ompConfigPath'
