@@ -59,7 +59,15 @@ end {
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (fd --gen-completions powershell | Out-String) -Comment 'fd PSReadline Argument Completer') )
     }
     if (Get-Command bat -CommandType Application -ErrorAction Ignore) {
-        $argCompFiles.Add( ( New-ArgCompleterObject -Script (bat --completion ps1 | Out-String) -Comment 'bat PSReadline Argument Completer' ) )
+        # --completion wasn't added until around 0.26.1
+        bat --version |
+            ForEach-Object -Process {
+                [version]($_ -split ' ')[1]
+            } |
+            Where-Object -FilterScript { $_ -ge [version]'0.26.1' } |
+            ForEach-Object -Process {
+                $argCompFiles.Add( ( New-ArgCompleterObject -Script (bat --completion ps1 | Out-String) -Comment 'bat PSReadline Argument Completer' ) )
+            }
     }
     if (Get-Command rg -CommandType Application -ErrorAction Ignore) {
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (rg --generate complete-powershell | Out-String) -Comment 'ripgrep (rg) PSReadline Argument Completer' ) )
