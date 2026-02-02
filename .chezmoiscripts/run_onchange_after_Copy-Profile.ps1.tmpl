@@ -1,4 +1,4 @@
-# No Op for *nix {{ if ne .chezmoi.os "windows" }}
+# No Op for *nix {{ if eq .chezmoi.os "windows" }}
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 param()
 # profile.ps1 SHA256: {{ includeTemplate "dot_config/powershell/profile.ps1.tmpl" . | sha256sum }}
