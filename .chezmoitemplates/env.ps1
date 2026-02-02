@@ -22,7 +22,8 @@ $FzfIconTheme = "--color='prompt:#00897b,pointer:#c386f1,marker:#ff479c'"
 # powershell.exe doesn't handle the raw UTF-8 character because of $OutputEncoding and [Console]::OutputEncoding/InputEncoding
 $FzfIcons = "--prompt='$([char]0xF054) ' --pointer='$([char]0xDB81)$([char]0xDF0B) ' --marker='$([char]0xF444)'"
 $FzfLayout = '--border=rounded --padding=1 --margin=1'
-$FzfHistory = "--history='$HOME\.config\fzf\.fzf_history'"
+$fzfHistoryPath = Join-Path -Path $HOME -ChildPath '.config' | Join-Path -ChildPath 'fzf' | Join-Path -ChildPath '.fzf_history'
+$FzfHistory = "--history='$fzfHistoryPath'"
 # Go to first item upon key entry change
 $FzfBind = '--bind change:first'
 $env:FZF_DEFAULT_OPTS = "$FzfTheme $FzfIconTheme $FzfIcons $FzfLayout $FzfHistory $FzfBind"
@@ -37,25 +38,29 @@ $env:FZF_ALT_C_OPTS = ''
 $env:FZF_CTRL_R_OPTS = ''
 
 # User level environment variable. Not sure how it was configured.
+# chezmoi choco env var {{ if eq .chezmoi.os "windows" }}
 $env:ChocolateyToolsLocation = "C:\tools"
+# end {{ end }}
 
 # carapace completions use PSReadLine tooltip
 $env:CARAPACE_TOOLTIP = 1 # Powershell tooltip
 
 $envvarPathSeperator = [System.IO.Path]::PathSeparator
 $envvarPathsToAdd = [System.Collections.Generic.List[string]]@(
-    if ($IsWindows -or $PSVersionTable.PSEdition -eq 'Desktop') {
-        "$env:OneDrive\Documents\exe" # Custom miscellaneous exe folder
-        'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64' # For wsdl.exe to handle SOAP endpoints to web services.
-        "$env:APPDATA\carapace\bin" # carapace likes to have this in the process path for a feature. The binary does use forward slashes though
-    }
+    # chezmoi windows path if block {{ if eq .chezmoi.os "windows" }}
+    "$env:OneDrive\Documents\exe" # Custom miscellaneous exe folder
+    'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64' # For wsdl.exe to handle SOAP endpoints to web services.
+    "$env:APPDATA\carapace\bin" # carapace likes to have this in the process path for a feature. The binary does use forward slashes though
+    # end {{ end }}
 ) 
+# chezmoi windows py if block {{ if eq .chezmoi.os "windows" }}
 if (Get-Command py -CommandType Application -ErrorAction Ignore) {
     # Something broke in Windows with py.exe Launcher and oh-my-posh.exe
     # This keeps the python segment from breaking on the Downloads folder and others
     # Additionally python.exe and python3.exe exist in the path as stubs that further complicate things.
     $envvarPathsToAdd.Add( [System.IO.Directory]::GetParent( (py -3 -c "import sys; print (sys.executable)")).FullName )
 }
+# end {{ end }}
 $envvarP = $null
 $envvarEscP = $null
 foreach ($envvarP in $envvarPathsToAdd) {   
@@ -72,7 +77,8 @@ $lessDefaultParams = '--raw-control-chars --ignore-case --quit-if-one-screen --q
 
 # less.exe Settings
 $env:LESS = $lessDefaultParams # Options which are passed to less.exe automatically.
-$env:LESSHISTFILE = "$HOME\_lesshst"
+$lessHistPath = Join-Path -Path $HOME -ChildPath '_lesshst'
+$env:LESSHISTFILE = $lessHistPath 
 $env:LESSCHARSET = 'utf-8'
 $env:VISUAL = 'code' # Read by less.exe. Otherwise vi is the default. EDITOR is used also but not sure if other applications use this variable.
 $env:LESSEDIT = '%E ?l--goto %g\:%l:%g.' # If line number is known, go to it. Otherwise open the file.
@@ -101,6 +107,7 @@ Remove-Variable -Name @(
     'FzfIconTheme'
     'FzfIcons'
     'FzfLayout'
+    'fzfHistoryPath'
     'FzfHistory'
     'FzfBind'
     'envvarPathSeperator'
@@ -109,4 +116,5 @@ Remove-Variable -Name @(
     'envvarEscP'
     'lessDefaultParams'
     'ripGrepConfigPath'
+    'lessHistPath'
 )
