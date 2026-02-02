@@ -54,7 +54,7 @@ end {
             }
         }
     }
-        '' # Empty CRLF to all parseable psd1 and correct chezmoi output
+        '' # Empty CRLF to allow parseable psd1 and correct chezmoi output
     $publicFunctionAliasesAll | Sort-Object | ForEach-Object -Process {
         "    '$_'"
     }
