@@ -1,2 +1,6 @@
+{{ if ne .chezmoi.os "windows" }}
+.chezmoiscripts/run_onchange_after_Copy-Profile.ps1.tmpl
+.chezmoiscripts/run_onchange_after-Copy-PowerShellConfig.ps1.tmpl
+{{ end }}
 LICENSE
 README.md
