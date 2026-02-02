@@ -22,7 +22,7 @@ $setPSReadLineOptionSplat = @{
         Error              = "$esc[38;2;139;0;0m"       #8b0000
     }
     # HistorySavePath = "$env:OneDrive\Documents\.config\pwsh\PSReadLine\All$($Host.Name)_history.txt" # Microsoft Defender On Sharepoint throws malware warnings
-    HistorySavePath = "$env:USERPROFILE\.config\PSReadLine\All$($Host.Name)_history.txt"
+    HistorySavePath = "$HOME\.config\PSReadLine\All$($Host.Name)_history.txt"
     MaximumHistoryCount = 500000
     HistoryNoDuplicates = $true
     # By default PSReadline removes "password", "cred", etc items from history. This forces save of all commands to history.

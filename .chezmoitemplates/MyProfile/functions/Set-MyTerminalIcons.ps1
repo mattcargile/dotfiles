@@ -11,8 +11,8 @@ function Set-MyTerminalIcons {
     }
     
     end {
-        Add-TerminalIconsColorTheme -Path "$env:USERPROFILE\.config\powershell\Terminal-Icons\colorThemes\mac.psd1" -Force
-        Add-TerminalIconsIconTheme -Path "$env:USERPROFILE\.config\powershell\Terminal-Icons\iconThemes\mac.psd1" -Force
+        Add-TerminalIconsColorTheme -Path "$HOME\.config\powershell\Terminal-Icons\colorThemes\mac.psd1" -Force
+        Add-TerminalIconsIconTheme -Path "$HOME\.config\powershell\Terminal-Icons\iconThemes\mac.psd1" -Force
         if ( (Get-TerminalIconsTheme).Icon.Name -ne 'mac') {
             Set-TerminalIconsTheme -ColorTheme 'mac' -IconTheme 'mac'
         }
