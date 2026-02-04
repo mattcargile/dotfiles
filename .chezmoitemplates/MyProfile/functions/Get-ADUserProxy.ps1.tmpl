@@ -24,9 +24,46 @@ function Get-ADUserProxy {
         $SamAccountName,
         # Uses -Filter with * wildcard support on displayName property
         [Parameter(ParameterSetName = 'Filter')]
-        [Alias('dn', 'nm')]
+        [Alias('dn')]
         [string]
         $DisplayName,
+        # Uses -Filter with * wildcard support on Name property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias('nm')]
+        [string]
+        $Name,
+        # Uses -Filter with * wildcard support on Title property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias('tt')]
+        [string]
+        $Title,
+        # Uses -Filter with * wildcard support on physicalDeliveryOfficeName property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias('pdon', 'PhysicalDeliveryOfficeName')]
+        [string]
+        $Office,
+        # Uses -Filter with -eq $true on Enabled property
+        # Password expiration is complicated so best to filter outside the function
+        # with the PasswordExpired computed property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias()]
+        [switch]
+        $Enabled,
+        # Uses -Filter with -eq $false on Enabled property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias('dis', 'de')]
+        [switch]
+        $Disabled,
+        # Uses -Filter with -eq $true on LockedOut property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias('lo')]
+        [switch]
+        $LockedOut,
+        # Uses -Filter with -eq $false on LockedOut property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias('ul', 'NotLockedOut')]
+        [switch]
+        $Unlocked,
         # See help on Get-ADUser. Same as -Filter on main command but without the Mandatory Attribute
         [Parameter(ParameterSetName = 'Filter')]
         [string]
@@ -39,6 +76,13 @@ function Get-ADUserProxy {
             # Need to remove non-default bound parameters otherwise `GetCommand` doesn't return `.Parameters`
             $PSBoundParameters.Remove('SamAccountName') | Out-Null # Returns true or false if it removed or didn't remove the key
             $PSBoundParameters.Remove('DisplayName') | Out-Null
+            $PSBoundParameters.Remove('Name') | Out-Null
+            $PSBoundParameters.Remove('Title') | Out-Null
+            $PSBoundParameters.Remove('Office') | Out-Null
+            $PSBoundParameters.Remove('Enabled') | Out-Null
+            $PSBoundParameters.Remove('Disabled') | Out-Null
+            $PSBoundParameters.Remove('LockedOut') | Out-Null
+            $PSBoundParameters.Remove('Unlocked') | Out-Null
             $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADUser', [System.Management.Automation.CommandTypes]::Cmdlet, $PSBoundParameters)
             $dynamicParams = @($targetCmd.Parameters.GetEnumerator() | Microsoft.PowerShell.Core\Where-Object { $_.Value.IsDynamic })
             if ($dynamicParams.Length -gt 0) {
@@ -67,17 +111,63 @@ function Get-ADUserProxy {
                 $PSBoundParameters['OutBuffer'] = 1
             }
             if ($PSCmdlet.ParameterSetName -eq 'Filter') {
-                if (-not $SamAccountName -and -not $DisplayName -and -not $Filter) {
+                if (-not $SamAccountName -and
+                    -not $DisplayName -and
+                    -not $Name -and
+                    -not $Title -and
+                    -not $Office -and
+                    -not $Enabled -and
+                    -not $Disabled -and
+                    -not $LockedOut -and
+                    -not $Unlocked -and
+                    -not $Filter
+                ) {
                     throw 'Must provider at least SamAccountName, DisplayName or Filter parameter.'
                 }
+                if ($Enabled -and $Disabled) {
+                    throw [ArgumentException]::new('Can''t supply both Disabled and Enabled parameters. Use only one of them.', 'Disabled,Enabled')
+                }
+                if ($LockedOut -and $Unlocked) {
+                    throw [ArgumentException]::new('Can''t supply both LockedOut and Unlocked parameters. Use only one of them.', 'LockedOut,Unlocked')
+                }
+
+                $enabledFilterValue = $null
+                if ($Enabled) {
+                    $enabledFilterValue = $true
+                }
+                elseif ($Disabled) {
+                    $enabledFilterValue = $false 
+                }
+                $lockedOutFilterValue = $null
+                if ($LockedOut) {
+                    $lockedOutFilterValue = 0
+                }
+                $unlockedFilterValue = $null
+                if ($Unlocked) {
+                    $unlockedFilterValue = 0
+                }
+
                 $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
                     Write-ADAndFilter SamAccountName $SamAccountName -Verbose:$false |
-                    Write-ADAndFilter DisplayName $DisplayName -Verbose:$false
+                    Write-ADAndFilter DisplayName $DisplayName -Verbose:$false |
+                    Write-ADAndFilter Name $Name -Verbose:$false |
+                    Write-ADAndFilter Title $Title -Verbose:$false |
+                    Write-ADAndFilter Office $Office -Verbose:$false |
+                    Write-ADAndFilter Enabled $enabledFilterValue -EQ -Verbose:$false |
+                    Write-ADAndFilter lockoutTime $lockedOutFilterValue -GT -Verbose:$false |
+                    Write-ADAndFilter lockoutTime $unlockedFilterValue -EQ -Verbose:$false
                 Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
 
                 # Removing parameters not included on proxied command
                 $PSBoundParameters.Remove('SamAccountName') | Out-Null
                 $PSBoundParameters.Remove('DisplayName') | Out-Null
+                $PSBoundParameters.Remove('Name') | Out-Null
+                $PSBoundParameters.Remove('Title') | Out-Null
+                $PSBoundParameters.Remove('Office') | Out-Null
+                $PSBoundParameters.Remove('Enabled') | Out-Null
+                $PSBoundParameters.Remove('Disabled') | Out-Null
+                $PSBoundParameters.Remove('LockedOut') | Out-Null
+                $PSBoundParameters.Remove('Unlocked') | Out-Null
             }
 
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADUser', [System.Management.Automation.CommandTypes]::Cmdlet)

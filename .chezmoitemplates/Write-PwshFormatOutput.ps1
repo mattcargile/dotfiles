@@ -12,8 +12,8 @@ end {
     #region ActiveDirectory
     $writeFormatViewSplat = @{
         TypeName = 'Microsoft.ActiveDirectory.Management.ADUser'
-        Property = 'SamAccountName', 'DisplayName', 'Enabled', 'LockedOut', 'PasswordExpired', 'Title', 'physicalDeliveryOfficeName'
-        Width = 20, 25, 10, 10, 15, 25, 30
+        Property = 'SamAccountName', 'DisplayName', 'Enabled', 'LockedOut', 'PasswordExpired', 'Title', 'Office'
+        Width = 20, 25, 10, 10, 15, 35, 35
     }
     $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
     $writeFormatViewSplat = @{
@@ -32,6 +32,13 @@ end {
         TypeName = 'Microsoft.ActiveDirectory.Management.ADPrincipal'
         Property = 'ADGroup', 'SamAccountName', 'Name', 'objectClass', 'DistinguishedName'
         Width = 30, 30, 30, 13, 80
+    }
+    $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
+    # Search-ADAccount returns this and has ADGroup added
+    $writeFormatViewSplat = @{
+        TypeName = 'Microsoft.ActiveDirectory.Management.ADAccount'
+        Property = 'SamAccountName', 'Name', 'objectClass', 'DistinguishedName'
+        Width = 30, 30, 13, 80
     }
     $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
 

@@ -11,29 +11,54 @@ Take the currently bound `-Filter` and add the `-and` if necessary and the `Desc
 and then return the string
 #>
 function Write-ADAndFilter {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Like')]
     [OutputType([string])]
     param (
         # The `-Filter` value to add to or return
-        [Parameter(ValueFromPipeline, Position = 2)]
+        [Parameter(ParameterSetName = 'Like', ValueFromPipeline, Position = 2)]
+        [Parameter(ParameterSetName = 'EqualTo', ValueFromPipeline, Position = 2)]
+        [Parameter(ParameterSetName = 'GreaterThan', ValueFromPipeline, Position = 2)]
         [AllowEmptyString()]
         [AllowNull()]
         [string]
         $Filter,
         # The property to filter on
-        [Parameter(Mandatory, Position = 0)]
+        [Parameter(ParameterSetName = 'Like', Mandatory, Position = 0)]
+        [Parameter(ParameterSetName = 'EqualTo', Mandatory, Position = 0)]
+        [Parameter(ParameterSetName = 'GreaterThan', Mandatory, Position = 0)]
         [string]
         $PropertyName,
         # The propery value to check
-        [Parameter(Position = 1)]
+        [Parameter(ParameterSetName = 'Like', Position = 1)]
+        [Parameter(ParameterSetName = 'EqualTo', Position = 1)]
+        [Parameter(ParameterSetName = 'GreaterThan', Position = 1)]
         [AllowEmptyString()]
         [AllowNull()]
         [string]
-        $PropertyValue
+        $PropertyValue,
+        # Allow -like override for switch type or bool type properties which don't support -like
+        # Forces the PropertyValue to match on the exact string value
+        [Parameter(ParameterSetName = 'EqualTo')]
+        [switch]
+        $EQ,
+        # Allow -like override for switch type or bool type properties which don't support -like
+        # Forces the PropertyValue to match on the exact string value
+        [Parameter(ParameterSetName = 'GreaterThan')]
+        [switch]
+        $GT
     )
     
     process {
-        $baseFilter = "$PropertyName -like `$$PropertyName" 
+        $baseFilterFormat = "$PropertyName {0} {1}" 
+        if ($EQ) {
+            $baseFilter = $baseFilterFormat -f '-eq', "'$($PropertyValue -replace "'", "''" )'"
+        }
+        elseif ($GT) {
+            $baseFilter = $baseFilterFormat -f '-gt', "'$($PropertyValue -replace "'", "''" )'"
+        }
+        else {
+            $baseFilter = $baseFilterFormat -f '-like', "`$$PropertyName"
+        }
         if (-not $Filter) {
             Write-Verbose 'Filter is null or empty.'
             if (-not $PropertyValue) {
