@@ -147,8 +147,11 @@ function Get-InstalledSoftware {
                                         $subKey.Name, $exp.NativeErrorCode, $exp.Message)
                                     $PSC.WriteError($err)
                                 }
+                                Write-Information -MessageData $filetime -Tags FILETIME
                                 $filetime64 = [uint64]$filetime.dwHighDateTime -shl 32 -bor ($filetime.dwLowDateTime -band [uint32]::MaxValue)
+                                Write-Information -MessageData $filetime64 -Tags FILETIME, 64bit
                                 $installedOnDt = [datetime]::FromFileTime($filetime64)
+                                Write-Information -MessageData $installedOnDt -Tags FILETIME, 64bit, Datetime
                             }
 
                             $outInsSoft = [PSCustomObject]@{
