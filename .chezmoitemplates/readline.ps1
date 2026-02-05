@@ -139,7 +139,7 @@ $setPSReadLineKeyHandlerSplat = @{
                 if ($cursor -lt $token.Extent.StartOffset) { continue }
                 if ($cursor -lt $token.Extent.EndOffset) {
                     $result = $token
-                    $token = $token -as [StringExpandableToken]
+                    $token = $token -as [System.Management.Automation.Language.StringExpandableToken]
                     if ($token) {
                         $nested = FindToken $token.NestedTokens $cursor
                         if ($nested) { $result = $nested }
@@ -154,7 +154,9 @@ $setPSReadLineKeyHandlerSplat = @{
         $token = FindToken $tokens $cursor
 
         # If we're on or inside a **quoted** string token (so not generic), we need to be smarter
-        if ($token -is [StringToken] -and $token.Kind -ne [TokenKind]::Generic) {
+        if ($token -is [System.Management.Automation.Language.StringToken] -and
+            $token.Kind -ne [System.Management.Automation.Language.TokenKind]::Generic
+        ) {
             # If we're at the start of the string, assume we're inserting a new string
             if ($token.Extent.StartOffset -eq $cursor) {
                 [Microsoft.PowerShell.PSConsoleReadLine]::Insert("$quote$quote ")
@@ -170,7 +172,10 @@ $setPSReadLineKeyHandlerSplat = @{
         }
 
         if ($null -eq $token -or
-            $token.Kind -eq [TokenKind]::RParen -or $token.Kind -eq [TokenKind]::RCurly -or $token.Kind -eq [TokenKind]::RBracket) {
+            $token.Kind -eq [System.Management.Automation.Language.TokenKind]::RParen -or
+                $token.Kind -eq [System.Management.Automation.Language.TokenKind]::RCurly -or
+                $token.Kind -eq [System.Management.Automation.Language.TokenKind]::RBracket
+            ) {
             if ($line[0..$cursor].Where{$_ -eq $quote}.Count % 2 -eq 1) {
                 # Odd number of quotes before the cursor, insert a single quote
                 [Microsoft.PowerShell.PSConsoleReadLine]::Insert($quote)
@@ -185,8 +190,11 @@ $setPSReadLineKeyHandlerSplat = @{
 
         # If cursor is at the start of a token, enclose it in quotes.
         if ($token.Extent.StartOffset -eq $cursor) {
-            if ($token.Kind -eq [TokenKind]::Generic -or $token.Kind -eq [TokenKind]::Identifier -or 
-                $token.Kind -eq [TokenKind]::Variable -or $token.TokenFlags.hasFlag([TokenFlags]::Keyword)) {
+            if ($token.Kind -eq [System.Management.Automation.Language.TokenKind]::Generic -or
+                $token.Kind -eq [System.Management.Automation.Language.TokenKind]::Identifier -or 
+                $token.Kind -eq [System.Management.Automation.Language.TokenKind]::Variable -or
+                $token.TokenFlags.hasFlag([System.Management.Automation.Language.TokenFlags]::Keyword)
+            ) {
                 $end = $token.Extent.EndOffset
                 $len = $end - $cursor
                 [Microsoft.PowerShell.PSConsoleReadLine]::Replace($cursor, $len, $quote + $line.SubString($cursor, $len) + $quote)
