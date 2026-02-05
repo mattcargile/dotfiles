@@ -207,12 +207,7 @@ function Get-InstalledSoftware {
             
             $allNames = [System.Collections.Generic.List[string]]::new($startingCapacity)
         }
-        if ($Name.Count -gt 1) {
-            foreach ($nm in $Name) { $allNames.Add($nm) }
-        }
-        else {
-            $allNames.Add($Name)
-        }
+        foreach ($nm in $Name) { $allNames.Add($nm) }
     }
     end {
         if ($null -ne $allNames) {
