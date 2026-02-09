@@ -1,14 +1,12 @@
-$ompConfigPath = Join-Path -Path $HOME -ChildPath .config | Join-Path -ChildPath 'oh-my-posh' | Join-Path -ChildPath 'night-owl_mac.omp.json'
 # chezmoi HomeBrew Shell Env if block {{ if lookPath "/home/linuxbrew/.linuxbrew/bin/brew" }}
 & /home/linuxbrew/.linuxbrew/bin/brew shellenv | Invoke-Expression
 # end {{ end }}
-oh-my-posh init pwsh --config $ompConfigPath | Invoke-Expression
+oh-my-posh init pwsh --config "$([System.IO.Path]::Combine( $HOME, '.config', 'oh-my-posh', 'night-owl_mac.omp.json' ))" | Invoke-Expression
 
 # Custom OMP Prompt Context
 function Set-MyOmpContext {
+    [Alias('Set-PoshContext')]
+    param()
     # Update process level directory. Helps with .Net Methods.
     [System.Environment]::CurrentDirectory = (Get-Location -PSProvider FileSystem).ProviderPath
 }
-New-Alias -Name 'Set-PoshContext' -Value 'Set-MyOmpContext' -Description 'oh-my-posh Custom alias override' -Force
-
-Remove-Variable 'ompConfigPath'

@@ -18,7 +18,7 @@ Import-Module -Name @(
     'PowerShellHumanizer' # Used for File and Directory time and length formatting. Need to import because libraries are used.
     'Terminal-Icons' # Need to import first so I can override the default formatter further downstream. Used for icons of File and Directory 
     'ZLocation2' # Forked z-cd jumper. Original repo isn't active.
-    "$HOME\.config\powershell\MyProfile\MyProfile.psd1"
+    [System.IO.Path]::Combine( [string[]]@( $HOME, '.config', 'powershell', 'MyProfile', 'MyProfile.psd1' ) )
 )
 
 # Helper Visual Studio Code Command Palette operations ( i.e. EditorServicesCommandSuite )
@@ -59,6 +59,6 @@ if ($IsCoreCLR) {
 #endregion
 
 #region Custom Types and Format
-Update-FormatData -PrependPath "$HOME\.config\powershell\profile.format.ps1xml"
-Update-TypeData -PrependPath "$HOME\.config\powershell\profile.types.ps1xml"
+Update-FormatData -PrependPath ( [System.IO.Path]::Combine( $HOME, '.config', 'powershell', 'profile.format.ps1xml' ) )
+Update-TypeData -PrependPath ( [System.IO.Path]::Combine( $HOME, '.config', 'powershell', 'profile.types.ps1xml' ) )
 #endregion
