@@ -1,4 +1,4 @@
-# No Op for *nix {{ if eq .chezmoi.os "windows" }}
+# No Op for *nix because files are in correct location already {{ if eq .chezmoi.os "windows" }}
 [CmdletBinding()]
 param()
 # powershell.config.json SHA256: {{ include "dot_config/powershell/powershell.config.json" | sha256sum }}
