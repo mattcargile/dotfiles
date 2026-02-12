@@ -224,6 +224,7 @@ function Get-CimInstanceService {
                         '%\\Common Files\\Adobe\\%'
                         '%\\Microsoft\\Microsoft Search in Bing\\%'
                         '%\\Microsoft OneDrive\\%'
+                        '%\\Symantec\\Symantec Endpoint Protection\\%'
                     )
                     $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
                         Write-CimFilter PathName $notPathName -Not -Verbose:$false
