@@ -1,5 +1,5 @@
-# Join-String chezmoi if block {{ if eq .isPSCore true }}
-function Join-String {
+# Join-StringProxy chezmoi if block {{ if eq .isPSCore true }}
+function Join-StringProxy {
     [CmdletBinding(DefaultParameterSetName = 'default', RemotingCapability = 'None')]
     [Alias('join')]
     param(
@@ -83,10 +83,5 @@ function Join-String {
         }
     }
 }
-<#
-
-.ForwardHelpTargetName Microsoft.PowerShell.Utility\Join-String
-.ForwardHelpCategory Cmdlet
-
-#>
+# Forwarding help doesn't work because parameter positions are different
 # end {{ end }}
