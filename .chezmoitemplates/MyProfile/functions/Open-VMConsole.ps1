@@ -2,11 +2,10 @@ function Open-VMConsole {
     [CmdletBinding()]
     [Alias('opvmc')]
     param(
-        # VM Name
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [Alias('Name', 'VM')]
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Alias('VMName', 'VM', 'ComputerName')]
         [object[]]
-        $VMName
+        $Name
     )
     process {
         $vmlist = 

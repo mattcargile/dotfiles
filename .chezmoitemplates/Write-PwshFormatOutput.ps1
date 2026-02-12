@@ -258,7 +258,7 @@ end {
     }
     $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
 
-    # .\functions\Get-ChildItemWide.ps1
+    # Get-ChildItemWide.ps1
     $writeFormatViewSplat = @{
         FormatXml = @"
         <SelectionSet>
