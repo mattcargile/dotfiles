@@ -25,11 +25,11 @@ end {
         $ast = [System.Management.Automation.Language.Parser]::ParseFile( $currentFile, [ref]$tkns, [ref]$err )
         if ($err) {
             Write-Information -MessageData $err -Tags 'ParserError'
-            Write-Error "[$($ac.Comment)] $($err.Message) Start Line $($err.Extent.StartLineNumber) and Start Column $($err.Extent.StartColumnNumber)."
+            Write-Error "[$($currentFile.Name)] $($err.Message) Start Line $($err.Extent.StartLineNumber) and Start Column $($err.Extent.StartColumnNumber)."
             continue
         }
         if ($ast.BeginBlock -or $ast.CleanBlock -or $ast.DynamicParamBlock -or $ast.ProcessBlock -or $ast.ParamBlock -or $ast.ScriptRequirements) {
-            Write-Error -Message "[$($ac.Comment)] Ast in a form that isn't expected and includes more code blocks than only End Block. Continuing to next item."
+            Write-Error -Message "[$($currentFile.Name)] Ast in a form that isn't expected and includes more code blocks than only End Block. Continuing to next item."
             continue
         }
         Write-Information -MessageData $ast -Tags Ast
