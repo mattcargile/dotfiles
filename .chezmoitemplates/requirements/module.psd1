@@ -104,10 +104,6 @@
         PSEdition = 'Desktop'
         Scope = 'AllUsers'
     }
-    PSUtil = @{
-        PSEdition = 'Desktop'
-        Scope = 'AllUsers'
-    }
     PSNative = @{
         PSEdition = 'Desktop'
         Scope = 'AllUsers'
