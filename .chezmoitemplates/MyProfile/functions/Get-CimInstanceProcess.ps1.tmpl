@@ -202,7 +202,16 @@ function Get-CimInstanceProcess {
         [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
         [Alias('pt', 'ExecutablePath')]
         [string[]]
-        ${Path}
+        ${Path},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet')]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet')]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
+        [Alias('pid')]
+        [string[]]
+        ${ProcessId}
+
     )
 
     begin {
@@ -269,7 +278,8 @@ function Get-CimInstanceProcess {
                 }
                 $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
                     Write-CimFilter Name $Name -Escape:$EscapeCimProxyFilterParameter -Verbose:$false |
-                    Write-CimFilter ExecutablePath $Path -Escape:$EscapeCimProxyFilterParameter -Verbose:$false
+                    Write-CimFilter ExecutablePath $Path -Escape:$EscapeCimProxyFilterParameter -Verbose:$false |
+                    Write-CimFilter ProcessId $ProcessId -Escape:$EscapeCimProxyFilterParameter -Verbose:$false
 
                 # Remove parameters not on proxied command
                 $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found
@@ -277,6 +287,7 @@ function Get-CimInstanceProcess {
                 $PSBoundParameters.Remove('EscapeProxyFilterParameter') | Out-Null
                 $PSBoundParameters.Remove('Name') | Out-Null
                 $PSBoundParameters.Remove('Path') | Out-Null
+                $PSBoundParameters.Remove('ProcessId') | Out-Null
             }
             $PSBoundParameters['ClassName'] = 'Win32_Process'
             $customPSTypeNameBase = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
