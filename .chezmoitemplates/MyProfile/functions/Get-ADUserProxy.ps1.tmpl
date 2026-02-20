@@ -42,6 +42,10 @@ function Get-ADUserProxy {
         [Alias('pdon', 'PhysicalDeliveryOfficeName')]
         [string]
         $Office,
+        # Uses -Filter with * wildcard support on Sid property
+        [Parameter(ParameterSetName = 'Filter')]
+        [string]
+        $Sid,
         # Uses -Filter with -eq $true on Enabled property
         # Password expiration is complicated so best to filter outside the function
         # with the PasswordExpired computed property
@@ -79,6 +83,7 @@ function Get-ADUserProxy {
             $PSBoundParameters.Remove('Name') | Out-Null
             $PSBoundParameters.Remove('Title') | Out-Null
             $PSBoundParameters.Remove('Office') | Out-Null
+            $PSBoundParameters.Remove('Sid') | Out-Null
             $PSBoundParameters.Remove('Enabled') | Out-Null
             $PSBoundParameters.Remove('Disabled') | Out-Null
             $PSBoundParameters.Remove('LockedOut') | Out-Null
@@ -116,6 +121,7 @@ function Get-ADUserProxy {
                     -not $Name -and
                     -not $Title -and
                     -not $Office -and
+                    -not $Sid -and
                     -not $Enabled -and
                     -not $Disabled -and
                     -not $LockedOut -and
@@ -153,6 +159,7 @@ function Get-ADUserProxy {
                     Write-ADAndFilter Name $Name -Verbose:$false |
                     Write-ADAndFilter Title $Title -Verbose:$false |
                     Write-ADAndFilter Office $Office -Verbose:$false |
+                    Write-ADAndFilter SID $Sid -Verbose:$false |
                     Write-ADAndFilter Enabled $enabledFilterValue -EQ -Verbose:$false |
                     Write-ADAndFilter lockoutTime $lockedOutFilterValue -GT -Verbose:$false |
                     Write-ADAndFilter lockoutTime $unlockedFilterValue -EQ -Verbose:$false
@@ -164,6 +171,7 @@ function Get-ADUserProxy {
                 $PSBoundParameters.Remove('Name') | Out-Null
                 $PSBoundParameters.Remove('Title') | Out-Null
                 $PSBoundParameters.Remove('Office') | Out-Null
+                $PSBoundParameters.Remove('Sid') | Out-Null
                 $PSBoundParameters.Remove('Enabled') | Out-Null
                 $PSBoundParameters.Remove('Disabled') | Out-Null
                 $PSBoundParameters.Remove('LockedOut') | Out-Null
