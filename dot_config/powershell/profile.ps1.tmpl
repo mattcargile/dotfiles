@@ -16,7 +16,6 @@
 Import-Module -Name @(
     'ClassExplorer' # Helps with exploration of libraries and objects
     'PowerShellHumanizer' # Used for File and Directory time and length formatting. Need to import because libraries are used.
-    'Terminal-Icons' # Need to import first so I can override the default formatter further downstream. Used for icons of File and Directory 
     'ZLocation2' # Forked z-cd jumper. Original repo isn't active.
     [System.IO.Path]::Combine( [string[]]@( $HOME, '.config', 'powershell', 'MyProfile', 'MyProfile.psd1' ) )
 )

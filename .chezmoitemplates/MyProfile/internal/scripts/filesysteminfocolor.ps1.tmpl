@@ -1,0 +1,2 @@
+{{- $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .sourceDir ".chezmoitemplates" "Write-FileSystemInfoColorAnsiEsc.ps1" ) -}}
+{{- outputList "pwsh" $argCompleterArgList -}}

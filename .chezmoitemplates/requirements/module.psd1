@@ -132,10 +132,6 @@
         PSEdition = 'Desktop'
         Scope = 'AllUsers'
     }
-    'Terminal-Icons' = @{
-        PSEdition = 'Desktop'
-        Scope = 'AllUsers'
-    }
     Testimo = @{
         PSEdition = 'Desktop'
         Scope = 'AllUsers'

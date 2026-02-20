@@ -1,5 +1,4 @@
 @{
-    Name  = 'mac'
     Types = @{
         Directories = @{
             symlink  = '7373ff'
@@ -27,8 +26,9 @@
                 music                                       = 'DB7093'
                 songs                                       = 'DB7093'
                 onedrive                                    = 'D3D3D3'
-                {{ if ne .workOneDriveBusinessName "" }}'onedrive - {{ lower .workOneDriveBusinessName -}}'          = 'D3D3D3'{{ end }}
-                {{ if ne .workOneDriveBusinessName "" }}'{{- lower .workOneDriveBusinessName -}}'                     = 'D3D3D3'{{ end }}
+                # chezmoi if block work onedrive and sharepoint {{ if ne .workOneDriveBusinessName "" }}
+                'onedrive - {{ lower .workOneDriveBusinessName -}}'          = 'D3D3D3'
+                '{{- lower .workOneDriveBusinessName -}}'                     = 'D3D3D3' # chezmoi end block {{- end }}
                 downloads                                   = 'D3D3D3'
                 src                                         = '00FF7F'
                 development                                 = '00FF7F'

@@ -1,1 +1,3 @@
+{{- /* chezmoi:template:encoding=utf-8-bom */ -}}
+{{- /* Windows Powershell Desktop requires UTF-8 With Byte Order Mark or parsing fails as it defaults to older ANSI/ASCII encoding */ -}}
 {{ template "MyProfile/MyProfile.psm1.tmpl" . }}

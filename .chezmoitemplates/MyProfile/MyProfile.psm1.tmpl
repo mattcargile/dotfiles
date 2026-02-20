@@ -1,6 +1,6 @@
 {{- $isPSCore := hasPrefix "core" ( base .chezmoi.sourceFile ) -}}
 {{- $isWindows := eq .chezmoi.os "windows" -}}
-{{- $tmplDict := dict "isPSCore" $isPSCore "isWindows" $isWindows -}}
+{{- $tmplDict := dict "isPSCore" $isPSCore "isWindows" $isWindows "workOneDriveBusinessName" .workOneDriveBusinessName "sourceDir" .chezmoi.sourceDir -}}
 {{- range $file := glob ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "MyProfile" "**" "*ps1*" )  -}}
 {{ includeTemplate $file $tmplDict }}
 {{ end -}}

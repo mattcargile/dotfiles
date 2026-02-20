@@ -1,5 +1,4 @@
 @{
-    Name  = 'mac'
     Types = @{
         Directories = @{
             # Default directory icon
@@ -25,12 +24,13 @@
                 pictures                             = 'nf-md-folder_image'
                 videos                               = 'nf-md-movie'
                 movies                               = 'nf-md-movie'
-                media                                = 'nf-dev-html5_multimedia'
+                media                                = 'nf-dev-html5'
                 music                                = 'nf-md-music_box_multiple'
                 songs                                = 'nf-md-music_box_multiple'
                 onedrive                             = 'nf-md-microsoft_onedrive'
-                {{ if ne .workOneDriveBusinessName "" }}'onedrive - {{ lower .workOneDriveBusinessName -}}'   = 'nf-md-microsoft_onedrive'{{ end }}
-                {{ if ne .workOneDriveBusinessName "" }}'{{- lower .workOneDriveBusinessName -}}'              = 'nf-md-microsoft_onedrive'{{ end }}
+                # chezmoi if block work onedrive and sharepoint {{ if ne .workOneDriveBusinessName "" }}
+                'onedrive - {{ lower .workOneDriveBusinessName -}}'   = 'nf-md-microsoft_onedrive'
+                '{{- lower .workOneDriveBusinessName -}}'              = 'nf-md-microsoft_onedrive' # chezmoi end block {{- end }}
                 downloads                            = 'nf-md-folder_download'
                 src                                  = 'nf-oct-terminal'
                 development                          = 'nf-oct-terminal'
@@ -196,12 +196,13 @@
             '.rpm'                  = 'nf-md-package_variant'
 
             # PowerShell
-            '.ps1'                  = 'nf-md-console_line'
-            '.psm1'                 = 'nf-md-console_line'
-            '.psd1'                 = 'nf-md-console_line'
-            '.ps1xml'               = 'nf-md-console_line'
-            '.psc1'                 = 'nf-md-console_line'
-            '.pssc'                 = 'nf-md-console_line'
+            '.clixml'               = 'nf-dev-powershell'
+            '.ps1'                  = 'nf-dev-powershell'
+            '.psm1'                 = 'nf-dev-powershell'
+            '.psd1'                 = 'nf-dev-powershell'
+            '.ps1xml'               = 'nf-dev-powershell'
+            '.psc1'                 = 'nf-dev-powershell'
+            '.pssc'                 = 'nf-dev-powershell'
 
             # Javascript
             '.js'                   = 'nf-dev-javascript'
@@ -229,7 +230,6 @@
             '.dll'                  = 'nf-fa-archive'
 
             # Importable Data files
-            '.clixml'               = 'nf-dev-code_badge'
             '.csv'                  = 'nf-md-file_excel'
             '.tsv'                  = 'nf-md-file_excel'
 
@@ -277,7 +277,7 @@
             '.hs'                   = 'nf-dev-haskell'
 
             # XAML
-            '.xaml'                 = 'nf-md-xaml'
+            '.xaml'                 = 'nf-md-language_xaml'
 
             # Rust
             '.rs'                   = 'nf-dev-rust'
@@ -290,7 +290,7 @@
             '.accdb'                = 'nf-md-microsoft_access'
             '.laccdb'               = 'nf-md-microsoft_access'
             '.mdb'                  = 'nf-md-microsoft_access'
-            '.sqlite'               = 'nf-dev-sqllite'
+            '.sqlite'               = 'nf-dev-sqlite'
             '.pgsql'                = 'nf-dev-database'
             '.postgres'             = 'nf-dev-postgresql'
             '.psql'                 = 'nf-dev-database'
@@ -490,8 +490,8 @@
             # Email
             '.ics'                  = 'nf-fa-calendar'
             '.msg'                  = 'nf-oct-mail'
-            '.pst'                  = 'nf-mdi-email'
-            '.ost'                  = 'nf-mdi-email'
+            '.pst'                  = 'nf-md-email'
+            '.ost'                  = 'nf-md-email'
 
             # Certificates
             '.cer'                  = 'nf-fa-certificate'
@@ -552,12 +552,12 @@
             '.lock'                 = 'nf-fa-lock'
 
             # Terraform
-            '.tf'                   = 'nf-dev-code_badge'
-            '.tfvars'               = 'nf-dev-code_badge'
-            '.tf.json'              = 'nf-dev-code_badge'
-            '.tfvars.json'          = 'nf-dev-code_badge'
-            '.auto.tfvars'          = 'nf-dev-code_badge'
-            '.auto.tfvars.json'     = 'nf-dev-code_badge'
+            '.tf'                   = 'nf-dev-terraform'
+            '.tfvars'               = 'nf-dev-terraform'
+            '.tf.json'              = 'nf-dev-terraform'
+            '.tfvars.json'          = 'nf-dev-terraform'
+            '.auto.tfvars'          = 'nf-dev-terraform'
+            '.auto.tfvars.json'     = 'nf-dev-terraform'
 
             # Viz
             '.pbix'                 = 'nf-md-file_chart'

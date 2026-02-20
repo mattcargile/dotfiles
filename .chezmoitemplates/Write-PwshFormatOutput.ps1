@@ -302,7 +302,7 @@ end {
             VirtualProperty = @{
                 LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
                 Length = $writeFormatLengthSb 
-                Name = {Terminal-Icons\Format-TerminalIcons $_}
+                Name = {Format-FileSystemInfoName $_}
             }
             AliasProperty = $writeFormatFileAndDirInfoAliasProperty
         },
@@ -326,7 +326,7 @@ end {
             VirtualProperty = @{
                 LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
                 Length = {[string]::Empty}
-                Name = {Terminal-Icons\Format-TerminalIcons $_}
+                Name = {Format-FileSystemInfoName $_}
             }
             AliasProperty = $writeFormatFileAndDirInfoAliasProperty
         },
@@ -364,7 +364,7 @@ end {
             Property = $writeFormatFileInfoProperty 
             ViewTypeName = $writeFormatFileInfoNamespace
             VirtualProperty = @{
-                Name = {Terminal-Icons\Format-TerminalIcons $_}
+                Name = {Format-FileSystemInfoName $_}
                 Length = $writeFormatLengthSb 
                 CreationTime = {ConvertTo-HumanDate $_.CreationTime}
                 LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
@@ -393,7 +393,7 @@ end {
         [pscustomobject]@{
             Property = $writeFormatDirInfoProperty 
             VirtualProperty = @{
-                Name = {Terminal-Icons\Format-TerminalIcons $_}
+                Name = {Format-FileSystemInfoName $_}
                 CreationTime = {ConvertTo-HumanDate $_.CreationTime}
                 LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
                 LastAccessTime = {ConvertTo-HumanDate $_.LastAccessTime}
@@ -413,7 +413,7 @@ end {
 
     $writeFormatWideView = @(
         [pscustomobject]@{
-            ScriptBlock = {Terminal-Icons\Format-TerminalIcons $_}
+            ScriptBlock = {Format-FileSystemInfoName $_}
         },
         [pscustomobject]@{
             ViewSelectionSet = $writeFormatDeserSelSetName
