@@ -6,27 +6,6 @@ param (
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-function ConvertFrom-RGBColor {
-    [OutputType([string])]
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [ValidateNotNullOrEmpty()]
-        [string]$RGB
-    )
-    begin {
-        $escape = [char]27
-    }
-
-    process {
-        $r   = [convert]::ToInt32($RGB.SubString(0,2), 16)
-        $g   = [convert]::ToInt32($RGB.SubString(2,2), 16)
-        $b   = [convert]::ToInt32($RGB.SubString(4,2), 16)
-
-        "${escape}[38;2;$r;$g;$b`m"
-    }
-}
-
 $fileSystemInfoColorPath = Join-Path $PSScriptRoot .\filesysteminfocolor.psd1.tmpl
 $fileSystemInfoColorScript =  chezmoi execute-template --file $fileSystemInfoColorPath | Out-String
 
@@ -84,11 +63,9 @@ for ($tkIdx = 0; $tkIdx -lt $parserTokens.Count; $tkIdx++) {
             Out-Null
     }
     elseif (${previousToken}?.TokenFlags -contains 'AssignmentOperator' -and $currentToken.Kind -eq 'StringLiteral' ) {
-        $currentColorRGB = ConvertFrom-RGBColor -RGB $currentToken.Value.TrimStart('#')
-        Write-Debug "Current modified Color Property for converstion is $currentColorRGB"
         $outStringBuilder.
             Append( "'" ).
-            Append( $currentColorRGB ).
+            Append( $PSStyle.Foreground.FromRgb( "0x$($currentToken.Value)" ) ).
             Append( "'" ).
             Append( " #$($currentToken.Value)") | Out-Null
     }
