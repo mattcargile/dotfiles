@@ -2,9 +2,9 @@ function Resolve-FileSystemInfoNameFormat {
     [OutputType([hashtable])]
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [System.IO.FileSystemInfo]
-        $FileInfo,
+        [Parameter(Mandatory)]
+        [psobject]
+        $FileSystemInfo,
         [Parameter()]
         [System.Collections.Hashtable]
         $IconData = $script:formatFileSystemInfoIcon,
@@ -14,6 +14,18 @@ function Resolve-FileSystemInfoNameFormat {
     )
 
     begin {
+        $fileSystemInfoType = 'System.IO.FileSystemInfo'
+        $fileSystemInfoDeserType = "Deserialized.$fileSystemInfoType"
+        $hasCorrectType = $false
+        if ($FileSystemInfo -is $fileSystemInfoType) {
+            $hasCorrectType = $true
+        }
+        if ($FileSystemInfo.pstypenames -contains $fileSystemInfoDeserType) {
+            $hasCorrectType = $true
+        }
+        if (-not $hasCorrectType) {
+            throw [System.NotSupportedException]'Only System.IO.FileSystemInfo and Deserialized variant is supported.'
+        }
         $colorReset = "$([char]27)[0m"
     }
 
@@ -24,13 +36,13 @@ function Resolve-FileSystemInfoNameFormat {
             Target   = ''
         }
 
-        if ($FileInfo.PSIsContainer) {
+        if ($FileSystemInfo.PSIsContainer) {
             $type = 'Directories'
         } else {
             $type = 'Files'
         }
 
-        switch ($FileInfo.LinkType) {
+        switch ($FileSystemInfo.LinkType) {
             # Determine symlink or junction icon and color
             'Junction' {
                 if ($IconData) {
@@ -43,7 +55,7 @@ function Resolve-FileSystemInfoNameFormat {
                 } else {
                     $colorSeq = $colorReset
                 }
-                $displayInfo['Target'] = ' ' + '󰁕' + ' ' + $FileInfo.Target
+                $displayInfo['Target'] = ' ' + '󰁕' + ' ' + $FileSystemInfo.Target
                 break
             }
             'SymbolicLink' {
@@ -57,23 +69,23 @@ function Resolve-FileSystemInfoNameFormat {
                 } else {
                     $colorSeq = $colorReset
                 }
-                $displayInfo['Target'] = ' ' + '󰁕' + ' ' + $FileInfo.Target
+                $displayInfo['Target'] = ' ' + '󰁕' + ' ' + $FileSystemInfo.Target
                 break
             } default {
                 if ($IconData) {
                     # Determine normal directory icon and color
-                    $icon = $IconData.Types.$type.WellKnown[$FileInfo.Name]
+                    $icon = $IconData.Types.$type.WellKnown[$FileSystemInfo.Name]
                     if (-not $icon) {
-                        if ($FileInfo.PSIsContainer) {
-                            $icon = $IconData.Types.$type[$FileInfo.Name]
-                        } elseif ($IconData.Types.$type.ContainsKey($FileInfo.Extension)) {
-                            $icon = $IconData.Types.$type[$FileInfo.Extension]
+                        if ($FileSystemInfo.PSIsContainer) {
+                            $icon = $IconData.Types.$type[$FileSystemInfo.Name]
+                        } elseif ($IconData.Types.$type.ContainsKey($FileSystemInfo.Extension)) {
+                            $icon = $IconData.Types.$type[$FileSystemInfo.Extension]
                         } else {
                             # File probably has multiple extensions
                             # Fallback to computing the full extension
-                            $firstDot = $FileInfo.Name.IndexOf('.')
+                            $firstDot = $FileSystemInfo.Name.IndexOf('.')
                             if ($firstDot -ne -1) {
-                                $fullExtension = $FileInfo.Name.Substring($firstDot)
+                                $fullExtension = $FileSystemInfo.Name.Substring($firstDot)
                                 $icon = $IconData.Types.$type[$fullExtension]
                             }
                         }
@@ -83,7 +95,7 @@ function Resolve-FileSystemInfoNameFormat {
 
                         # Fallback if everything has gone horribly wrong
                         if (-not $icon) {
-                            if ($FileInfo.PSIsContainer) {
+                            if ($FileSystemInfo.PSIsContainer) {
                                 $icon = ''
                             } else {
                                 $icon = ''
@@ -94,18 +106,18 @@ function Resolve-FileSystemInfoNameFormat {
                     $icon = $null
                 }
                 if ($ColorData) {
-                    $colorSeq = $ColorData.Types.$type.WellKnown[$FileInfo.Name]
+                    $colorSeq = $ColorData.Types.$type.WellKnown[$FileSystemInfo.Name]
                     if (-not $colorSeq) {
-                        if ($FileInfo.PSIsContainer) {
-                            $colorSeq = $ColorData.Types.$type[$FileInfo.Name]
-                        } elseif ($ColorData.Types.$type.ContainsKey($FileInfo.Extension)) {
-                            $colorSeq = $ColorData.Types.$type[$FileInfo.Extension]
+                        if ($FileSystemInfo.PSIsContainer) {
+                            $colorSeq = $ColorData.Types.$type[$FileSystemInfo.Name]
+                        } elseif ($ColorData.Types.$type.ContainsKey($FileSystemInfo.Extension)) {
+                            $colorSeq = $ColorData.Types.$type[$FileSystemInfo.Extension]
                         } else {
                             # File probably has multiple extensions
                             # Fallback to computing the full extension
-                            $firstDot = $FileInfo.Name.IndexOf('.')
+                            $firstDot = $FileSystemInfo.Name.IndexOf('.')
                             if ($firstDot -ne -1) {
-                                $fullExtension = $FileInfo.Name.Substring($firstDot)
+                                $fullExtension = $FileSystemInfo.Name.Substring($firstDot)
                                 $colorSeq = $ColorData.Types.$type[$fullExtension]
                             }
                         }

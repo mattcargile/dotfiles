@@ -24,19 +24,32 @@ function Format-FileSystemInfoName {
     [Alias('ffs','fls', 'fdir')]
     param(
         [Parameter(Mandatory, ValueFromPipeline)]
-        [IO.FileSystemInfo]$FileInfo
+        [psobject]$FileSystemInfo
     )
 
     begin {
+        $fileSystemInfoType = 'System.IO.FileSystemInfo'
+        $fileSystemInfoDeserType = "Deserialized.$fileSystemInfoType"
         $colorReset = "$([char]27)[0m"
     }
 
     process {
-        $displayInfo = Resolve-FileSystemInfoNameFormat -FileInfo $FileInfo
+        $hasCorrectType = $false
+        if ($FileSystemInfo -is $fileSystemInfoType) {
+            $hasCorrectType = $true
+        }
+        if ($FileSystemInfo.pstypenames -contains $fileSystemInfoDeserType) {
+            $hasCorrectType = $true
+        }
+        if (-not $hasCorrectType) {
+            Write-Error -Message 'Only System.IO.FileSystemInfo and Deserialized variant is supported.' -Category InvalidType
+            return
+        }
+        $displayInfo = Resolve-FileSystemInfoNameFormat -FileSystemInfo $FileSystemInfo
         if ($displayInfo.Icon) {
-            "$($displayInfo.Color)$($displayInfo.Icon)  $($FileInfo.Name)$($displayInfo.Target)$($colorReset)"
+            "$($displayInfo.Color)$($displayInfo.Icon)  $($FileSystemInfo.Name)$($displayInfo.Target)$($colorReset)"
         } else {
-            "$($displayInfo.Color)$($FileInfo.Name)$($displayInfo.Target)$($script:colorReset)"
+            "$($displayInfo.Color)$($FileSystemInfo.Name)$($displayInfo.Target)$($script:colorReset)"
         }
     }
 }

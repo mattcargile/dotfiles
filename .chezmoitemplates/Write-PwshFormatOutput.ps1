@@ -226,9 +226,8 @@ end {
     $writeFormatDeserFileInfoNamespace = 'Deserialized.System.IO.FileInfo'
     $writeFormatDirInfoNamespace = 'System.IO.DirectoryInfo'
     $writeFormatFileInfoNamespace = 'System.IO.FileInfo'
-    $writeFormatSelSetName = 'FileSystemTypes'
-    $writeFormatDeserSelSetName = 'FileSystemTypesDeserialized'
-    $writeFormatSelSetWideName = 'FileSystemTypesWide'
+    $writeFormatSelSetName = 'HumanFileSystemTypes'
+    $writeFormatSelSetWideName = "${writeFormatSelSetName}Wide"
     $writeFormatViewSplat = @{
         FormatXml = @"
         <SelectionSet>
@@ -236,19 +235,6 @@ end {
             <Types>
                 <TypeName>$writeFormatDirInfoNamespace</TypeName>
                 <TypeName>$writeFormatFileInfoNamespace</TypeName>
-                <TypeName>$writeFormatDeserDirInfoNamespace</TypeName>
-                <TypeName>$writeFormatDeserFileInfoNamespace</TypeName>
-            </Types>
-        </SelectionSet>
-"@
-        TypeName = 'NotApplicable'
-    }
-    $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
-    $writeFormatViewSplat = @{
-        FormatXml = @"
-        <SelectionSet>
-            <Name>$writeFormatDeserSelSetName</Name>
-            <Types>
                 <TypeName>$writeFormatDeserDirInfoNamespace</TypeName>
                 <TypeName>$writeFormatDeserFileInfoNamespace</TypeName>
             </Types>
@@ -292,6 +278,11 @@ end {
         ModeWithoutHardLink = 'Mode'
     }
     $writeFormatDeserFileAndDirInfoProperty = 'Mode', 'LastWriteTime', 'Length', 'Name'
+    $writeFormatDirInfoVirtProp = @{
+        LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
+        Length = {[string]::Empty}
+        Name = {Format-FileSystemInfoName $_}
+    }
 
     $writeFormatTable = @(
         [PSCustomObject]@{
@@ -307,39 +298,21 @@ end {
             AliasProperty = $writeFormatFileAndDirInfoAliasProperty
         },
         [PSCustomObject]@{
-            ViewTypeName = $writeFormatDeserDirInfoNamespace
-            Property = $writeFormatDeserFileAndDirInfoProperty
-            AlignProperty = $writeFormatAlign
-            Width = $writeFormatWidth 
-            Wrap = $true
-            VirtualProperty = @{
-                LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
-                Length = {[string]::Empty}
-            }
-        },
-        [PSCustomObject]@{
             ViewTypeName = $writeFormatDirInfoNamespace
             Property = $writeFormatFileAndDirInfoProperty 
             AlignProperty = $writeFormatAlign
             Width = $writeFormatWidth 
             Wrap = $true
-            VirtualProperty = @{
-                LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
-                Length = {[string]::Empty}
-                Name = {Format-FileSystemInfoName $_}
-            }
+            VirtualProperty = $writeFormatDirInfoVirtProp
             AliasProperty = $writeFormatFileAndDirInfoAliasProperty
         },
         [PSCustomObject]@{
-            ViewTypeName = $writeFormatDeserFileInfoNamespace
-            Property = $writeFormatDeserFileAndDirInfoProperty 
+            ViewTypeName = $writeFormatDeserDirInfoNamespace
+            Property = $writeFormatDeserFileAndDirInfoProperty
             AlignProperty = $writeFormatAlign
             Width = $writeFormatWidth 
             Wrap = $true
-            VirtualProperty = @{
-                LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
-                Length = { [Humanizer.ByteSizeExtensions]::Humanize($_.Length, '0.00') }
-            }
+            VirtualProperty = $writeFormatDirInfoVirtProp
             # Fix for https://github.com/StartAutomating/EZOut/issues/235
             AliasProperty = @{
                 Mode = 'Mode'
@@ -359,10 +332,15 @@ end {
 
     $writeFormatFileInfoProperty = 'Name', 'Length', 'CreationTime', 'LastWriteTime', 'LastAccessTime', 'Mode', 'LinkType', 'Target', 'VersionInfo'
     $writeFormatDirInfoProperty = 'Name', 'CreationTime', 'LastWriteTime', 'LastAccessTime', 'Mode', 'LinkType', 'Target'
+    $writeFormatDirInfoVirtProp = @{
+        Name = {Format-FileSystemInfoName $_}
+        CreationTime = {ConvertTo-HumanDate $_.CreationTime}
+        LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
+        LastAccessTime = {ConvertTo-HumanDate $_.LastAccessTime}
+    }
     $writeListView = @(
         [pscustomobject]@{
             Property = $writeFormatFileInfoProperty 
-            ViewTypeName = $writeFormatFileInfoNamespace
             VirtualProperty = @{
                 Name = {Format-FileSystemInfoName $_}
                 Length = $writeFormatLengthSb 
@@ -370,34 +348,16 @@ end {
                 LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
                 LastAccessTime = {ConvertTo-HumanDate $_.LastAccessTime}
             }
-        },
-        [pscustomobject]@{
-            Property = $writeFormatFileInfoProperty 
-            ViewTypeName = $writeFormatDeserFileInfoNamespace
-            VirtualProperty = @{
-                Length = {[Humanizer.ByteSizeExtensions]::Humanize($_.Length, '0.00')}
-                CreationTime = {ConvertTo-HumanDate $_.CreationTime}
-                LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
-                LastAccessTime = {ConvertTo-HumanDate $_.LastAccessTime}
-            }
-        },
+        }
         [pscustomobject]@{
             Property = $writeFormatDirInfoProperty 
             ViewTypeName = $writeFormatDeserDirInfoNamespace
-            VirtualProperty = @{
-                CreationTime = {ConvertTo-HumanDate $_.CreationTime}
-                LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
-                LastAccessTime = {ConvertTo-HumanDate $_.LastAccessTime}
-            }
+            VirtualProperty = $writeFormatDirInfoVirtProp
         },
         [pscustomobject]@{
             Property = $writeFormatDirInfoProperty 
-            VirtualProperty = @{
-                Name = {Format-FileSystemInfoName $_}
-                CreationTime = {ConvertTo-HumanDate $_.CreationTime}
-                LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
-                LastAccessTime = {ConvertTo-HumanDate $_.LastAccessTime}
-            }
+            ViewTypeName = $writeFormatDirInfoNamespace
+            VirtualProperty = $writeFormatDirInfoVirtProp 
         }
     )
     
@@ -411,17 +371,8 @@ end {
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
 
-    $writeFormatWideView = @(
-        [pscustomobject]@{
-            ScriptBlock = {Format-FileSystemInfoName $_}
-        },
-        [pscustomobject]@{
-            ViewSelectionSet = $writeFormatDeserSelSetName
-            Property = 'Name'
-        }
-    )
     $writeFormatViewSplat = @{
-        FormatXML = ( $writeFormatWideView | Write-FormatWideView )
+        FormatXML = Write-FormatWideView -ScriptBlock { Format-FileSystemInfoName $_ }
         IsSelectionSet = $true
         Name = 'humanchildren'
         TypeName = $writeFormatSelSetName, $writeFormatSelSetWideName 
