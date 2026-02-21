@@ -65,9 +65,9 @@ for ($tkIdx = 0; $tkIdx -lt $parserTokens.Count; $tkIdx++) {
     elseif (${previousToken}?.TokenFlags -contains 'AssignmentOperator' -and $currentToken.Kind -eq 'StringLiteral' ) {
         $outStringBuilder.
             Append( "'" ).
-            Append( $PSStyle.Foreground.FromRgb( "0x$($currentToken.Value)" ) ).
+            Append( $PSStyle.Foreground.FromRgb( "0x$($currentToken.Value.Substring(1))" ) ). # Remove the helper formatting hash (#)
             Append( "'" ).
-            Append( " #$($currentToken.Value)") | Out-Null
+            Append( " $($currentToken.Value)") | Out-Null
     }
     else {
         $outStringBuilder.Append($currentToken) | Out-Null
