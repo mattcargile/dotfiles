@@ -47,12 +47,14 @@ function Resolve-FileSystemInfoNameFormat {
             'Junction' {
                 if ($IconData) {
                     $icon = $IconData.Types.($type)['junction']
-                } else {
+                }
+                else {
                     $icon = $null
                 }
                 if ($ColorData) {
                     $colorSeq = $ColorData.Types.($type)['junction']
-                } else {
+                }
+                else {
                     $colorSeq = $colorReset
                 }
                 $displayInfo['Target'] = ' ' + '󰁕' + ' ' + $FileSystemInfo.Target
@@ -61,12 +63,14 @@ function Resolve-FileSystemInfoNameFormat {
             'SymbolicLink' {
                 if ($IconData) {
                     $icon = $IconData.Types.($type)['symlink']
-                } else {
+                }
+                else {
                     $icon = $null
                 }
                 if ($ColorData) {
                     $colorSeq = $ColorData.Types.($type)['symlink']
-                } else {
+                }
+                else {
                     $colorSeq = $colorReset
                 }
                 $displayInfo['Target'] = ' ' + '󰁕' + ' ' + $FileSystemInfo.Target
@@ -78,15 +82,15 @@ function Resolve-FileSystemInfoNameFormat {
                     if (-not $icon) {
                         if ($FileSystemInfo.PSIsContainer) {
                             $icon = $IconData.Types.$type[$FileSystemInfo.Name]
-                        } elseif ($IconData.Types.$type.ContainsKey($FileSystemInfo.Extension)) {
-                            $icon = $IconData.Types.$type[$FileSystemInfo.Extension]
-                        } else {
-                            # File probably has multiple extensions
-                            # Fallback to computing the full extension
+                        }
+                        if (-not $icon) {
                             $firstDot = $FileSystemInfo.Name.IndexOf('.')
                             if ($firstDot -ne -1) {
                                 $fullExtension = $FileSystemInfo.Name.Substring($firstDot)
                                 $icon = $IconData.Types.$type[$fullExtension]
+                            }
+                            if (-not $icon) {
+                                $icon = $IconData.Types.$type[$FileSystemInfo.Extension]
                             }
                         }
                         if (-not $icon) {
@@ -97,12 +101,14 @@ function Resolve-FileSystemInfoNameFormat {
                         if (-not $icon) {
                             if ($FileSystemInfo.PSIsContainer) {
                                 $icon = ''
-                            } else {
+                            }
+                            else {
                                 $icon = ''
                             }
                         }
                     }
-                } else {
+                }
+                else {
                     $icon = $null
                 }
                 if ($ColorData) {
@@ -110,15 +116,15 @@ function Resolve-FileSystemInfoNameFormat {
                     if (-not $colorSeq) {
                         if ($FileSystemInfo.PSIsContainer) {
                             $colorSeq = $ColorData.Types.$type[$FileSystemInfo.Name]
-                        } elseif ($ColorData.Types.$type.ContainsKey($FileSystemInfo.Extension)) {
-                            $colorSeq = $ColorData.Types.$type[$FileSystemInfo.Extension]
-                        } else {
-                            # File probably has multiple extensions
-                            # Fallback to computing the full extension
+                        }
+                        if (-not $colorSeq) {
                             $firstDot = $FileSystemInfo.Name.IndexOf('.')
                             if ($firstDot -ne -1) {
                                 $fullExtension = $FileSystemInfo.Name.Substring($firstDot)
                                 $colorSeq = $ColorData.Types.$type[$fullExtension]
+                            }
+                            if (-not $colorSeq) {
+                                $colorSeq = $ColorData.Types.$type[$FileSystemInfo.Extension]
                             }
                         }
                         if (-not $colorSeq) {
@@ -130,7 +136,8 @@ function Resolve-FileSystemInfoNameFormat {
                             $colorSeq = $colorReset
                         }
                     }
-                } else {
+                }
+                else {
                     $colorSeq = $colorReset
                 }
             }
