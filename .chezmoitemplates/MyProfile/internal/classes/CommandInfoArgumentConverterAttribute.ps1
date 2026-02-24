@@ -7,14 +7,24 @@ class CommandInfoArgumentConverterAttribute : System.Management.Automation.Argum
             $cmd = Get-Command -Name ([WildcardPattern]::Escape($cmd)) 
             if (-not $cmd) { $cmd = $inputData }
         }
-        # Weird behavior with ActiveDirectory module and accounting for nested aliases
+        # Some commands have pre-loaded modules so they resolve properly.
+        # Implicitly loaded commands won't have the `ResolvedCommand` property
+        if ($cmd.ResolvedCommand -is [System.Management.Automation.CommandInfo]) {
+            return $cmd.ResolvedCommand
+        }
         while ($cmd -is [System.Management.Automation.AliasInfo]) {
-            $cmd = Get-Command ([WildcardPattern]::Escape($cmd.Definition))
+            $cmdDefEsc = [WildcardPattern]::Escape($cmd.Definition)
+            # Some fully qualified module and cmdlet names return the wrong ModuleName and Source like `Get-ScheduledTask`
+            $cmdDefEscSplit = $cmdDefEsc -split '\\', 2
+            if ($cmdDefEscSplit.Count -eq 2) {
+                $cmd = Get-Command -Module $cmdDefEscSplit[0] -Name $cmdDefEscSplit[1]
+            }
+            else {
+                $cmd = Get-Command $cmdDefEsc 
+            }
         }
         if ($cmd -is [System.Management.Automation.CommandInfo]) {
-            # Force module auto load
-            # string module overrides Join-String in an interesting way so need to select the first one
-            return ( $cmd | Get-Command | Select-Object -First 1)
+            return $cmd 
         }
         throw [System.Management.Automation.ArgumentTransformationMetadataException]"Did not find CommandInfo for $cmd."
     }
