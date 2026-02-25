@@ -5,6 +5,7 @@ function Get-UserVariable {
     param(
         [Parameter(Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [ValidateNotNullOrEmpty()]
+        [ArgumentCompleter([GetUserVariableNameArgumentCompleter])]
         [string[]]
         ${Name},
 

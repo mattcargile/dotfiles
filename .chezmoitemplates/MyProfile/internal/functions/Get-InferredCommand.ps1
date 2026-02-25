@@ -7,7 +7,8 @@ function Get-InferredCommand {
     )
     end {
         $command = $FakeBoundParameters['Command']
-        if ($command = Get-CommandFromString $command) {
+        # if ($command = Get-CommandFromString $command) {
+        if ($command = Resolve-Command $command) {
             return $command
         }
 
@@ -40,6 +41,6 @@ function Get-InferredCommand {
             return
         }
 
-        return Get-CommandFromString $firstArg
+        return Resolve-Command $firstArg
     }
 }

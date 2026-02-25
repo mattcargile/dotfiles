@@ -5,6 +5,7 @@ function Get-CommandParameter {
         [Parameter(ValueFromPipeline, Position = 0)]
         [ValidateNotNull()]
         [Alias('c')]
+        [ArgumentCompleter([GetCommandParameterCommandArgumentCompleter])]
         [CommandInfoArgumentConverter()]
         [System.Management.Automation.CommandInfo] $Command,
 
@@ -12,6 +13,7 @@ function Get-CommandParameter {
         [ValidateNotNullOrEmpty()]
         [Alias('Parameter','n')]
         [SupportsWildcards()]
+        [ArgumentCompleter([GetCommandParameterNameArgumentCompleter])]
         [string[]] $Name,
 
         [Parameter()]
@@ -34,7 +36,7 @@ function Get-CommandParameter {
         if ($moduleName -ne '' -and $null -ne $moduleName -and $moduleName -ne 'Microsoft.PowerShell.Core') {
             $module = Get-Module -Name $moduleName -ErrorAction Ignore
             if (-not $module) {
-                Import-Module $module -ErrorAction Ignore
+                Import-Module $moduleName -ErrorAction Ignore
             }
         }
         foreach ($set in $Command.ParameterSets) {
