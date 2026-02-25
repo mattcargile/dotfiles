@@ -411,47 +411,146 @@ Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
 #endregion
 
 #region ExpandAliases
+# Expands command aliases + parameter aliases / unique prefixes.
+# Ambiguous params are left unexpanded and marked with a trailing '?' to force PSReadLine error-coloring.
 $setPSReadLineKeyHandlerSplat = @{
     Chord = 'Alt+%'
     BriefDescription = 'ExpandAliases'
-    Description = "Replace all aliases with the full command"
+    Description = "Replace all aliases with the full command (and expand parameters where unambiguous)"
     ScriptBlock = {
         param($key, $arg)
 
-        $ast = $null
-        $tokens = $null
-        $errors = $null
-        $cursor = $null
+        [System.Management.Automation.Language.Ast]$ast = $null
+        [System.Management.Automation.Language.Token[]]$tokens = $null
+        [System.Management.Automation.Language.ParseError[]]$errors = $null
+        [int]$cursor = $null
         [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$ast, [ref]$tokens, [ref]$errors, [ref]$cursor)
 
-        $startAdjustment = 0
-        foreach ($token in $tokens)
-        {
-            if ($token.TokenFlags -band [TokenFlags]::CommandName)
-            {
-                $alias = $ExecutionContext.InvokeCommand.GetCommand($token.Extent.Text, 'Alias')
-                if ($alias -ne $null)
-                {
-                    $resolvedCommand = $alias.ResolvedCommandName
-                    if ($resolvedCommand -ne $null)
-                    {
-                        $extent = $token.Extent
-                        $length = $extent.EndOffset - $extent.StartOffset
-                        [Microsoft.PowerShell.PSConsoleReadLine]::Replace(
-                            $extent.StartOffset + $startAdjustment,
-                            $length,
-                            $resolvedCommand)
+        if (-not $ast) { return }
 
-                        # Our copy of the tokens won't have been updated, so we need to
-                        # adjust by the difference in length
-                        $startAdjustment += ($resolvedCommand.Length - $length)
+        # Collect replacements, then apply from right -> left so offsets don't shift.
+        $replacements = New-Object System.Collections.Generic.List[object]
+        $hadAmbiguous = $false
+
+        $commandAsts = $ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.CommandAst] }, $true)
+
+        foreach ($cmdAst in $commandAsts) {
+            $cmdName = $cmdAst.GetCommandName()
+            if (-not $cmdName) { continue }
+
+            # Resolve alias -> real command name (for the command token itself)
+            $cmdInfo = $ExecutionContext.InvokeCommand.GetCommand($cmdName, 'All')
+            if (-not $cmdInfo) { continue }
+
+            $resolvedName = $cmdName
+            if ($cmdInfo.CommandType -eq [System.Management.Automation.CommandTypes]::Alias -and $cmdInfo.ResolvedCommandName) {
+                $resolvedName = $cmdInfo.ResolvedCommandName
+            }
+
+            # Get the command info for parameter resolution (prefer resolved name).
+            $resolvedCmdInfo = $ExecutionContext.InvokeCommand.GetCommand($resolvedName, 'All')
+            if (-not $resolvedCmdInfo) { $resolvedCmdInfo = $cmdInfo }
+
+            # Expand the command name token (CommandElements[0]) if it's actually different.
+            $firstElement = $cmdAst.CommandElements[0]
+            if ($firstElement -and ($resolvedName -ne $cmdName)) {
+                $extent = $firstElement.Extent
+                $len = $extent.EndOffset - $extent.StartOffset
+                $replacements.Add([pscustomobject]@{
+                    Start = $extent.StartOffset
+                    Length = $len
+                    Text = $resolvedName
+                }) | Out-Null
+            }
+
+            # Expand parameters for this command
+            $params = $resolvedCmdInfo.Parameters
+            if (-not $params) { continue }
+
+            foreach ($elem in $cmdAst.CommandElements) {
+                if ($elem -isnot [System.Management.Automation.Language.CommandParameterAst]) { continue }
+
+                $elemParamName = $elem.ParameterName
+                if (-not $elemParamName) { continue }
+
+                # Find candidates by:
+                #  - exact parameter name match
+                #  - alias match
+                #  - unique prefix of a parameter name
+                $candidates =
+                    foreach ($kv in $params.GetEnumerator()) {
+                        $p = $kv.Value
+                        if (-not $p) { continue }
+                        $pName = $p.Name
+
+                        $aliasHit = $false
+                        if ($p.Aliases) {
+                            foreach ($a in $p.Aliases) {
+                                if ($a -eq $elemParamName) {
+                                    $aliasHit = $true
+                                    break
+                                }
+                            }
+                        }
+
+                        $nameHit = $pName -eq $elemParamName
+                        $prefixHit = $pName -like "$elemParamName*"
+
+                        if ($nameHit -or $aliasHit -or $prefixHit) {
+                            $p
+                        }
+                    }
+
+                # Distinct by parameter name
+                $candidates = $candidates | Sort-Object Name -Unique
+
+                $extent = $elem.Extent
+                $len = $extent.EndOffset - $extent.StartOffset
+                $originalText = $extent.Text  # includes leading '-'
+
+                if ($candidates.Count -eq 1) {
+                    $full = '-' + $candidates[0].Name
+
+                    # Only replace if it changes something (avoid churn)
+                    if ($originalText -cne $full) {
+                        $replacements.Add([pscustomobject]@{
+                                Start  = $extent.StartOffset
+                                Length = $len
+                                Text   = $full
+                            }) | Out-Null
                     }
                 }
+                elseif ($candidates.Count -gt 1) {
+                    # Mark ambiguous so it shows up red (Error token coloring)
+                    # Keep it recognizable; user can remove the '?' after deciding.
+                    $hadAmbiguous = $true
+                    $marked = $originalText
+                    if (-not $marked.EndsWith('?')) { $marked = $marked + '?' }
+
+                    $replacements.Add([pscustomobject]@{
+                            Start  = $extent.StartOffset
+                            Length = $len
+                            Text   = $marked
+                        }) | Out-Null
+                }
             }
+        }
+
+        if ($replacements.Count -eq 0) { return }
+
+        # Apply replacements from rightmost to leftmost
+        foreach ($r in ($replacements | Sort-Object Start -Descending)) {
+            [Microsoft.PowerShell.PSConsoleReadLine]::Replace($r.Start, $r.Length, $r.Text)
+        }
+
+        if ($hadAmbiguous) {
+            # Audible + leaves red-marked params to fix.
+            [Microsoft.PowerShell.PSConsoleReadLine]::Ding()
         }
     }
 }
 Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
+#endregion
 
 #endregion
 
