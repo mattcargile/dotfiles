@@ -51,7 +51,7 @@ if ($ast.BeginBlock -or $ast.CleanBlock -or $ast.DynamicParamBlock -or $ast.Proc
 }
 $outStringBuilder = [System.Text.StringBuilder]::new($ast.Extent.EndOffset)
 $outStringBuilder.AppendLine( '[Diagnostics.CodeAnalysis.SuppressMessageAttribute( ''PSUseDeclaredVarsMoreThanAssignments'', ''formatFileSystemInfoIcon'', Justification = ''Variable used as cache in later module calls.'')]' ) | Out-Null
-$outStringBuilder.Append( '$script:formatFileSystemInfoIcon = ' ) | Out-Null
+$outStringBuilder.Append( '$formatFileSystemInfoIcon = ' ) | Out-Null
 for ($tkIdx = 0; $tkIdx -lt $parserTokens.Count; $tkIdx++) {
     if ($tkIdx -gt 0) { $previousToken = $parserTokens[$tkIdx - 1] }
     else { $previousToken = $null }
