@@ -442,18 +442,19 @@ $setPSReadLineKeyHandlerSplat = @{
             $cmdInfo = $ExecutionContext.InvokeCommand.GetCommand($cmdName, 'All')
             if (-not $cmdInfo) { continue }
 
-            $resolvedName = $cmdName
             if ($cmdInfo.CommandType -eq [System.Management.Automation.CommandTypes]::Alias -and $cmdInfo.ResolvedCommandName) {
                 $resolvedName = $cmdInfo.ResolvedCommandName
+                # Get the command info for parameter resolution (prefer resolved name).
+                $resolvedCmdInfo = $ExecutionContext.InvokeCommand.GetCommand($resolvedName, 'All')
             }
-
-            # Get the command info for parameter resolution (prefer resolved name).
-            $resolvedCmdInfo = $ExecutionContext.InvokeCommand.GetCommand($resolvedName, 'All')
-            if (-not $resolvedCmdInfo) { $resolvedCmdInfo = $cmdInfo }
+            else {
+                $resolvedName = $cmdInfo.Name
+                $resolvedCmdInfo = $cmdInfo
+            }
 
             # Expand the command name token (CommandElements[0]) if it's actually different.
             $firstElement = $cmdAst.CommandElements[0]
-            if ($firstElement -and ($resolvedName -ne $cmdName)) {
+            if ($firstElement -and ($resolvedName -cne $cmdName)) {
                 $extent = $firstElement.Extent
                 $len = $extent.EndOffset - $extent.StartOffset
                 $replacements.Add([pscustomobject]@{
