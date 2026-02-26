@@ -6,20 +6,20 @@ $setPSReadLineOptionSplat = @{
     Colors = @{
         # ListPrediction handled further down
         # InlinePrediction handled further down
-        Member             = "$esc[38;2;228;228;228m"   #e4e4e4
-        Parameter          = "$esc[38;2;228;228;228m"   #e4e4e4
-        Default            = "$esc[38;2;228;228;228m"   #e4e4e4
-        Operator           = "$esc[38;2;197;197;197m"   #c5c5c5
-        Keyword            = "$esc[38;2;197;134;192m"   #c586c0
-        Command            = "$esc[38;2;220;220;125m"   #dcdc7d
-        Emphasis           = "$underline$esc[48;2;38;79;120m" #264f78
-        Selection          = "$esc[48;2;38;79;120m"     #264f78
-        Type               = "$esc[38;2;78;201;176m"    #4ec9b0
-        Variable           = "$esc[38;2;124;220;254m"   #7cdcfe
-        String             = "$esc[38;2;206;145;120m"   #ce9178
-        Comment            = "$esc[38;2;96;139;78m"     #608b4e
-        Number             = "$esc[38;2;147;206;168m"   #93cea8
-        Error              = "$esc[38;2;139;0;0m"       #8b0000
+        Member             = "$esc[38;2;228;228;228m"           #e4e4e4
+        Parameter          = "$esc[38;2;228;228;228m"           #e4e4e4
+        Default            = "$esc[38;2;228;228;228m"           #e4e4e4
+        Operator           = "$esc[38;2;197;197;197m"           #c5c5c5
+        Keyword            = "$esc[38;2;197;134;192m"           #c586c0
+        Command            = "$esc[38;2;220;220;125m"           #dcdc7d
+        Emphasis           = "$underline$esc[48;2;38;79;120m"   #264f78
+        Selection          = "$esc[7m"                            # Swap foreground and background colors for `carapace` completers
+        Type               = "$esc[38;2;78;201;176m"            #4ec9b0
+        Variable           = "$esc[38;2;124;220;254m"           #7cdcfe
+        String             = "$esc[38;2;206;145;120m"           #ce9178
+        Comment            = "$esc[38;2;96;139;78m"             #608b4e
+        Number             = "$esc[38;2;147;206;168m"           #93cea8
+        Error              = "$esc[38;2;139;0;0m"               #8b0000
     }
     # HistorySavePath = "$env:OneDrive\Documents\.config\pwsh\PSReadLine\All$($Host.Name)_history.txt" # Microsoft Defender On Sharepoint throws malware warnings
     HistorySavePath = [System.IO.Path]::Combine( $HOME, '.config', 'PSReadLine', "All$($Host.Name)_history.txt" )
