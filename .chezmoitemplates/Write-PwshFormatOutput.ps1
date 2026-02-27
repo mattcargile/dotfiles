@@ -15,6 +15,9 @@ end {
     $writeFormatControlSplat = @{
         Name = $grpSetCtrlName
         Action = {
+            Write-FormatViewExpression -ScriptBlock { "$([char]0x1B)[1;3;34mIndex:$([char]0x1B)[0m " } # Bold;Italics;Blue
+            Write-FormatViewExpression -Property Index
+            Write-FormatViewExpression -Newline
             Write-FormatViewExpression -ScriptBlock { "$([char]0x1B)[1;3;34mProperty Name:$([char]0x1B)[0m " } # Bold;Italics;Blue
             Write-FormatViewExpression -Property Name
             Write-FormatViewExpression -Newline

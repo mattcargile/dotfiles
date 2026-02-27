@@ -50,11 +50,12 @@ filter Expand-Object {
         $InputObject
     )
 	
+    $itemCounter = 0
     foreach ($currentObject in $InputObject) {
         if ($null -eq $currentObject) {
             continue
         }
-        $matchedProps = [System.Collections.Generic.Dictionary[string, psobject]]::new()
+        $matchedProps = [System.Collections.Generic.OrderedDictionary[string, psobject]]::new()
         switch ($PSCmdlet.ParameterSetName) {
             'Like' {
                 foreach ($currentName in $Name) {
@@ -64,6 +65,7 @@ filter Expand-Object {
                                 Name = $currentLikeMatchedProp.Name
                                 TypeName = $currentLikeMatchedProp.TypeNameOfValue
                                 Value = $currentLikeMatchedProp.Value
+                                Index = ($itemCounter++)
                             }
                             Write-Debug "Adding $($currentProp.Name)"
                             $matchedProps.Add( $currentLikeMatchedProp.Name, $currrentOutput )
@@ -82,6 +84,7 @@ filter Expand-Object {
                                     Name = $currentProp.Name
                                     TypeName = $currentProp.TypeNameOfValue
                                     Value = $currentProp.Value
+                                    Index = ($itemCounter++)
                                 }
                                 Write-Debug "Adding $($currentProp.Name)"
                                 $matchedProps.Add($currentProp.Name, $currentOutput )
