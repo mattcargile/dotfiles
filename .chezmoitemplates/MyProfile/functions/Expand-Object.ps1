@@ -54,22 +54,49 @@ filter Expand-Object {
         if ($null -eq $currentObject) {
             continue
         }
-        $matchedProps = foreach ($currentPropName in $currentObject.psobject.Properties.Name) {
-            foreach ($currentName in $Name) {
-                if ($PSCmdlet.ParameterSetName -eq 'Like' -and $currentPropName -like $currentName) {
-                    $currentPropName
-                    break
+        $matchedProps = [System.Collections.Generic.Dictionary[string, psobject]]::new()
+        switch ($PSCmdlet.ParameterSetName) {
+            'Like' {
+                foreach ($currentName in $Name) {
+                    foreach ($currentLikeMatchedProp in $currentObject.psobject.Properties.Match($currentName)) {
+                        if ( -not $matchedProps.ContainsKey($currentLikeMatchedProp.Name)) {
+                            $currrentOutput = [MyProfileExpandObject]@{
+                                Name = $currentLikeMatchedProp.Name
+                                TypeName = $currentLikeMatchedProp.TypeNameOfValue
+                                Value = $currentLikeMatchedProp.Value
+                            }
+                            Write-Debug "Adding $($currentProp.Name)"
+                            $matchedProps.Add( $currentLikeMatchedProp.Name, $currrentOutput )
+                        }
+
+                    }
+                    
                 }
-                elseif ($PSCmdlet.ParameterSetName -eq 'Match' -and $currentPropName -match $currentName) {
-                    $currentPropName
-                    break
+             }
+             'Match' {
+                foreach ($currentProp in $currentObject.psobject.Properties) {
+                    if (-not $matchedProps.ContainsKey($currentProp.Name) ) {
+                        foreach ($currentName in $Name) {
+                            if ($currentProp.Name -match $currentName) {
+                                $currentOutput = [MyProfileExpandObject]@{
+                                    Name = $currentProp.Name
+                                    TypeName = $currentProp.TypeNameOfValue
+                                    Value = $currentProp.Value
+                                }
+                                Write-Debug "Adding $($currentProp.Name)"
+                                $matchedProps.Add($currentProp.Name, $currentOutput )
+                                break
+                            }
+                        }
+                    }
                 }
+
+             }
+            Default {
+                Write-Error "Entered the default switch parameter set. Parameter set definitions are wrong."
+                return
             }
         }
-        foreach ($prop in $matchedProps) {
-            if ($null -ne $currentObject.$prop) {
-                $currentObject.$prop
-            }
-        }
+        $matchedProps.Values
     }
 }

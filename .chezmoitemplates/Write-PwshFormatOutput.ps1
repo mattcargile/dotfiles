@@ -9,6 +9,43 @@ end {
     #region Collect formatter Xml
     $formatList = [System.Collections.Generic.List[string]]::new()
 
+    #region Expand-Object
+    $typeName = 'MyProfileExpandObject'
+    $grpSetCtrlName = "$typeName-GrpSetCtrl"
+    $writeFormatControlSplat = @{
+        Name = $grpSetCtrlName
+        Action = {
+            Write-FormatViewExpression -ScriptBlock { "$([char]0x1B)[1;3;34mProperty Name:$([char]0x1B)[0m " } # Bold;Italics;Blue
+            Write-FormatViewExpression -Property Name
+            Write-FormatViewExpression -Newline
+            Write-FormatViewExpression -ScriptBlock { "$([char]0x1B)[1;3;34mType Name:$([char]0x1B)[0m " }
+            Write-FormatViewExpression -Property TypeName
+            Write-FormatViewExpression -Newline
+            Write-FormatViewExpression -ScriptBlock { "$([char]0x1B)[1;3;34mProperty ToString:$([char]0x1B)[0m " }
+            Write-FormatViewExpression -Property Value
+        }
+    }
+    $formatList.Add( (Write-FormatControl @writeFormatControlSplat) )
+    $writeFormatViewSplat = @{
+        Name = $typeName
+        TypeName = $typeName
+        GroupByProperty = 'Name'
+        GroupAction = $grpSetCtrlName
+        FormatXML = (
+            Write-FormatCustomView -Action {
+                if ($PSVersionTable.PSVersion -ge [version]'7.3.0') {
+                    $_.Value | Format-List -Property * | Out-AnsiFormatting
+                }
+                else {
+                    $_.Value | Format-List -Property * | Out-String
+                }
+            }
+            )
+    }
+
+    $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
+    #endregion
+
     #region ActiveDirectory
     $writeFormatViewSplat = @{
         TypeName = 'Microsoft.ActiveDirectory.Management.ADUser'
@@ -123,12 +160,8 @@ end {
         Name = $grpSetCtrlName
         Action = {
             Write-FormatViewExpression -Text '    Set: '
-            Write-FormatViewExpression -ScriptBlock {
-                if ($_.IsDefaultSet) {
-                    return [ClassExplorer.Internal._Format]::Variable($_.Set) + ' (Default)'
-                }
-                return [ClassExplorer.Internal._Format]::Variable($_.Set)
-            } 
+            Write-FormatViewExpression -ScriptBlock { [ClassExplorer.Internal._Format]::Variable($_.Set) }
+            Write-FormatViewExpression -If { $_.IsDefaultSet } -ScriptBlock { ' (Default)' }
             Write-FormatViewExpression -Newline
             Write-FormatViewExpression -Newline
             Write-FormatViewExpression -ScriptBlock { "$([char]0x1b)[90m(# = Position, M = IsMandatory, D = IsDynamic)$([char]0x1b)[0m" }
@@ -208,7 +241,7 @@ end {
     #endregion
 
     #region System.IO.DirectoryInfo & System.IO.FileInfo
-    $grpSetCtrlName = 'FileSystemTypes-GroupingFormat'
+    $grpSetCtrlName = 'HumanFileSystemTypes-GroupingFormat'
     $writeFormatCustomViewSplat = @{
         Name = $grpSetCtrlName
         AsControl = $true
@@ -377,7 +410,7 @@ end {
         Name = 'humanchildren'
         TypeName = $writeFormatSelSetName, $writeFormatSelSetWideName 
         GroupByProperty = 'PSParentPath'
-        GroupAction = 'FileSystemTypes-GroupingFormat'
+        GroupAction = $grpSetCtrlName
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat))
     #endregion
