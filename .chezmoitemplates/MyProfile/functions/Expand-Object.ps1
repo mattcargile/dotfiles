@@ -31,7 +31,7 @@
 
     Expands all properties from all objects returned by dir that match the string "name" ("PSChildName", "FullName", "Name", "BaseName" for directories)
 #>
-filter Expand-Object {
+function Expand-Object {
     [CmdletBinding(DefaultParameterSetName = 'Like')]
     [Alias('eno', 'exp')]
     Param (
@@ -49,57 +49,61 @@ filter Expand-Object {
         [psobject]
         $InputObject
     )
-	
-    $itemCounter = 0
-    foreach ($currentObject in $InputObject) {
-        if ($null -eq $currentObject) {
-            continue
-        }
-        $matchedProps = [System.Collections.Generic.OrderedDictionary[string, psobject]]::new()
-        switch ($PSCmdlet.ParameterSetName) {
-            'Like' {
-                foreach ($currentName in $Name) {
-                    foreach ($currentLikeMatchedProp in $currentObject.psobject.Properties.Match($currentName)) {
-                        if ( -not $matchedProps.ContainsKey($currentLikeMatchedProp.Name)) {
-                            $currrentOutput = [MyProfileExpandObject]@{
-                                Name = $currentLikeMatchedProp.Name
-                                TypeName = $currentLikeMatchedProp.TypeNameOfValue
-                                Value = $currentLikeMatchedProp.Value
-                                Index = ($itemCounter++)
-                            }
-                            Write-Debug "Adding $($currentProp.Name)"
-                            $matchedProps.Add( $currentLikeMatchedProp.Name, $currrentOutput )
-                        }
 
-                    }
-                    
-                }
-             }
-             'Match' {
-                foreach ($currentProp in $currentObject.psobject.Properties) {
-                    if (-not $matchedProps.ContainsKey($currentProp.Name) ) {
-                        foreach ($currentName in $Name) {
-                            if ($currentProp.Name -match $currentName) {
-                                $currentOutput = [MyProfileExpandObject]@{
-                                    Name = $currentProp.Name
-                                    TypeName = $currentProp.TypeNameOfValue
-                                    Value = $currentProp.Value
+    begin {
+        $itemCounter = 0
+    }
+    process {
+        foreach ($currentObject in $InputObject) {
+            if ($null -eq $currentObject) {
+                continue
+            }
+            $matchedProps = [System.Collections.Generic.OrderedDictionary[string, psobject]]::new()
+            switch ($PSCmdlet.ParameterSetName) {
+                'Like' {
+                    foreach ($currentName in $Name) {
+                        foreach ($currentLikeMatchedProp in $currentObject.psobject.Properties.Match($currentName)) {
+                            if ( -not $matchedProps.ContainsKey($currentLikeMatchedProp.Name)) {
+                                $currrentOutput = [MyProfileExpandObject]@{
+                                    Name = $currentLikeMatchedProp.Name
+                                    TypeName = $currentLikeMatchedProp.TypeNameOfValue
+                                    Value = $currentLikeMatchedProp.Value
                                     Index = ($itemCounter++)
                                 }
                                 Write-Debug "Adding $($currentProp.Name)"
-                                $matchedProps.Add($currentProp.Name, $currentOutput )
-                                break
+                                $matchedProps.Add( $currentLikeMatchedProp.Name, $currrentOutput )
+                            }
+
+                        }
+                        
+                    }
+                }
+                'Match' {
+                    foreach ($currentProp in $currentObject.psobject.Properties) {
+                        if (-not $matchedProps.ContainsKey($currentProp.Name) ) {
+                            foreach ($currentName in $Name) {
+                                if ($currentProp.Name -match $currentName) {
+                                    $currentOutput = [MyProfileExpandObject]@{
+                                        Name = $currentProp.Name
+                                        TypeName = $currentProp.TypeNameOfValue
+                                        Value = $currentProp.Value
+                                        Index = ($itemCounter++)
+                                    }
+                                    Write-Debug "Adding $($currentProp.Name)"
+                                    $matchedProps.Add($currentProp.Name, $currentOutput )
+                                    break
+                                }
                             }
                         }
                     }
-                }
 
-             }
-            Default {
-                Write-Error "Entered the default switch parameter set. Parameter set definitions are wrong."
-                return
+                }
+                Default {
+                    Write-Error "Entered the default switch parameter set. Parameter set definitions are wrong."
+                    return
+                }
             }
+            $matchedProps.Values
         }
-        $matchedProps.Values
     }
 }
