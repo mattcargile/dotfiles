@@ -5,7 +5,7 @@ function Format-FileSystemInfoName {
     .DESCRIPTION
         Take the provided file or folder object and look up the appropriate icon and color to display.
     .PARAMETER FileInfo
-        The file or folder to display
+        The file or folder to display. Must be System.IO.FileSystemInfo or Deserialized variant
     .EXAMPLE
         Get-Item ./README.md | Format-FileSystemInfoName
 
@@ -34,14 +34,7 @@ function Format-FileSystemInfoName {
     }
 
     process {
-        $hasCorrectType = $false
-        if ($FileSystemInfo -is $fileSystemInfoType) {
-            $hasCorrectType = $true
-        }
-        if ($FileSystemInfo.pstypenames -contains $fileSystemInfoDeserType) {
-            $hasCorrectType = $true
-        }
-        if (-not $hasCorrectType) {
+        if ($FileSystemInfo -isnot $fileSystemInfoType -and $FileSystemInfo.pstypenames -notcontains $fileSystemInfoDeserType) {
             Write-Error -Message 'Only System.IO.FileSystemInfo and Deserialized variant is supported.' -Category InvalidType
             return
         }
@@ -49,7 +42,7 @@ function Format-FileSystemInfoName {
         if ($displayInfo.Icon) {
             "$($displayInfo.Color)$($displayInfo.Icon)  $($FileSystemInfo.Name)$($displayInfo.Target)$($colorReset)"
         } else {
-            "$($displayInfo.Color)$($FileSystemInfo.Name)$($displayInfo.Target)$($script:colorReset)"
+            "$($displayInfo.Color)$($FileSystemInfo.Name)$($displayInfo.Target)$($colorReset)"
         }
     }
 }
