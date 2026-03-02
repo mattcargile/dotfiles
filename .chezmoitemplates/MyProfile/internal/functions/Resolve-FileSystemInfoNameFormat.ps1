@@ -16,14 +16,7 @@ function Resolve-FileSystemInfoNameFormat {
     begin {
         $fileSystemInfoType = 'System.IO.FileSystemInfo'
         $fileSystemInfoDeserType = "Deserialized.$fileSystemInfoType"
-        $hasCorrectType = $false
-        if ($FileSystemInfo -is $fileSystemInfoType) {
-            $hasCorrectType = $true
-        }
-        if ($FileSystemInfo.pstypenames -contains $fileSystemInfoDeserType) {
-            $hasCorrectType = $true
-        }
-        if (-not $hasCorrectType) {
+        if ($FileSystemInfo -isnot $fileSystemInfoType -and $FileSystemInfo.pstypenames -notcontains $fileSystemInfoDeserType) {
             throw [System.NotSupportedException]'Only System.IO.FileSystemInfo and Deserialized variant is supported.'
         }
         $colorReset = "$([char]27)[0m"
