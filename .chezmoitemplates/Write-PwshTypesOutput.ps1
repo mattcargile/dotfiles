@@ -56,7 +56,7 @@ end {
                 $procTime = Get-CimInstance @getCimInstanceSplat | Sort-Object -Property IDProcess, Name
                 $procTimeTotal = $procTime[0].PercentProcessorTime
                 $procTimeProcess = $procTime[1].PercentProcessorTime
-                [Math]::Round( $procTimeProcess / $procTimeTotal, 2 )
+                [Math]::Round( $procTimeProcess / $procTimeTotal * 100, 2 )
             }
         }
     }
