@@ -54,6 +54,10 @@ New parameter for the proxy function. Allows the process owner user to be displa
 populating another PSTypeName. Switch includes because this is a slower operation as `Invoke-CimMethod`
 must be called for each object.
 
+.PARAMETER IncludeCPUPercentage
+New parameter for the proxy function. Allows CPU percentage column to be calculated from Win32_PerfFormattedData_PerfProc_Process
+class. Could be slow as per object another network call has to be made.
+
 .PARAMETER EscapeProxyFilterParameter
 Impacts new parameters related to the filter like Name, Path, etc. Perform the single quote and backslash escaping. The backslash is the escape character in WQL.
 
@@ -184,6 +188,14 @@ function Get-CimInstanceProcess {
         [Parameter(ParameterSetName = 'ClassNameComputerSet')]
         [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
         [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
+        [Alias('icp')]
+        [switch]
+        ${IncludeCPUPercentage},
+
+        [Parameter(ParameterSetName = 'ClassNameSessionSet')]
+        [Parameter(ParameterSetName = 'ClassNameComputerSet')]
+        [Parameter(ParameterSetName = 'ResourceUriSessionSet')]
+        [Parameter(ParameterSetName = 'ResourceUriComputerSet')]
         [Alias('EscapeCharacters', 'ec', 'epfp')]
         [switch]
         ${EscapeProxyFilterParameter},
@@ -284,6 +296,7 @@ function Get-CimInstanceProcess {
                 # Remove parameters not on proxied command
                 $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found
                 $PSBoundParameters.Remove('IncludeUser') | Out-Null
+                $PSBoundParameters.Remove('IncludeCPUPercentage') | Out-Null
                 $PSBoundParameters.Remove('EscapeProxyFilterParameter') | Out-Null
                 $PSBoundParameters.Remove('Name') | Out-Null
                 $PSBoundParameters.Remove('Path') | Out-Null
@@ -292,21 +305,29 @@ function Get-CimInstanceProcess {
             $PSBoundParameters['ClassName'] = 'Win32_Process'
             $customPSTypeNameBase = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
             $customPSTypeNameUser = "$customPSTypeNameBase#IncludeUser"
+            $customPSTypeNameCPUPercentage = "$customPSTypeNameBase#IncludeCPUPercentage"
             $cimProcessIncludeUser = $false
+            $cimProcessIncludeCPUPercentage = $false
             if ($IncludeUser) {
                 $cimProcessIncludeUser = $true
+            }
+            if ($IncludeCPUPercentage) {
+                $cimProcessIncludeCPUPercentage = $true
             }
 
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('CimCmdlets\Get-CimInstance', [System.Management.Automation.CommandTypes]::Cmdlet)
             $scriptCmd = {
                 & $wrappedCmd @PSBoundParameters | & {
                     process {
-                        if ( $_.psobject.Properties.Name -contains 'PSShowComputerName') {
+                        if ( $_.psobject.Properties['PSShowComputerName']) {
                             $_.PSShowComputerName = $false
                         }
-                        $_.PSTypeNames.Insert( 0, $customPSTypeNameBase )
+                        $_.pstypenames.Insert( 0, $customPSTypeNameBase )
                         if ($cimProcessIncludeUser) {
-                            $_.PSTypeNames.Insert( 0, $customPSTypeNameUser)
+                            $_.pstypenames.Insert( 0, $customPSTypeNameUser)
+                        }
+                        if ($cimProcessIncludeCPUPercentage) {
+                            $_.pstypenames.Insert( 0, $customPSTypeNameCPUPercentage)
                         }
                         $_
                     }
