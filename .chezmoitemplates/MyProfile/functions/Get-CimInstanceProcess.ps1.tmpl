@@ -306,15 +306,21 @@ function Get-CimInstanceProcess {
             $customPSTypeNameBase = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
             $customPSTypeNameUser = "$customPSTypeNameBase#IncludeUser"
             $customPSTypeNameCPUPercentage = "$customPSTypeNameBase#IncludeCPUPercentage"
+            $customPSTypeNameUserAndCPUPercentage = "$customPSTypeNameBase#IncludeUserAndCPUPercentage"
             $cimProcessIncludeUser = $false
             $cimProcessIncludeCPUPercentage = $false
-            if ($IncludeUser) {
-                $cimProcessIncludeUser = $true
+            $cimProcessIncludeUserAndCPUPercentage = $false
+            if ($IncludeUser -and $IncludeCPUPercentage) {
+                $cimProcessIncludeUserAndCPUPercentage = $true
             }
-            if ($IncludeCPUPercentage) {
-                $cimProcessIncludeCPUPercentage = $true
+            else {
+                if ($IncludeUser) {
+                    $cimProcessIncludeUser = $true
+                }
+                elseif ($IncludeCPUPercentage) {
+                    $cimProcessIncludeCPUPercentage = $true
+                }
             }
-
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('CimCmdlets\Get-CimInstance', [System.Management.Automation.CommandTypes]::Cmdlet)
             $scriptCmd = {
                 & $wrappedCmd @PSBoundParameters | & {
@@ -323,11 +329,16 @@ function Get-CimInstanceProcess {
                             $_.PSShowComputerName = $false
                         }
                         $_.pstypenames.Insert( 0, $customPSTypeNameBase )
-                        if ($cimProcessIncludeUser) {
-                            $_.pstypenames.Insert( 0, $customPSTypeNameUser)
+                        if ($cimProcessIncludeUserAndCPUPercentage) {
+                            $_.pstypenames.Insert( 0, $customPSTypeNameUserAndCPUPercentage)
                         }
-                        if ($cimProcessIncludeCPUPercentage) {
-                            $_.pstypenames.Insert( 0, $customPSTypeNameCPUPercentage)
+                        else {
+                            if ($cimProcessIncludeUser) {
+                                $_.pstypenames.Insert( 0, $customPSTypeNameUser)
+                            }
+                            elseif ($cimProcessIncludeCPUPercentage) {
+                                $_.pstypenames.Insert( 0, $customPSTypeNameCPUPercentage)
+                            }
                         }
                         $_
                     }

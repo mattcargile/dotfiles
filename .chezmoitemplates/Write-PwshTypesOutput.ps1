@@ -31,34 +31,42 @@ end {
     }
     $typesList.Add( ( Write-TypeView @writeTypeViewSplat ) )
 
+    $incUserScriptProperties = @{
+        Owner = { [OutputType('string')]param() $this | Invoke-CimMethod -MethodName GetOwner } 
+        User = { [OutputType('string')]param() $this.Owner.User } 
+        UserDomain = { [OutputType('string')]param() $this.Owner.Domain } 
+    }
+    $incCPUPercentScriptProperties = @{
+        CPUPercentage = {
+            [OutputType('double')]
+            param()
+            $getCimInstanceSplat = @{
+                ClassName = 'Win32_PerfFormattedData_PerfProc_Process'
+                Property = 'PercentProcessorTime', 'IDProcess'
+                ComputerName =  $this.CSName
+                Filter = "( IDProcess = 0 AND Name = '_Total') OR ( IDProcess = $($this.ProcessId))"
+            }
+            $procTime = Get-CimInstance @getCimInstanceSplat | Sort-Object -Property IDProcess, Name
+            $procTimeTotal = $procTime[0].PercentProcessorTime
+            $procTimeProcess = $procTime[1].PercentProcessorTime
+            [Math]::Round( $procTimeProcess / $procTimeTotal * 100, 2 )
+        }
+    }
     $writeTypeViewSplat = @{
         TypeName = "$cimCustomWin32ProcessClassBase#IncludeUser"
-        ScriptProperty = @{
-            Owner = { [OutputType('string')]param() $this | Invoke-CimMethod -MethodName GetOwner } 
-            User = { [OutputType('string')]param() $this.Owner.User } 
-            UserDomain = { [OutputType('string')]param() $this.Owner.Domain } 
-        }
+        ScriptProperty = $incUserScriptProperties 
     }
     $typesList.Add( ( Write-TypeView @writeTypeViewSplat ) )
 
     $writeTypeViewSplat = @{
         TypeName = "$cimCustomWin32ProcessClassBase#IncludeCPUPercentage"
-        ScriptProperty = @{
-            CPUPercentage = {
-                [OutputType('double')]
-                param()
-                $getCimInstanceSplat = @{
-                    ClassName = 'Win32_PerfFormattedData_PerfProc_Process'
-                    Property = 'PercentProcessorTime', 'IDProcess'
-                    ComputerName =  $this.CSName
-                    Filter = "( IDProcess = 0 AND Name = '_Total') OR ( IDProcess = $($this.ProcessId))"
-                }
-                $procTime = Get-CimInstance @getCimInstanceSplat | Sort-Object -Property IDProcess, Name
-                $procTimeTotal = $procTime[0].PercentProcessorTime
-                $procTimeProcess = $procTime[1].PercentProcessorTime
-                [Math]::Round( $procTimeProcess / $procTimeTotal * 100, 2 )
-            }
-        }
+        ScriptProperty = $incCPUPercentScriptProperties 
+    }
+    $typesList.Add( ( Write-TypeView @writeTypeViewSplat ) )
+
+    $writeTypeViewSplat = @{
+        TypeName = "$cimCustomWin32ProcessClassBase#IncludeUserAndCPUPercentage"
+        ScriptProperty = $incUserScriptProperties + $incCPUPercentScriptProperties 
     }
     $typesList.Add( ( Write-TypeView @writeTypeViewSplat ) )
     #endregion

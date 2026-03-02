@@ -88,7 +88,7 @@ end {
     $writeFormatViewSplat = @{
         TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process'
         Property = 'CSName', 'Pid', 'Name', 'WSMb', 'CPUSec', 'Path'
-        Width = 15, 5, 48, 8, 8, 80
+        Width = 15, 5, 48, 13, 13, 80
         VirtualProperty = @{
             Path = { ConvertTo-CompactPath -Path $_.ExecutablePath -Length 80 -Verbose:$false }
         }
@@ -97,7 +97,7 @@ end {
     $writeFormatViewSplat = @{
         TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process#IncludeUser'
         Property = 'CSName', 'Pid', 'User', 'Name', 'WSMb', 'CPUSec', 'Path'
-        Width = 15, 5, 25, 48, 8, 8, 80
+        Width = 15, 5, 25, 48, 13, 13, 80
         VirtualProperty = @{
             Path = { ConvertTo-CompactPath -Path $_.ExecutablePath -Length 80 -Verbose:$false }
         }
@@ -106,7 +106,16 @@ end {
     $writeFormatViewSplat = @{
         TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process#IncludeCPUPercentage'
         Property = 'CSName', 'Pid', 'Name', 'WSMb', 'CPUSec', 'Path', 'CPUPercentage'
-        Width = 15, 5, 48, 8, 8, 80, 13
+        Width = 15, 5, 48, 13, 13, 80, 13
+        VirtualProperty = @{
+            Path = { ConvertTo-CompactPath -Path $_.ExecutablePath -Length 80 -Verbose:$false }
+        }
+    }
+    $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
+    $writeFormatViewSplat = @{
+        TypeName = 'MacMicrosoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process#IncludeUserAndCPUPercentage'
+        Property = 'CSName', 'Pid', 'User', 'Name', 'WSMb', 'CPUSec', 'Path', 'CPUPercentage'
+        Width = 15, 5, 25, 48, 13, 13, 80, 13
         VirtualProperty = @{
             Path = { ConvertTo-CompactPath -Path $_.ExecutablePath -Length 80 -Verbose:$false }
         }
