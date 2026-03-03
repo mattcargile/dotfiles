@@ -6,8 +6,9 @@ function Get-CommandParameter {
         [ValidateNotNull()]
         [Alias('c')]
         [ArgumentCompleter([GetCommandParameterCommandArgumentCompleter])]
-        [CommandInfoArgumentConverter()]
-        [System.Management.Automation.CommandInfo] $Command,
+        [GetCommandParameterCommandArgumentTransformationAttribute()]
+        [System.Management.Automation.CommandInfo]
+        $Command,
 
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty()]
