@@ -58,12 +58,16 @@ function Expand-Object {
             if ($null -eq $currentObject) {
                 continue
             }
+            # chezmoi if type of dictionary block {{- if eq .isPSCore true }}
             $matchedProps = [System.Collections.Generic.OrderedDictionary[string, psobject]]::new()
+            # else and end {{- else }}{{ nindent 12 "$matchedProps = [System.Collections.Specialized.OrderedDictionary]::new()" }}{{ end }}
             switch ($PSCmdlet.ParameterSetName) {
                 'Like' {
                     foreach ($currentName in $Name) {
                         foreach ($currentLikeMatchedProp in $currentObject.psobject.Properties.Match($currentName)) {
+                            # chezmoi if contains method block {{- if eq .isPSCore true }}
                             if ( -not $matchedProps.ContainsKey($currentLikeMatchedProp.Name)) {
+                            # else and end {{- else }}{{ nindent 28 "if ( -not $matchedProps.Contains($currentLikeMatchedProp.Name)) {" }}{{ end }}
                                 $currrentOutput = [MyProfileExpandObject]@{
                                     Name = $currentLikeMatchedProp.Name
                                     TypeName = $currentLikeMatchedProp.TypeNameOfValue
@@ -80,7 +84,9 @@ function Expand-Object {
                 }
                 'Match' {
                     foreach ($currentProp in $currentObject.psobject.Properties) {
+                        # chezmoi if contains method block {{- if eq .isPSCore true }}
                         if (-not $matchedProps.ContainsKey($currentProp.Name) ) {
+                        # else and end {{- else }}{{ nindent 24 "if (-not $matchedProps.Contains($currentProp.Name) ) {" }}{{ end }}
                             foreach ($currentName in $Name) {
                                 if ($currentProp.Name -match $currentName) {
                                     $currentOutput = [MyProfileExpandObject]@{
