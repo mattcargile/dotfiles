@@ -320,7 +320,7 @@ end {
         Name = 'Left'
     }
     $writeFormatLengthSb = {
-        if ($_.Attributes.HasFlag( [System.IO.FileAttributes]::Offline) ) {
+        if ($_.Attributes -is [System.IO.FileAttributes] -and $_.Attributes.HasFlag( [System.IO.FileAttributes]::Offline) ) {
             "($([Humanizer.ByteSizeExtensions]::Humanize($_.Length, '0.00')))"
         }
         else {
