@@ -22,7 +22,7 @@ function Select-FirstObject {
 
         $amountProcessed++
         if ($amountProcessed -ge $Count) {
-            [UtilityProfile.CommandStopper]::Stop($PSCmdlet)
+            [MyProfileLib.CommandStopper]::Stop($PSCmdlet)
         }
     }
 }

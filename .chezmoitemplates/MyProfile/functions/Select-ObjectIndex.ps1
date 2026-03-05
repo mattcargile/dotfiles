@@ -31,7 +31,7 @@ function Select-ObjectIndex {
             if ($currentIndex -eq $Index) {
                 # yield
                 $InputObject
-                [UtilityProfile.CommandStopper]::Stop($PSCmdlet)
+                [MyProfileLib.CommandStopper]::Stop($PSCmdlet)
             }
 
             $currentIndex++

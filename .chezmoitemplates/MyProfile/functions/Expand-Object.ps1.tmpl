@@ -68,7 +68,7 @@ function Expand-Object {
                             # chezmoi if contains method block {{- if eq .isPSCore true }}
                             if ( -not $matchedProps.ContainsKey($currentLikeMatchedProp.Name)) {
                             # else and end {{- else }}{{ nindent 28 "if ( -not $matchedProps.Contains($currentLikeMatchedProp.Name)) {" }}{{ end }}
-                                $currrentOutput = [MyProfileExpandObject]@{
+                                $currrentOutput = [MyProfileLib.ExpandObject]@{
                                     Name = $currentLikeMatchedProp.Name
                                     TypeName = $currentLikeMatchedProp.TypeNameOfValue
                                     Value = $currentLikeMatchedProp.Value
@@ -89,7 +89,7 @@ function Expand-Object {
                         # else and end {{- else }}{{ nindent 24 "if (-not $matchedProps.Contains($currentProp.Name) ) {" }}{{ end }}
                             foreach ($currentName in $Name) {
                                 if ($currentProp.Name -match $currentName) {
-                                    $currentOutput = [MyProfileExpandObject]@{
+                                    $currentOutput = [MyProfileLib.ExpandObject]@{
                                         Name = $currentProp.Name
                                         TypeName = $currentProp.TypeNameOfValue
                                         Value = $currentProp.Value

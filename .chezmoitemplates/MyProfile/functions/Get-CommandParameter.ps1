@@ -48,7 +48,7 @@ function Get-CommandParameter {
 
                 foreach ($target in $targetParameters) {
                     if ($target.IsMatch($param.Name)) {
-                        $result = [UtilityCommandParameterInfo]@{
+                        $result = [MyProfileLib.CommandParameterInfo]@{
                             Set = $set.Name
                             Aliases = $param.Aliases
                             Position = $param.Position

@@ -10,7 +10,7 @@ end {
     $formatList = [System.Collections.Generic.List[string]]::new()
 
     #region Expand-Object
-    $typeName = 'MyProfileExpandObject'
+    $typeName = 'MyProfileLib.ExpandObject'
     $grpSetCtrlName = "$typeName-GrpSetCtrl"
     $writeFormatControlSplat = @{
         Name = $grpSetCtrlName
@@ -18,7 +18,7 @@ end {
             Write-FormatViewExpression -ScriptBlock { "$([char]0x1B)[1;3;34mIndex:$([char]0x1B)[0m " } # Bold;Italics;Blue
             Write-FormatViewExpression -Property Index
             Write-FormatViewExpression -Newline
-            Write-FormatViewExpression -ScriptBlock { "$([char]0x1B)[1;3;34mProperty Name:$([char]0x1B)[0m " } # Bold;Italics;Blue
+            Write-FormatViewExpression -ScriptBlock { "$([char]0x1B)[1;3;34mProperty Name:$([char]0x1B)[0m " }
             Write-FormatViewExpression -Property Name
             Write-FormatViewExpression -Newline
             Write-FormatViewExpression -ScriptBlock { "$([char]0x1B)[1;3;34mType Name:$([char]0x1B)[0m " }
@@ -176,7 +176,8 @@ end {
     #endregion
 
     #region Command Parameter
-    $grpSetCtrlName = 'UtilityCommandParameterInfo.GrpSetCtrl'
+    $gcpBaseTypeName = 'MyProfileLib.CommandParameterInfo'
+    $grpSetCtrlName = "$gcpBaseTypeName.GrpSetCtrl"
     $writeFormatControlSplat = @{
         Name = $grpSetCtrlName
         Action = {
@@ -191,8 +192,8 @@ end {
     $formatList.Add( (Write-FormatControl @writeFormatControlSplat) )
 
     $writeFormatViewSplat = @{
-        TypeName = 'UtilityCommandParameterInfo'
-        Name = 'UtilityCommandParameterInfo'
+        TypeName = $gcpBaseTypeName
+        Name = $gcpBaseTypeName
         GroupByProperty = 'Set'
         GroupAction = $grpSetCtrlName
         Width = 2, 1, 1, 14, 25, 40

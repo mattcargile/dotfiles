@@ -1,0 +1,46 @@
+[CmdletBinding()]
+param (
+)
+# MyProfileLib.csproj SHA256: {{- include "MyProfileLib/MyProfileLib.csproj" | sha256sum }}
+# range include .cs loop {{ range $csFile := glob ( joinPath .chezmoi.sourceDir "MyProfileLib" "*.cs" ) }} 
+# {{ base $csFile }} SHA256: {{- include $csFile | sha256sum }}
+# end range glob {{ end }}
+
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+$outputDir = $null
+# Hopefully we are in `chezmoi` context...
+if ( ( Test-Path Env:CHEZMOI_SOURCE_DIR ) -and
+    ( Test-Path Env:\CHEZMOI_DEST_DIR ) -and
+    $env:CHEZMOI -eq 1
+) { 
+    $sourceBase = $env:CHEZMOI_SOURCE_DIR
+    $outputDir = Join-Path $env:CHEZMOI_DEST_DIR .config powershell MyProfile
+    Write-Verbose "The Output Directory is '$outputDir'"
+}
+# Hopefully this won't lock up the `chezmoi` database because we are hopefully running outside the scope of `chezmoi`
+else {
+    $sourceBase = chezmoi source-path
+}
+Write-Verbose "The Source Base Directory is '$sourceBase'"
+$sourceProj = Join-Path $sourceBase MyProfileLib MyProfileLib.csproj
+Write-Verbose "The Source Project file is '$sourceProj'"
+
+$dotnetArgs = @(
+    'publish'
+    $sourceProj
+    '--configuration'
+    'Release'
+    '--nologo'
+    '--verbosity'
+    'quiet'
+)
+$dotnetCoreArgs = '--framework', 'net9.0'
+$dotnetDesktopArgs = '--framework', 'net472'
+if ($outputDir) {
+    $dotnetCoreArgs += '--output', ( Join-Path $outputDir 'lib' 'core' )
+    $dotnetDesktopArgs += '--output', ( Join-Path $outputDir 'lib' 'desktop' )
+}
+dotnet @dotnetArgs @dotnetCoreArgs 
+dotnet @dotnetArgs @dotnetDesktopArgs 

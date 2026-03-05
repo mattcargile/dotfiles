@@ -1,1 +1,5 @@
 .chezmoitemplates/glyphnames.json
+/.vs
+/MyProfileLib/bin
+/MyProfileLib/obj
+.chezmoitemplates/outchezmoiscripts
