@@ -1,3 +1,4 @@
+# Need to reset action keys or else an `Enter` will automatically execute the command from the history. Muscle memory is already too strong.
 Set-PSRunActionKeyBinding -FirstActionKey 'Shift+Enter' -SecondActionKey 'Enter'
 Set-PSRunPSReadLineKeyHandler -PSReadLineHistoryChord 'Ctrl+r' -TabCompletionChord 'Ctrl+8,Tab'
 Get-PSRunDefaultSelectorOption | ForEach-Object -Process {
