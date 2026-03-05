@@ -9,7 +9,7 @@ function Open-VMConsole {
     )
     process {
         $vmlist = 
-            foreach ($vm in $VMName) {
+            foreach ($vm in $Name) {
                 if ($vm -is [string]) {
                     Write-Verbose "Converting String input ($($vm)) to VM object"
                     try {
