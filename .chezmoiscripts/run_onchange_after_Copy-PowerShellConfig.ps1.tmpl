@@ -3,5 +3,8 @@
 param()
 # powershell.config.json SHA256: {{ include "dot_config/powershell/powershell.config.json" | sha256sum }}
 
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
 Copy-Item -Path $env:USERPROFILE\.config\powershell\powershell.config.json -Destination (Split-Path -Path $PROFILE.CurrentUserCurrentHost)
 # {{ end }}
