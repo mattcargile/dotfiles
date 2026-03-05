@@ -8,6 +8,8 @@ param (
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+# Below needed to output the glyphs correctly otherwise we have question mark(s) in the output
+$OutputEncoding = [System.Console]::InputEncoding = [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
 $glyphPath = Join-Path $PSScriptRoot glyphnames.json
 Write-Debug "Glyph file path is $glyphPath"
