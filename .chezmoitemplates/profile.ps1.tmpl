@@ -1,0 +1,55 @@
+# isPSCore setting {{- $isPSCore := eq "profile.ps1.tmpl" ( base .chezmoi.sourceFile ) }}
+# isPSCore if Requires {{- if eq $isPSCore true }}
+#Requires -Version 7.5
+# else Requires {{- else -}}{{- "\r\n" -}}#Requires -Version 5.1 {{- end }}
+
+#region Using Namespace For Quick Interactive Usage
+{{ includeTemplate "usingnm.ps1" . }}
+#endregion
+
+#region Environment Variables
+{{ includeTemplate "env.ps1.tmpl" . }}
+#endregion
+
+#region Prompt
+{{ includeTemplate "prompt.ps1.tmpl" . }}
+#endregion
+
+# Helper Visual Studio Code Command Palette operations ( i.e. EditorServicesCommandSuite )
+if($env:TERM_PROGRAM -eq 'vscode' -and $Host.Name -eq 'Visual Studio Code Host') {
+    Import-CommandSuite
+}
+#endegion
+
+#region isPSCore if CoreCLR related {{- if eq $isPSCore true }}
+# Prefer core's implementation of join and have a proxied command
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments","StringModule_DontInjectJoinString",Justification="Variable required in session for future implicit string module load.")]
+$StringModule_DontInjectJoinString = $true
+
+{{ includeTemplate "powershellrun.ps1" . }}
+#endregion {{- end }}
+
+#region PSDefaultParameterValues
+{{ includeTemplate "defaultparams.ps1.tmpl" . }}
+#endregion
+
+#region ArgumentCompleter Generated
+# chezmoi outputList args {{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir ".chezmoitemplates" "Write-ArgCompleterOutput.ps1" ) }}
+{{ outputList "pwsh" $argCompleterArgList }}
+#endregion
+#region argcompleter.ps1
+{{ includeTemplate "argcompleter.ps1" . }}
+#endregion
+
+#region Alias
+{{ includeTemplate "alias.ps1" . }}
+#endregion
+
+#region ReadLine
+{{ includeTemplate "readline.ps1" . }}
+#endregion
+
+#region Custom Types and Format
+Update-FormatData -PrependPath ( [System.IO.Path]::Combine( $HOME, '.config', 'powershell', 'profile.format.ps1xml' ) )
+#endregion
+

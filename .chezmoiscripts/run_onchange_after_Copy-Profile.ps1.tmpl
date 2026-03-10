@@ -2,10 +2,12 @@
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 param()
 # profile.ps1 SHA256: {{ includeTemplate "dot_config/powershell/profile.ps1.tmpl" . | sha256sum }}
+# profile_desktop.ps1 SHA256: {{ includeTemplate "dot_config/powershell/profile_desktop.ps1.tmpl" . | sha256sum }}
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $profileFilePath = "$env:USERPROFILE\.config\powershell\profile.ps1"
+$profileDesktopFilePath = "$env:USERPROFILE\.config\powershell\profile_desktop.ps1" 
 $myDocumentsParentPath = Split-Path -Path $( [Environment]::GetFolderPath('MyDocuments') ) -Parent
 Write-Verbose -Message "MyDocuments Parent Path: $myDocumentsParentPath"
 $oneDriveRedirectPathWildcard = "$( Join-Path -Path $env:USERPROFILE -ChildPath 'OneDrive' )*"
@@ -14,20 +16,20 @@ if ($myDocumentsParentPath -like $oneDriveRedirectPathWildcard) {
     if ($env:OneDriveCommercial) {
         if ($PSCmdlet.ShouldProcess( $profileFilePath, 'Copy to OneDrive Commericial location for PowerShell and Windows PowerShell.')) {
             Copy-Item -Path $profileFilePath -Destination "$env:OneDriveCommercial\Documents\PowerShell\profile.ps1"
-            Copy-Item -Path $profileFilePath -Destination "$env:OneDriveCommercial\Documents\WindowsPowerShell\profile.ps1"
+            Copy-Item -Path $profileDesktopFilePath -Destination "$env:OneDriveCommercial\Documents\WindowsPowerShell\profile.ps1"
         }
     }
     if ($env:OneDriveConsumer) {
         if ($PSCmdlet.ShouldProcess( $profileFilePath, 'Copy to OneDrive Consumer location for PowerShell and Windows PowerShell.')) {
             Copy-Item -Path $profileFilePath -Destination "$env:OneDriveConsumer\Documents\PowerShell\profile.ps1"
-            Copy-Item -Path $profileFilePath -Destination "$env:OneDriveConsumer\Documents\WindowsPowerShell\profile.ps1"
+            Copy-Item -Path $profileDesktopFilePath -Destination "$env:OneDriveConsumer\Documents\WindowsPowerShell\profile.ps1"
         }
     }
 }
 else {
     if ($PSCmdlet.ShouldProcess( $profileFilePath, 'Copy to non-OneDrive location for PowerShell and Windows PowerShell.')) {
         Copy-Item -Path $profileFilePath -Destination "$env:USERPROFILE\Documents\PowerShell\profile.ps1"
-        Copy-Item -Path $profileFilePath -Destination "$env:USERPROFILE\Documents\WindowsPowerShell\profile.ps1"
+        Copy-Item -Path $profileDesktopFilePath -Destination "$env:USERPROFILE\Documents\WindowsPowerShell\profile.ps1"
     }
 }
 # end {{ end }}

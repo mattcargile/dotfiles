@@ -1,4 +1,7 @@
 LICENSE
 README.md
-/MyProfileLib
+MyProfileLib
 chezmoi.slnx
+{{ if ne .chezmoi.os "windows" }}
+.config/powershell/profile_desktop.ps1
+{{ end }}
