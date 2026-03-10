@@ -84,6 +84,11 @@ Personal cross-platform configuration using chezmoi.
         <package id="powershell-core" />
         <package id="openssh" />
         <package id="sysinternals" />
+        <package id="PDFXchangeEditor" />
+        ```
+    * `PDFXChangeEditor` has annoying auto updater and a flag must be used to disable it. Use below to install. May need to pass this flag during updates too.
+        ```powershell
+        sudo choco install PDFXchangeEditor -y --params '"/NOUPDATER"'
         ```
 1. Import the choco `xml` config.
    ```powershell
