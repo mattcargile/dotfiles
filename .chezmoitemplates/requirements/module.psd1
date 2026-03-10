@@ -88,10 +88,6 @@
         PSEdition = 'Desktop'
         Scope = 'AllUsers'
     }
-    PowerShellHumanizer = @{
-        PSEdition = 'Desktop'
-        Scope = 'AllUsers'
-    }
     PSEventViewer = @{
         PSEdition = 'Desktop'
         Scope = 'AllUsers'
