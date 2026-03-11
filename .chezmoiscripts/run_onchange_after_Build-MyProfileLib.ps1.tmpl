@@ -11,6 +11,19 @@ param (
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
+try {
+    $dotnetCmdInfo = Get-Command -Name dotnet -CommandType Application
+    Get-Item -Path $dotnetCmdInfo.Definition | Out-Null
+}
+catch {
+    throw
+}
+
+$hasNugetHttpsSrc = dotnet nuget list source --format short | Select-String -Pattern '^E\w{0,2}\shttps' -CaseSensitive -Quiet
+if (-not $hasNugetHttpsSrc) {
+    throw [InvalidOperationException]'Cannot find proper https nuget source for packages. Try `dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org`'
+}
+
 $outputDir = $null
 # Hopefully we are in `chezmoi` context...
 if ( ( Test-Path Env:CHEZMOI_SOURCE_DIR ) -and
@@ -18,7 +31,7 @@ if ( ( Test-Path Env:CHEZMOI_SOURCE_DIR ) -and
     $env:CHEZMOI -eq 1
 ) {
     $sourceBase = $env:CHEZMOI_SOURCE_DIR
-    $outputDir = Join-Path $env:CHEZMOI_DEST_DIR .config powershell MyProfile
+    $outputDir = Join-Path $env:CHEZMOI_DEST_DIR .config powershell MyProfile lib
     Write-Verbose "The Output Directory is '$outputDir'"
 }
 # Hopefully this won't lock up the `chezmoi` database because we are hopefully running outside the scope of `chezmoi`
@@ -41,8 +54,27 @@ $dotnetArgs = @(
 $dotnetCoreArgs = '--framework', 'net9.0'
 $dotnetDesktopArgs = '--framework', 'netstandard2.0'
 if ($outputDir) {
-    $dotnetCoreArgs += '--output', ( Join-Path $outputDir 'lib' 'core' )
-    $dotnetDesktopArgs += '--output', ( Join-Path $outputDir 'lib' 'desktop' )
+    Write-Verbose "Iterating over files in $outputDir to check for locks."
+    $outputFiles = Get-ChildItem -Path $outputDir -Recurse -File
+    foreach ($currentFile in $outputFiles) {
+        try {
+            Write-Debug "Attempting to open $currentFile"
+            $currentFileStream = [System.IO.File]::Open( $currentFile.FullName, 'Open', 'ReadWrite', 'None' )
+        }
+        catch {
+            throw
+        }
+        finally {
+            if ($currentFileStream) {
+                Write-Debug "Disposing of $currentFile FileStream."
+                $currentFileStream.Dispose()
+            }
+        }
+    }
+    Write-Verbose "Removing the files found at $outputDir"
+    Remove-Item -Path $outputFiles
+    $dotnetCoreArgs += '--output', ( Join-Path $outputDir 'core' )
+    $dotnetDesktopArgs += '--output', ( Join-Path $outputDir 'desktop' )
 }
 dotnet @dotnetArgs @dotnetCoreArgs
 dotnet @dotnetArgs @dotnetDesktopArgs
