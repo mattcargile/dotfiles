@@ -248,4 +248,8 @@ $pwshRunSplat = @{
 }
 Set-PSReadLineKeyHandler @pwshRunSplat
 
-Remove-Variable 'pwshRunSplat'
+Remove-Variable -Name @(
+    'pwshRunSplat'
+    'pwshRunTabSplat'
+    'pwshRunReadlineHistorySplat'
+)
