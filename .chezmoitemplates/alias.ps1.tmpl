@@ -49,11 +49,11 @@ New-Alias -Name 'ipxl' -Value 'Import-Excel'
 # https://github.com/PowershellFrameworkCollective/PSUtil/issues/67
 New-Alias -Name 'add' -Value 'string\Add-String'
 New-Alias -Name 'format' -Value 'string\Format-String'
+# chezmoi if not core {{ if eq .isPSCore false }}
 # Using proxy Join-String command for Core edition.
 # Join-String only exposed in the `psd1` for the Desktop edition 
-if ($PSEdition -eq 'Desktop') {
-  New-Alias -Name 'join' -Value 'string\Join-String'
-}
+New-Alias -Name 'join' -Value 'string\Join-String'
+# chezmoi end if not core {{- end }}
 New-Alias -Name 'replace' -Value 'string\Set-String'
 New-Alias -Name 'split' -Value 'string\Split-String'
 New-Alias -Name 'trim' -Value 'string\Get-SubString'
@@ -147,11 +147,13 @@ New-Alias -Name 'gwts' -Value 'Get-WTSSession'
 New-Alias -Name 'rwts' -Value 'Remove-WTSSession'
 # PSParseHTML
 New-Alias -Name 'cfhtml' -Value 'PSParseHTML\ConvertFrom-HTML'
-# Native Commands
-$prg86 = ${env:ProgramFiles(x86)}
-$prgFiles = $env:ProgramFiles
-New-Alias -Name 'choco.exe' -Value 'choco' # Hack for autocomplete.
+
 New-Alias -Name 'git.exe' -Value 'git' # Hack for autocomplete.
+#region chezmoi if windows {{- if eq .isWindows true }}
+# chezmoi prog files 86 var {{- $prg86 := env "ProgramFiles(x86)" }}
+# chezmoi prog files var  {{- $prgFiles := env "ProgramFiles" }}
+New-Alias -Name 'choco.exe' -Value 'choco' # Hack for autocomplete.
+
 # Python Alias
 # No longer needed or functional for oh-my-posh. Need to disable the App Execution Aliases in Windows
 # Appears one would need to clear entry from `HKCU:\Software\Microsoft\Windows\CurrentVersion\App Paths` and
@@ -159,78 +161,59 @@ New-Alias -Name 'git.exe' -Value 'git' # Hack for autocomplete.
 # Use `py -m pip list` instead of `pip`
 
 # Additional exe's
-$ssms86Path = Convert-Path -Path "$prg86\Microsoft SQL Server Management Studio *\Common7\IDE\Ssms.exe" | Sort-Object -Descending | Select-Object -First 1
-$ssmsPath = Convert-Path -Path "$prgFiles\Microsoft SQL Server Management Studio *\Release\Common7\IDE\Ssms.exe" | Sort-Object -Descending | Select-Object -First 1
-if ($ssmsPath) {
-  New-Alias -Name 'ssms' -Value $ssmsPath
-}
-elseif ($ssms86Path) {
-  New-Alias -Name 'ssms' -Value $ssms86Path
-}
-New-Alias -Name 'npp' -Value "$prgFiles\Notepad++\notepad++.exe"
-New-Alias -Name 'ostress' -Value "$prgFiles\Microsoft Corporation\RMLUtils\ostress.exe"
-# Helper vs variables
-$vsVer = '2022'
-$vsPrefix = "$prgFiles\Microsoft Visual Studio\$vsVer\Community"
-$vsIDE = "$vsPrefix\Common7\IDE"
-$vsMsBldBin = "$vsPrefix\MSBuild\Current\Bin"
-if ($vsPrefix) {
-  # For VS 2019 launching. Sometimes Invoke-Item will launch older versions.
-  New-Alias -Name 'devenv' -Value "$vsIDE\devenv.exe"
-  # For tf.exe TFS source control. This may change with new versions.
-  New-Alias -Name 'tf' -Value "$vsIDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\tf.exe"
-  # sqlpackage.exe 150/2019 DacPac diff
-  New-Alias -Name 'sqlpackage' -Value "$vsIDE\Extensions\Microsoft\SQLDB\DAC\150\sqlpackage.exe"
-  # C# interactive
-  New-Alias -Name 'csi' -Value "$vsMsBldBin\Roslyn\csi.exe"
-  # C# Compiler
-  New-Alias -Name 'csc' -Value "$vsMsBldBin\Roslyn\csc.exe"
-  # MsBuild tool
-  New-Alias -Name 'msbuild' -Value "$vsMsBldBin\MsBuild.exe"
-}
-# Avoiding using the old Lua 7z or the like
-New-Alias -Name '7z' -Value "$env:USERPROFILE\scoop\shims\7z.exe"
-# Cisco Anyconnect (Secure Client) VPN ( vpncli.exe )
-$ciscoPaths = @(
-  "$prg86\Cisco\Cisco Secure Client\vpncli.exe"
-  "$prg86\Cisco\Cisco AnyConnect Secure Mobility Client\vpncli.exe"
-)
-foreach ($currentCiscoPath in $ciscoPaths) {
-  if(Test-Path $currentCiscoPath) {
-    New-Alias -Name 'vpncli' -Value $currentCiscoPath
-    break
-  }
-}
-# Wally keyboard Flash CLI tool
-New-Alias -Name 'wally-cli' -Value "$prg86\Wally\wally-cli.exe"
-# Microsoft Kerberos Configuration Manager
-New-Alias -Name 'KerberosConfigMgr' -Value "$prgFiles\Microsoft\Kerberos Configuration Manager for SQL Server\KerberosConfigMgr.exe"
-# SentinelOne Control for checking status
-if ($senOnePath = Convert-Path "$prgFiles\SentinelOne\Sentinel Agent*\SentinelCtl.exe" -ErrorAction Ignore | Sort-Object -Descending | Select-Object -First 1) {
-    New-Item -Path function:\SentinelCtl -Value "gsudo `"& '$senOnePath' `$args`"" -Force | Out-Null
-}
-# Spacesniffer GUI check disk space. Relies on $env:PATH
-if ( $spcSnif = Get-Command -Name 'SpaceSniffer.exe' -CommandType Application -ErrorAction Ignore | Select-Object -First 1 -ExpandProperty 'Definition' ) {
-    New-Item -Path function:\SpaceSniffer -Value "gsudo `"& '$spcSnif'`"" -Force | Out-Null
-}
+# chezmoi get ssmsBasePath {{- $ssmsBasePath := joinPath "Common7" "IDE" "Ssms.exe" }}
+# chezmoi get ssmsPrg86Path {{- $ssmsPrg86Path := joinPath ( glob ( joinPath $prg86 "Microsoft SQL Server Management Studio *" ) | sortAlpha | last ) $ssmsBasePath }}
+# chezmoi get ssmsPrgPath {{- $ssmsPrgPath := joinPath ( glob ( joinPath $prgFiles "Microsoft SQL Server Management Studio *" ) | sortAlpha | last ) "Release" $ssmsBasePath }}
+# chezmoi init ssmsPath {{- $ssmsPath := "" }}
+# chezmoi if get ssmsPath {{- if lookPath $ssmsPrgPath }}{{ $ssmsPath = $ssmsPrgPath }}{{ else if lookPath $ssmsPrg86Path }}{{ $ssmsPath = $ssmsPrg86Path }}{{ end }}
+# chezmoi if ssmsPath alias {{- if ne $ssmsPath "" }}{{ nindent 0 "New-Alias -Name 'ssms' -Value " }}{{ $ssmsPath | squote }}{{ end }}
 
+# chezmoi get nppPath {{- $nppPath := joinPath $prgFiles "Notepad++" "notepad++.exe" }}
+# chezmoi if nppPath alias {{- if lookPath $nppPath }}{{ nindent 0 "New-Alias -Name 'npp' -Value " }}{{ $nppPath | squote }}{{ end }}
+
+# chezmoi get ostressPath {{- $ostressPath := joinPath $prgFiles "Microsoft Corporation" "RMLUtils" "ostress.exe" }}
+# chezmoi if ostressPath alias {{- if lookPath $ostressPath }}{{ nindent 0 "New-Alias -Name 'ostress' -Value " }}{{ $ostressPath | squote }}{{ end }}
+
+# chezmoi get vsPrefix {{- $vsPrefix := joinPath $prgFiles "Microsoft Visual Studio" "2022" "Community" }}
+# chezmio if vsPrefix {{- if lstat $vsPrefix }}
+# chezmoi get vsIDE {{- $vsIDE := joinPath $vsPrefix "Common7" "IDE" }}
+# chezmoi get vsMsBldBin {{- $vsMsBldBin := joinPath $vsPrefix "MSBuild" "Current" "Bin" }}
+# chezmoi get devEnvPath {{- $devenvPath := joinPath $vsIDE "devenv.exe" }}
+# chezmoi if devenv alias {{- if lookPath $devenvPath }}{{ nindent 0 "New-Alias -Name 'devenv' -Value " }}{{ $devenvPath | squote }}{{ end }}
+# chezmoi get tfPath {{- $tfPath := joinPath $vsIDE "CommonExtensions" "Microsoft" "TeamFoundation" "Team Explorer" "tf.exe" }}
+# chezmoi if tf alias {{- if lookPath $tfPath }}{{ nindent 0 "New-Alias -Name 'tf' -Value " }}{{ $tfPath | squote }}{{ end }}
+# chezmoi get sqlpackagePath {{- $sqlpackagePath := joinPath $vsIDE "Extensions" "Microsoft" "SQLDB" "DAC" "SqlPackage.exe" }}
+# chezmoi if sqlpackage alias {{- if lookPath $sqlpackagePath }}{{ nindent 0 "New-Alias -Name 'sqlpackage' -Value " }}{{ $sqlpackagePath | squote }}{{ end }}
+# chezmoi get csiPath {{- $csiPath := joinPath $vsMsBldBin "Roslyn" "csi.exe" }}
+# chezmoi if csi alias {{- if lookPath $csiPath }}{{ nindent 0 "New-Alias -Name 'csi' -Value " }}{{ $csiPath | squote }}{{ end }}
+# chezmoi get cscPath {{- $cscPath := joinPath $vsMsBldBin "Roslyn" "csc.exe" }}
+# chezmoi if csc alias {{- if lookPath $cscPath }}{{ nindent 0 "New-Alias -Name 'csc' -Value " }}{{ $cscPath | squote }}{{ end }}
+# chezmoi get msbuildPath {{- $msbuildPath := joinPath $vsMsBldBin "MsBuild.exe" }}
+# chezmoi if msbuild alias {{- if lookPath $msbuildPath }}{{ nindent 0 "New-Alias -Name 'msbuild' -Value " }}{{ $msbuildPath | squote }}{{ end }}
+# chezmoi if vsPrefix end {{- end }}
+
+# chezmoi get vpncliAnyPath {{ $vpncliAnyPath := joinPath $prg86 "Cisco" "Cisco AnyConnect Secure Mobility Client" "vpncli.exe" }}
+# chezmoi get vpncliSecPath {{ $vpncliSecPath := joinPath $prg86 "Cisco" "Cisco Secure Client" "vpncli.exe" }}
+# chezmoi init vpncliPath {{- $vpncliPath := "" }}
+# chezmoi if get vpncliPath {{- if lookPath $vpncliSecPath }}{{ $vpncliPath = $vpncliSecPath }}{{ else if lookPath $vpncliAnyPath }}{{ $vpncliPath = $vpncliAnyPath }}{{ end }}
+# chezmoi if vpncliPath alias {{- if ne $vpncliPath "" }}{{ nindent 0 "New-Alias -Name 'vpncli' -Value " }}{{ $vpncliPath | squote }}{{ end }}
+
+# chezmoi get kerbConfigPath {{- $kerbConfigPath := joinPath $prgFiles "Microsoft" "Kerberos Configuration Manager for SQL Server" "KerberosConfigMgr.exe" }}
+# chezmoi if kerberosconfigmgr alias {{- if lookPath $kerbConfigPath }}{{ nindent 0 "New-Alias -Name 'kerberosconfigmgr' -Value " }}{{ $kerbConfigPath | squote }}{{ end }}
+
+# chezmoi if gsudo {{- if lookPath ( joinPath ( env "USERPROFILE" ) "scoop" "apps" "gsudo" "current" "gsudo.exe" ) }}
+
+# chezmoi get senOnePath {{- $senOnePath := joinPath ( glob ( joinPath $prgFiles "SentinelOne" "Sentinel Agent *" ) | sortAlpha | last ) "SentinelCtl.exe" }}
+# chezmoi if get senOnePath {{- if lookPath $senOnePath }}{{ "\r\n" }}function sentinelctl { invoke-gsudo -ScriptBlock { & {{ $senOnePath | squote }} @args } -ArgumentList $args }{{- end }}
+
+# chezmoi if spacesniffer {{- if lookPath "SpaceSniffer" }}{{ "\r\n" }}function spacesniffer { invoke-gsudo -ScriptBlock { & SpaceSniffer.exe @args } -ArgumentList $args }{{ end }}
+
+# chezmoi if gsudo end {{- end }}
+
+#endregion chezmoi if windows end {{- end }}
 
 $PSDefaultParameterValues.Remove( 'New-Alias:Description' )
 $PSDefaultParameterValues.Remove( 'New-Alias:Force' )
-Remove-Variable -Name @(
-  'prgFiles'
-  'prg86'
-  'vsVer'
-  'vsPrefix'
-  'vsIDE'
-  'vsMsBldBin'
-  'senOnePath'
-  'spcSnif'
-  'ssmsPath'
-  'ssms86Path'
-  'ciscoPaths'
-  'currentCiscoPath'
-)
 
 # scoop aliases
 # scoop alias add fsearch 'scoop-search.exe $args[0]' 'Fast search with scoop-search.exe'

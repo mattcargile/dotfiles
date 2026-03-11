@@ -1,908 +1,519 @@
 {
     "apps": [
         {
-            "Info": "",
-            "Updated": "2025-11-12T08:51:02.7890749-06:00",
             "Source": "main",
-            "Version": "25.01",
-            "Name": "7zip"
+            "Info": "",
+            "Updated": "2026-02-13T14:28:48.7630147-06:00",
+            "Name": "7zip",
+            "Version": "26.00"
         },
         {
-            "Info": "",
-            "Updated": "2025-11-12T09:13:09.9931282-06:00",
             "Source": "main",
-            "Version": "10.31.0",
-            "Name": "azcopy"
+            "Info": "",
+            "Updated": "2026-02-19T19:17:53.313316-06:00",
+            "Name": "azcopy",
+            "Version": "10.32.1"
         },
         {
-            "Info": "",
-            "Updated": "2025-12-02T19:53:43.9760781-06:00",
             "Source": "main",
-            "Version": "2.81.0",
-            "Name": "azure-cli"
+            "Info": "",
+            "Updated": "2026-03-04T10:59:32.7170069-06:00",
+            "Name": "azure-cli",
+            "Version": "2.84.0"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-12-02T19:53:45.6722898-06:00",
-            "Source": "main",
-            "Version": "0.26.1",
-            "Name": "bat"
+            "Name": "bat",
+            "Version": "0.26.1"
         },
         {
-            "Info": "",
-            "Updated": "2025-12-19T12:32:52.0738496-06:00",
             "Source": "gildas",
-            "Version": "0.16.1",
-            "Name": "bitbucket-cli"
+            "Info": "",
+            "Updated": "2026-02-16T10:44:00.6792539-06:00",
+            "Name": "bitbucket-cli",
+            "Version": "0.17.5"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:13:36.5589295-06:00",
-            "Source": "main",
-            "Version": "1.0.8.0",
-            "Name": "bzip2"
+            "Name": "bzip2",
+            "Version": "1.0.8.0"
         },
         {
-            "Info": "",
-            "Updated": "2025-12-29T18:34:33.0116568-06:00",
             "Source": "extras",
-            "Version": "1.5.7",
-            "Name": "carapace-bin"
-        },
-        {
             "Info": "",
-            "Updated": "2025-12-10T14:36:22.7834071-06:00",
-            "Source": "main",
-            "Version": "2.68.1",
-            "Name": "chezmoi"
+            "Updated": "2026-02-25T19:56:12.8376418-06:00",
+            "Name": "carapace-bin",
+            "Version": "1.6.3"
         },
         {
+            "Source": "main",
+            "Info": "",
+            "Updated": "2026-03-10T11:32:29.3347883-05:00",
+            "Name": "chezmoi",
+            "Version": "2.70.0"
+        },
+        {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:13:39.8818965-06:00",
-            "Source": "main",
-            "Version": "0.7.2",
-            "Name": "cht"
+            "Name": "cht",
+            "Version": "0.7.2"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-12-29T15:44:23.6701238-06:00",
-            "Source": "main",
-            "Version": "1.9.7",
-            "Name": "clink"
+            "Updated": "2026-02-25T19:56:13.6701168-06:00",
+            "Name": "clink",
+            "Version": "1.9.17"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:13:42.7066095-06:00",
-            "Source": "main",
-            "Version": "0.18.2",
-            "Name": "delta"
+            "Name": "delta",
+            "Version": "0.18.2"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-18T22:32:12.7345486-06:00",
-            "Source": "main",
-            "Version": "0.67.0",
-            "Name": "difftastic"
+            "Name": "difftastic",
+            "Version": "0.67.0"
         },
         {
+            "Source": "extras",
             "Info": "Held package",
             "Updated": "2025-11-12T09:13:52.8294991-06:00",
-            "Source": "extras",
-            "Version": "1.0.9208-23",
-            "Name": "discord"
+            "Name": "discord",
+            "Version": "1.0.9208-23"
         },
         {
+            "Source": "extras",
             "Info": "",
             "Updated": "2025-11-12T09:13:54.2398835-06:00",
-            "Source": "extras",
-            "Version": "2.2",
-            "Name": "diskspd"
+            "Name": "diskspd",
+            "Version": "2.2"
         },
         {
+            "Source": "extras",
             "Info": "",
             "Updated": "2025-11-12T09:13:55.4393137-06:00",
-            "Source": "extras",
-            "Version": "3.2.0",
-            "Name": "echoargs"
+            "Name": "echoargs",
+            "Version": "3.2.0"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:13:56.7451965-06:00",
-            "Source": "main",
-            "Version": "1.2.1",
-            "Name": "edit"
+            "Name": "edit",
+            "Version": "1.2.1"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-12-29T15:44:28.9310463-06:00",
-            "Source": "main",
-            "Version": "13.45",
-            "Name": "exiftool"
+            "Updated": "2026-03-02T16:01:54.5774322-06:00",
+            "Name": "exiftool",
+            "Version": "13.52"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:14:02.4950881-06:00",
-            "Source": "main",
-            "Version": "0.23.4",
-            "Name": "eza"
+            "Name": "eza",
+            "Version": "0.23.4"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-12-19T12:33:02.3138596-06:00",
-            "Source": "main",
-            "Version": "2.56.1",
-            "Name": "fastfetch"
+            "Updated": "2026-03-08T13:47:13.52-05:00",
+            "Name": "fastfetch",
+            "Version": "2.60.0"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-11-12T09:14:05.3961439-06:00",
-            "Source": "main",
-            "Version": "10.3.0",
-            "Name": "fd"
+            "Updated": "2026-03-10T11:32:30.2350075-05:00",
+            "Name": "fd",
+            "Version": "10.4.2"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-25T18:42:43.9633025-06:00",
-            "Source": "main",
-            "Version": "8.0.1",
-            "Name": "ffmpeg"
+            "Name": "ffmpeg",
+            "Version": "8.0.1"
         },
         {
-            "Info": "",
-            "Updated": "2025-11-18T22:32:20.4062453-06:00",
             "Source": "main",
-            "Version": "0.67.0",
-            "Name": "fzf"
+            "Info": "",
+            "Updated": "2026-03-02T16:01:56.4485365-06:00",
+            "Name": "fzf",
+            "Version": "0.70.0"
         },
         {
-            "Info": "",
-            "Updated": "2025-11-12T09:14:19.0698558-06:00",
             "Source": "main",
-            "Version": "5.3.2",
-            "Name": "gawk"
+            "Info": "",
+            "Updated": "2026-03-08T13:47:18.0424374-05:00",
+            "Name": "gawk",
+            "Version": "5.4.0"
         },
         {
-            "Info": "",
-            "Updated": "2025-12-10T14:36:25.0193559-06:00",
             "Source": "main",
-            "Version": "2.83.2",
-            "Name": "gh"
+            "Info": "",
+            "Updated": "2026-02-23T21:13:38.3796459-06:00",
+            "Name": "gh",
+            "Version": "2.87.3"
         },
         {
-            "Info": "",
-            "Updated": "2025-11-18T22:34:58.7663259-06:00",
             "Source": "main",
-            "Version": "2.52.0",
-            "Name": "git"
+            "Info": "",
+            "Updated": "2026-02-05T10:36:33.2712957-06:00",
+            "Name": "git",
+            "Version": "2.53.0"
         },
         {
-            "Info": "",
-            "Updated": "2025-11-12T09:14:24.3601216-06:00",
             "Source": "extras",
-            "Version": "2.6.1",
-            "Name": "git-credential-manager"
+            "Info": "",
+            "Updated": "2026-01-31T14:24:31.3700361-06:00",
+            "Name": "git-credential-manager",
+            "Version": "2.7.0"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:14:28.5226717-06:00",
-            "Source": "main",
-            "Version": "0.34.0",
-            "Name": "git-tfs"
+            "Name": "git-tfs",
+            "Version": "0.34.0"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-12-15T09:52:34.593492-06:00",
-            "Source": "main",
-            "Version": "0.28.0",
-            "Name": "gitui"
+            "Name": "gitui",
+            "Version": "0.28.0"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:14:31.7687477-06:00",
-            "Source": "main",
-            "Version": "2.1.1",
-            "Name": "glow"
+            "Name": "glow",
+            "Version": "2.1.1"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-12-02T19:54:31.9627635-06:00",
-            "Source": "main",
-            "Version": "1.25.5",
-            "Name": "go"
+            "Updated": "2026-03-08T13:48:20.3835385-05:00",
+            "Name": "go",
+            "Version": "1.26.1"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-12-30T14:20:04.2681159-06:00",
-            "Source": "main",
-            "Version": "2.5.16",
-            "Name": "gpg"
+            "Updated": "2026-02-25T19:56:16.5044491-06:00",
+            "Name": "gpg",
+            "Version": "2.5.18"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:15:26.9195351-06:00",
-            "Source": "main",
-            "Version": "1.20.1",
-            "Name": "gping"
+            "Name": "gping",
+            "Version": "1.20.1"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:15:29.0139504-06:00",
-            "Source": "main",
-            "Version": "2.6.1",
-            "Name": "gsudo"
+            "Name": "gsudo",
+            "Version": "2.6.1"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:15:31.9144276-06:00",
-            "Source": "main",
-            "Version": "1.3.12",
-            "Name": "gzip"
+            "Name": "gzip",
+            "Version": "1.3.12"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-11-12T09:15:33.261599-06:00",
-            "Source": "main",
-            "Version": "0.16.0",
-            "Name": "hexyl"
+            "Updated": "2026-02-16T10:44:07.9193709-06:00",
+            "Name": "hexyl",
+            "Version": "0.17.0"
         },
         {
+            "Source": "extras",
             "Info": "",
-            "Updated": "2025-11-25T18:42:45.37488-06:00",
-            "Source": "main",
-            "Version": "2.66.1",
-            "Name": "innounp"
+            "Updated": "2026-03-02T21:51:41.2838194-06:00",
+            "Name": "hyper",
+            "Version": "3.4.1"
         },
         {
+            "Source": "extras",
+            "Info": "",
+            "Updated": "2026-02-10T09:04:22.6928193-06:00",
+            "Name": "ilspy",
+            "Version": "9.1.0.7988"
+        },
+        {
+            "Source": "main",
+            "Info": "",
+            "Updated": "2026-02-19T19:18:02.1899481-06:00",
+            "Name": "innounp",
+            "Version": "2.67.4"
+        },
+        {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:15:35.6947001-06:00",
-            "Source": "main",
-            "Version": "1.8.1",
-            "Name": "jq"
+            "Name": "jq",
+            "Version": "1.8.1"
         },
         {
-            "Info": "",
-            "Updated": "2025-12-09T10:46:05.0918367-06:00",
             "Source": "extras",
-            "Version": "0.57.0",
-            "Name": "lazygit"
-        },
-        {
             "Info": "",
-            "Updated": "2025-11-12T09:15:38.5406254-06:00",
-            "Source": "main",
-            "Version": "685",
-            "Name": "less"
+            "Updated": "2026-03-10T11:32:31.4342641-05:00",
+            "Name": "lazygit",
+            "Version": "0.60.0"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-12-29T15:44:31.1771775-06:00",
-            "Source": "main",
-            "Version": "2.11.3",
-            "Name": "lessmsi"
+            "Updated": "2026-02-09T12:41:28.4534618-06:00",
+            "Name": "less",
+            "Version": "692"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-12-10T14:36:26.829579-06:00",
-            "Source": "main",
-            "Version": "r40",
-            "Name": "lf"
+            "Updated": "2026-02-21T23:05:26.8748498-06:00",
+            "Name": "lessmsi",
+            "Version": "2.12.5"
         },
         {
+            "Source": "main",
+            "Info": "",
+            "Updated": "2026-02-05T10:37:36.6110247-06:00",
+            "Name": "lf",
+            "Version": "r41"
+        },
+        {
+            "Source": "main",
+            "Info": "",
+            "Updated": "2026-03-10T21:29:53.2880072-05:00",
+            "Name": "lua-for-windows",
+            "Version": "5.1.5-52"
+        },
+        {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:15:47.7417539-06:00",
-            "Source": "main",
-            "Version": "4.4.1",
-            "Name": "make"
+            "Name": "make",
+            "Version": "4.4.1"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-12-31T11:18:01.3603146-06:00",
-            "Source": "main",
-            "Version": "25.12",
-            "Name": "miktex"
+            "Name": "miktex",
+            "Version": "25.12"
         },
         {
-            "Info": "",
-            "Updated": "2025-11-28T13:26:16.8599805-06:00",
             "Source": "extras",
-            "Version": "2.5.10",
-            "Name": "mongosh"
-        },
-        {
             "Info": "",
-            "Updated": "2025-11-25T18:44:38.8785072-06:00",
-            "Source": "main",
-            "Version": "8.0.45",
-            "Name": "mysql-workbench"
+            "Updated": "2026-02-13T14:28:55.2195739-06:00",
+            "Name": "mongosh",
+            "Version": "2.7.0"
         },
         {
+            "Source": "main",
+            "Info": "",
+            "Updated": "2026-01-22T19:50:45.8675038-06:00",
+            "Name": "mysql-workbench",
+            "Version": "8.0.46"
+        },
+        {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:18:46.0850503-06:00",
-            "Source": "main",
-            "Version": "2.0.4",
-            "Name": "neo-cowsay"
+            "Name": "neo-cowsay",
+            "Version": "2.0.4"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-11-12T09:18:56.4556718-06:00",
-            "Source": "main",
-            "Version": "0.11.5",
-            "Name": "neovim"
+            "Updated": "2026-01-31T14:24:43.738143-06:00",
+            "Name": "neovim",
+            "Version": "0.11.6"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-12-02T19:54:37.4939457-06:00",
-            "Source": "main",
-            "Version": "0.109.1",
-            "Name": "nu"
+            "Updated": "2026-03-02T16:02:01.868776-06:00",
+            "Name": "nu",
+            "Version": "0.111.0"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-12-31T11:18:05.7215669-06:00",
-            "Source": "main",
-            "Version": "28.9.0",
-            "Name": "oh-my-posh"
+            "Updated": "2026-03-08T13:48:22.5390041-05:00",
+            "Name": "oh-my-posh",
+            "Version": "29.7.1"
         },
         {
+            "Source": "extras",
             "Info": "",
             "Updated": "2025-12-21T13:16:28.0051837-06:00",
-            "Source": "extras",
-            "Version": "2.26.1",
-            "Name": "onefetch"
+            "Name": "onefetch",
+            "Version": "2.26.1"
         },
         {
-            "Info": "",
-            "Updated": "2025-11-12T09:19:07.2411571-06:00",
             "Source": "main",
-            "Version": "3.6.0",
-            "Name": "openssl-light"
+            "Info": "",
+            "Updated": "2026-01-31T14:24:47.9690159-06:00",
+            "Name": "openssl-light",
+            "Version": "3.6.1"
         },
         {
+            "Source": "extras",
             "Info": "",
             "Updated": "2025-11-12T09:19:09.2168446-06:00",
-            "Source": "extras",
-            "Version": "5.0.18362.1",
-            "Name": "orca"
+            "Name": "orca",
+            "Version": "5.0.18362.1"
         },
         {
-            "Info": "",
-            "Updated": "2025-11-18T22:35:06.5375715-06:00",
             "Source": "main",
-            "Version": "5.20.0",
-            "Name": "osquery"
-        },
-        {
             "Info": "",
-            "Updated": "2026-01-02T21:46:08.7033448-06:00",
-            "Source": "main",
-            "Version": "0.50.2",
-            "Name": "ov"
+            "Updated": "2026-01-13T09:18:52.7548622-06:00",
+            "Name": "osquery",
+            "Version": "5.21.0"
         },
         {
+            "Source": "main",
             "Info": "",
-            "Updated": "2025-12-01T09:35:42.8053069-06:00",
-            "Source": "main",
-            "Version": "3.8.3",
-            "Name": "pandoc"
+            "Updated": "2026-02-20T00:33:28.5222679-06:00",
+            "Name": "ov",
+            "Version": "0.51.1"
         },
         {
+            "Source": "main",
+            "Info": "",
+            "Updated": "2026-02-05T10:37:41.9251878-06:00",
+            "Name": "pandoc",
+            "Version": "3.9"
+        },
+        {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-12-09T10:46:13.7075914-06:00",
-            "Source": "main",
-            "Version": "25.12.0-0",
-            "Name": "poppler"
+            "Name": "poppler",
+            "Version": "25.12.0-0"
         },
         {
+            "Source": "psmux",
+            "Info": "",
+            "Updated": "2026-03-08T13:48:23.7589825-05:00",
+            "Name": "psmux",
+            "Version": "0.4.10"
+        },
+        {
+            "Source": "extras",
             "Info": "",
             "Updated": "2025-11-12T09:19:25.6735318-06:00",
-            "Source": "extras",
-            "Version": "0.83",
-            "Name": "putty"
+            "Name": "putty",
+            "Version": "0.83"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:19:28.718079-06:00",
+            "Name": "rga",
+            "Version": "0.10.9"
+        },
+        {
             "Source": "main",
-            "Version": "0.10.9",
-            "Name": "rga"
-        },
-        {
-            "Info": "",
-            "Updated": "2025-12-21T13:16:31.067685-06:00",
-            "Source": "extras",
-            "Version": "0.2.37",
-            "Name": "rio"
-        },
-        {
             "Info": "",
             "Updated": "2025-11-12T09:19:27.8156053-06:00",
-            "Source": "main",
-            "Version": "15.1.0",
-            "Name": "ripgrep"
+            "Name": "ripgrep",
+            "Version": "15.1.0"
         },
         {
+            "Source": "extras",
             "Info": "",
             "Updated": "2025-11-12T09:19:33.9418302-06:00",
-            "Source": "extras",
-            "Version": "1.17.2",
-            "Name": "sfsu"
+            "Name": "sfsu",
+            "Version": "1.17.2"
         },
         {
+            "Source": "main",
             "Info": "",
             "Updated": "2025-11-12T09:19:35.2605837-06:00",
-            "Source": "main",
-            "Version": "1.2.0",
-            "Name": "speedtest-cli"
+            "Name": "speedtest-cli",
+            "Version": "1.2.0"
         },
         {
-            "Info": "",
-            "Updated": "2025-12-19T12:33:19.612421-06:00",
             "Source": "extras",
-            "Version": "1.107.1",
-            "Name": "vscode"
+            "Info": "Held package",
+            "Updated": "2026-03-10T11:33:43.520998-05:00",
+            "Name": "vscode",
+            "Version": "1.111.0"
         },
         {
+            "Source": "extras",
             "Info": "Held package",
             "Updated": "2025-11-12T09:19:55.6436325-06:00",
-            "Source": "extras",
-            "Version": "20240203-110809-5046fc22",
-            "Name": "wezterm"
+            "Name": "wezterm",
+            "Version": "20240203-110809-5046fc22"
         },
         {
+            "Source": "extras",
             "Info": "Held package",
-            "Updated": "2025-11-12T09:19:58.2773139-06:00",
-            "Source": "extras",
-            "Version": "1.23.12811.0",
-            "Name": "windows-terminal"
+            "Updated": "2026-03-02T19:13:32.8791033-06:00",
+            "Name": "windows-terminal",
+            "Version": "1.23.20211.0"
         },
         {
+            "Source": "extras",
             "Info": "",
             "Updated": "2025-11-19T18:25:39.4953647-06:00",
-            "Source": "extras",
-            "Version": "6.5.5",
-            "Name": "winscp"
+            "Name": "winscp",
+            "Version": "6.5.5"
         }
     ],
     "buckets": [
         {
             "Name": "main",
             "Source": "https://github.com/ScoopInstaller/Main",
-            "Updated": "2026-01-02T18:41:36-06:00",
-            "Manifests": {
-                "value": 1412,
-                "Weeks": {
-                    "Ticks": 8539776000000000,
-                    "Days": 9884,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 9884.0,
-                    "TotalHours": 237216.0,
-                    "TotalMilliseconds": 853977600000.0,
-                    "TotalMicroseconds": 853977600000000.0,
-                    "TotalNanoseconds": 8.539776E+17,
-                    "TotalMinutes": 14232960.0,
-                    "TotalSeconds": 853977600.0
-                },
-                "Days": {
-                    "Ticks": 1219968000000000,
-                    "Days": 1412,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 1412.0,
-                    "TotalHours": 33888.0,
-                    "TotalMilliseconds": 121996800000.0,
-                    "TotalMicroseconds": 121996800000000.0,
-                    "TotalNanoseconds": 1.219968E+17,
-                    "TotalMinutes": 2033280.0,
-                    "TotalSeconds": 121996800.0
-                },
-                "Hours": {
-                    "Ticks": 50832000000000,
-                    "Days": 58,
-                    "Hours": 20,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 58.833333333333336,
-                    "TotalHours": 1412.0,
-                    "TotalMilliseconds": 5083200000.0,
-                    "TotalMicroseconds": 5083200000000.0,
-                    "TotalNanoseconds": 5083200000000000.0,
-                    "TotalMinutes": 84720.0,
-                    "TotalSeconds": 5083200.0
-                },
-                "Minutes": {
-                    "Ticks": 847200000000,
-                    "Days": 0,
-                    "Hours": 23,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 32,
-                    "Seconds": 0,
-                    "TotalDays": 0.9805555555555555,
-                    "TotalHours": 23.533333333333335,
-                    "TotalMilliseconds": 84720000.0,
-                    "TotalMicroseconds": 84720000000.0,
-                    "TotalNanoseconds": 84720000000000.0,
-                    "TotalMinutes": 1412.0,
-                    "TotalSeconds": 84720.0
-                },
-                "Seconds": {
-                    "Ticks": 14120000000,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 23,
-                    "Seconds": 32,
-                    "TotalDays": 0.016342592592592593,
-                    "TotalHours": 0.39222222222222225,
-                    "TotalMilliseconds": 1412000.0,
-                    "TotalMicroseconds": 1412000000.0,
-                    "TotalNanoseconds": 1412000000000.0,
-                    "TotalMinutes": 23.533333333333335,
-                    "TotalSeconds": 1412.0
-                },
-                "Milliseconds": {
-                    "Ticks": 14120000,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 412,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 1,
-                    "TotalDays": 1.634259259259259E-05,
-                    "TotalHours": 0.00039222222222222225,
-                    "TotalMilliseconds": 1412.0,
-                    "TotalMicroseconds": 1412000.0,
-                    "TotalNanoseconds": 1412000000.0,
-                    "TotalMinutes": 0.023533333333333333,
-                    "TotalSeconds": 1.412
-                }
-            }
+            "Updated": "2026-03-10T19:50:03-05:00",
+            "Manifests": 1457
         },
         {
             "Name": "extras",
             "Source": "https://github.com/ScoopInstaller/Extras",
-            "Updated": "2026-01-02T18:41:44-06:00",
-            "Manifests": {
-                "value": 2239,
-                "Weeks": {
-                    "Ticks": 13541472000000000,
-                    "Days": 15673,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 15673.0,
-                    "TotalHours": 376152.0,
-                    "TotalMilliseconds": 1354147200000.0,
-                    "TotalMicroseconds": 1354147200000000.0,
-                    "TotalNanoseconds": 1.3541472E+18,
-                    "TotalMinutes": 22569120.0,
-                    "TotalSeconds": 1354147200.0
-                },
-                "Days": {
-                    "Ticks": 1934496000000000,
-                    "Days": 2239,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 2239.0,
-                    "TotalHours": 53736.0,
-                    "TotalMilliseconds": 193449600000.0,
-                    "TotalMicroseconds": 193449600000000.0,
-                    "TotalNanoseconds": 1.934496E+17,
-                    "TotalMinutes": 3224160.0,
-                    "TotalSeconds": 193449600.0
-                },
-                "Hours": {
-                    "Ticks": 80604000000000,
-                    "Days": 93,
-                    "Hours": 7,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 93.29166666666667,
-                    "TotalHours": 2239.0,
-                    "TotalMilliseconds": 8060400000.0,
-                    "TotalMicroseconds": 8060400000000.0,
-                    "TotalNanoseconds": 8060400000000000.0,
-                    "TotalMinutes": 134340.0,
-                    "TotalSeconds": 8060400.0
-                },
-                "Minutes": {
-                    "Ticks": 1343400000000,
-                    "Days": 1,
-                    "Hours": 13,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 19,
-                    "Seconds": 0,
-                    "TotalDays": 1.554861111111111,
-                    "TotalHours": 37.31666666666667,
-                    "TotalMilliseconds": 134340000.0,
-                    "TotalMicroseconds": 134340000000.0,
-                    "TotalNanoseconds": 134340000000000.0,
-                    "TotalMinutes": 2239.0,
-                    "TotalSeconds": 134340.0
-                },
-                "Seconds": {
-                    "Ticks": 22390000000,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 37,
-                    "Seconds": 19,
-                    "TotalDays": 0.02591435185185185,
-                    "TotalHours": 0.6219444444444444,
-                    "TotalMilliseconds": 2239000.0,
-                    "TotalMicroseconds": 2239000000.0,
-                    "TotalNanoseconds": 2239000000000.0,
-                    "TotalMinutes": 37.31666666666667,
-                    "TotalSeconds": 2239.0
-                },
-                "Milliseconds": {
-                    "Ticks": 22390000,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 239,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 2,
-                    "TotalDays": 2.5914351851851853E-05,
-                    "TotalHours": 0.0006219444444444445,
-                    "TotalMilliseconds": 2239.0,
-                    "TotalMicroseconds": 2239000.0,
-                    "TotalNanoseconds": 2239000000.0,
-                    "TotalMinutes": 0.037316666666666665,
-                    "TotalSeconds": 2.239
-                }
-            }
+            "Updated": "2026-03-10T19:51:51-05:00",
+            "Manifests": 2279
         },
         {
             "Name": "nonportable",
             "Source": "https://github.com/ScoopInstaller/Nonportable",
-            "Updated": "2025-12-30T22:53:51-06:00",
-            "Manifests": {
-                "value": 128,
-                "Weeks": {
-                    "Ticks": 774144000000000,
-                    "Days": 896,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 896.0,
-                    "TotalHours": 21504.0,
-                    "TotalMilliseconds": 77414400000.0,
-                    "TotalMicroseconds": 77414400000000.0,
-                    "TotalNanoseconds": 77414400000000000.0,
-                    "TotalMinutes": 1290240.0,
-                    "TotalSeconds": 77414400.0
-                },
-                "Days": {
-                    "Ticks": 110592000000000,
-                    "Days": 128,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 128.0,
-                    "TotalHours": 3072.0,
-                    "TotalMilliseconds": 11059200000.0,
-                    "TotalMicroseconds": 11059200000000.0,
-                    "TotalNanoseconds": 11059200000000000.0,
-                    "TotalMinutes": 184320.0,
-                    "TotalSeconds": 11059200.0
-                },
-                "Hours": {
-                    "Ticks": 4608000000000,
-                    "Days": 5,
-                    "Hours": 8,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 5.333333333333333,
-                    "TotalHours": 128.0,
-                    "TotalMilliseconds": 460800000.0,
-                    "TotalMicroseconds": 460800000000.0,
-                    "TotalNanoseconds": 460800000000000.0,
-                    "TotalMinutes": 7680.0,
-                    "TotalSeconds": 460800.0
-                },
-                "Minutes": {
-                    "Ticks": 76800000000,
-                    "Days": 0,
-                    "Hours": 2,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 8,
-                    "Seconds": 0,
-                    "TotalDays": 0.08888888888888889,
-                    "TotalHours": 2.1333333333333333,
-                    "TotalMilliseconds": 7680000.0,
-                    "TotalMicroseconds": 7680000000.0,
-                    "TotalNanoseconds": 7680000000000.0,
-                    "TotalMinutes": 128.0,
-                    "TotalSeconds": 7680.0
-                },
-                "Seconds": {
-                    "Ticks": 1280000000,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 2,
-                    "Seconds": 8,
-                    "TotalDays": 0.0014814814814814814,
-                    "TotalHours": 0.035555555555555556,
-                    "TotalMilliseconds": 128000.0,
-                    "TotalMicroseconds": 128000000.0,
-                    "TotalNanoseconds": 128000000000.0,
-                    "TotalMinutes": 2.1333333333333333,
-                    "TotalSeconds": 128.0
-                },
-                "Milliseconds": {
-                    "Ticks": 1280000,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 128,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 1.4814814814814815E-06,
-                    "TotalHours": 3.555555555555555E-05,
-                    "TotalMilliseconds": 128.0,
-                    "TotalMicroseconds": 128000.0,
-                    "TotalNanoseconds": 128000000.0,
-                    "TotalMinutes": 0.0021333333333333334,
-                    "TotalSeconds": 0.128
-                }
-            }
+            "Updated": "2026-03-10T15:53:14-05:00",
+            "Manifests": 131
         },
         {
             "Name": "gildas",
             "Source": "https://github.com/gildas/scoop-bucket",
-            "Updated": "2025-12-16T09:02:25-06:00",
-            "Manifests": {
-                "value": 0,
-                "Weeks": {
-                    "Ticks": 0,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 0.0,
-                    "TotalHours": 0.0,
-                    "TotalMilliseconds": 0.0,
-                    "TotalMicroseconds": 0.0,
-                    "TotalNanoseconds": 0.0,
-                    "TotalMinutes": 0.0,
-                    "TotalSeconds": 0.0
-                },
-                "Days": {
-                    "Ticks": 0,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 0.0,
-                    "TotalHours": 0.0,
-                    "TotalMilliseconds": 0.0,
-                    "TotalMicroseconds": 0.0,
-                    "TotalNanoseconds": 0.0,
-                    "TotalMinutes": 0.0,
-                    "TotalSeconds": 0.0
-                },
-                "Hours": {
-                    "Ticks": 0,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 0.0,
-                    "TotalHours": 0.0,
-                    "TotalMilliseconds": 0.0,
-                    "TotalMicroseconds": 0.0,
-                    "TotalNanoseconds": 0.0,
-                    "TotalMinutes": 0.0,
-                    "TotalSeconds": 0.0
-                },
-                "Minutes": {
-                    "Ticks": 0,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 0.0,
-                    "TotalHours": 0.0,
-                    "TotalMilliseconds": 0.0,
-                    "TotalMicroseconds": 0.0,
-                    "TotalNanoseconds": 0.0,
-                    "TotalMinutes": 0.0,
-                    "TotalSeconds": 0.0
-                },
-                "Seconds": {
-                    "Ticks": 0,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 0.0,
-                    "TotalHours": 0.0,
-                    "TotalMilliseconds": 0.0,
-                    "TotalMicroseconds": 0.0,
-                    "TotalNanoseconds": 0.0,
-                    "TotalMinutes": 0.0,
-                    "TotalSeconds": 0.0
-                },
-                "Milliseconds": {
-                    "Ticks": 0,
-                    "Days": 0,
-                    "Hours": 0,
-                    "Milliseconds": 0,
-                    "Microseconds": 0,
-                    "Nanoseconds": 0,
-                    "Minutes": 0,
-                    "Seconds": 0,
-                    "TotalDays": 0.0,
-                    "TotalHours": 0.0,
-                    "TotalMilliseconds": 0.0,
-                    "TotalMicroseconds": 0.0,
-                    "TotalNanoseconds": 0.0,
-                    "TotalMinutes": 0.0,
-                    "TotalSeconds": 0.0
-                }
-            }
+            "Updated": "2026-02-14T06:43:01-06:00",
+            "Manifests": 0
+        },
+        {
+            "Name": "psmux",
+            "Source": "https://github.com/marlocarlo/scoop-psmux",
+            "Updated": "2026-03-06T09:01:36-06:00",
+            "Manifests": 1
         }
     ],
     "config": {
