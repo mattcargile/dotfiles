@@ -50,6 +50,8 @@ $dotnetArgs = @(
     '--nologo'
     '--verbosity'
     'quiet'
+    '/p:TreatWarningsAsErrors=true'
+    '/WarnAsError'
 )
 $dotnetCoreArgs = '--framework', 'net9.0'
 $dotnetDesktopArgs = '--framework', 'netstandard2.0'
@@ -71,10 +73,18 @@ if ($outputDir) {
             }
         }
     }
-    Write-Verbose "Removing the files found at $outputDir"
-    Remove-Item -Path $outputFiles
+    if ($outputFiles) {
+        Write-Verbose "Removing the files found at $outputDir"
+        Remove-Item -Path $outputFiles
+    }
     $dotnetCoreArgs += '--output', ( Join-Path $outputDir 'core' )
     $dotnetDesktopArgs += '--output', ( Join-Path $outputDir 'desktop' )
 }
-dotnet @dotnetArgs @dotnetCoreArgs
-dotnet @dotnetArgs @dotnetDesktopArgs
+$publishCore = dotnet @dotnetArgs @dotnetCoreArgs
+if ($LASTEXITCODE -gt 0) {
+    throw $publishCore
+}
+$publishDesktop = dotnet @dotnetArgs @dotnetDesktopArgs
+if ($LASTEXITCODE -gt 0) {
+    throw $publishDesktop
+}
