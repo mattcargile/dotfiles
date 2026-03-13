@@ -35,7 +35,7 @@ $StringModule_DontInjectJoinString = $true
 #endregion
 
 #region ArgumentCompleter Generated
-# chezmoi outputList args {{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir ".chezmoitemplates" "Write-ArgCompleterOutput.ps1" ) }}
+# chezmoi outputList args {{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-ArgCompleterOutput.ps1" ) }}
 {{ outputList "pwsh" $argCompleterArgList }}
 #endregion
 #region argcompleter.ps1
