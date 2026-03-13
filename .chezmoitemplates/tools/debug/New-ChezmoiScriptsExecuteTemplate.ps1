@@ -2,9 +2,9 @@
 param (
 )
 
-$chezmoiScriptsPath = Join-Path $PSScriptRoot .. .chezmoiscripts
+$chezmoiScriptsPath = Join-Path (chezmoi source-path) .chezmoiscripts
 Write-Verbose "Chezmoi Scripts Path is $chezmoiScriptsPath"
-$tempOutPath = Join-Path $PSScriptRoot outchezmoiscripts
+$tempOutPath = Join-Path $PSScriptRoot out
 Write-Verbose "Output base path is $tempOutPath"
 if (-not ( Test-Path $tempOutPath ) ) {
     if ($PSCmdlet.ShouldProcess($tempOutPath, 'Creating .gitignored output directory for scripts')) {

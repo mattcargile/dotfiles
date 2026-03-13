@@ -89,10 +89,10 @@ end {
     }
     $writeFormatLengthSb = {
         if ($_.Attributes -is [System.IO.FileAttributes] -and $_.Attributes.HasFlag( [System.IO.FileAttributes]::Offline) ) {
-            "($($_.Length | ConvertTo-HumanByteSize '0.00'))"
+            "($($_.Length | ConvertTo-HmnByteSize '0.00'))"
         }
         else {
-            $_.Length | ConvertTo-HumanByteSize '0.00'
+            $_.Length | ConvertTo-HmnByteSize '0.00'
         }
     }
     $writeFormatFileAndDirInfoProperty = 'ModeWithoutHardLink', 'LastWriteTime', 'Length', 'Name'
@@ -101,7 +101,7 @@ end {
     }
     $writeFormatDeserFileAndDirInfoProperty = 'Mode', 'LastWriteTime', 'Length', 'Name'
     $writeFormatDirInfoVirtProp = @{
-        LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
+        LastWriteTime = {ConvertTo-HmnDate $_.LastWriteTime}
         Length = {[string]::Empty}
         Name = {Format-FileSystemInfoName $_}
     }
@@ -113,7 +113,7 @@ end {
             Width = $writeFormatWidth 
             Wrap = $true
             VirtualProperty = @{
-                LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
+                LastWriteTime = {ConvertTo-HmnDate $_.LastWriteTime}
                 Length = $writeFormatLengthSb 
                 Name = {Format-FileSystemInfoName $_}
             }
@@ -156,9 +156,9 @@ end {
     $writeFormatDirInfoProperty = 'Name', 'CreationTime', 'LastWriteTime', 'LastAccessTime', 'Mode', 'LinkType', 'Target'
     $writeFormatDirInfoVirtProp = @{
         Name = {Format-FileSystemInfoName $_}
-        CreationTime = {ConvertTo-HumanDate $_.CreationTime}
-        LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
-        LastAccessTime = {ConvertTo-HumanDate $_.LastAccessTime}
+        CreationTime = {ConvertTo-HmnDate $_.CreationTime}
+        LastWriteTime = {ConvertTo-HmnDate $_.LastWriteTime}
+        LastAccessTime = {ConvertTo-HmnDate $_.LastAccessTime}
     }
     $writeListView = @(
         [pscustomobject]@{
@@ -166,9 +166,9 @@ end {
             VirtualProperty = @{
                 Name = {Format-FileSystemInfoName $_}
                 Length = $writeFormatLengthSb 
-                CreationTime = {ConvertTo-HumanDate $_.CreationTime}
-                LastWriteTime = {ConvertTo-HumanDate $_.LastWriteTime}
-                LastAccessTime = {ConvertTo-HumanDate $_.LastAccessTime}
+                CreationTime = {ConvertTo-HmnDate $_.CreationTime}
+                LastWriteTime = {ConvertTo-HmnDate $_.LastWriteTime}
+                LastAccessTime = {ConvertTo-HmnDate $_.LastAccessTime}
             }
         }
         [pscustomobject]@{

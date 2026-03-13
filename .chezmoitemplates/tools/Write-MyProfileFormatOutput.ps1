@@ -102,7 +102,7 @@ end {
         Property = 'CSName', 'Caption', 'Uptime'
         Width = 15, 45, 30
         VirtualProperty = @{
-            Uptime = { [Humanizer.TimeSpanHumanizeExtensions]::Humanize($_.Uptime, 3) }
+            Uptime = { $_.Uptime | ConvertTo-HmnTimeSpan 3 }
         }
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
@@ -113,7 +113,7 @@ end {
         TypeName = 'Utility.InstalledSoftware'
         Property = 'Name', 'Publisher', 'DisplayVersion', 'InstallDate'
         Width = 70, 25, 20, 15
-        VirtualProperty = @{ InstallDate = { ConvertTo-HumanDate $_.InstallDate } }
+        VirtualProperty = @{ InstallDate = { ConvertTo-HmnDate $_.InstallDate } }
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
     #endregion
@@ -122,7 +122,7 @@ end {
         TypeName = 'Utility.InstalledSoftware#IncludeComputerName'
         Property = 'Name', 'Publisher', 'DisplayVersion', 'InstallDate', 'ComputerName'
         Width = 70, 25, 20, 15, 15
-        VirtualProperty = @{ InstallDate = { ConvertTo-HumanDate $_.InstallDate } }
+        VirtualProperty = @{ InstallDate = { ConvertTo-HmnDate $_.InstallDate } }
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
     #endregion
@@ -133,8 +133,8 @@ end {
         Width = @(15,25,10,10,10)
         Property = 'ComputerName', 'Name', 'Type', 'FreeSpace', 'TotalSpace'
         VirtualProperty = @{
-            FreeSpace= { [Humanizer.ByteSizeExtensions]::Humanize($_.TotalFreeBytes, '0.00') }
-            TotalSpace={ [Humanizer.ByteSizeExtensions]::Humanize($_.TotalBytes, '0.00') } 
+            FreeSpace= { $_.TotalFreeBytes | ConvertTo-HnmByteSize '0.00' }
+            TotalSpace={ $_.TotalBytes | ConvertTo-HmnByteSize '0.00' } 
         }
     }
     $formatList.Add( ( Write-FormatView @writeFormatViewSplat ) )
