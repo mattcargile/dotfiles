@@ -1,26 +1,21 @@
 using Humanizer;
-using System.Diagnostics;
 using System.Management.Automation;
 
 namespace MyProfileLib.Commands;
 
 [CmdletBinding(ConfirmImpact = ConfirmImpact.Low)]
-[Cmdlet(VerbsData.ConvertTo, "HumanByteSize")]
-[Alias("cthbs")]
+[Cmdlet(VerbsData.ConvertTo, "HmnTimeSpan")]
+[Alias("cthts")]
 [OutputType(typeof(string))]
-public class ConvertToHumanByteSize : PSCmdlet
+public class ConvertToHmnTimeSpan : PSCmdlet
 {
     [Parameter(Mandatory = true, Position = 1, ValueFromPipeline = true)]
-    [Alias("ByteSize", "bs")]
-    public long Size {get; set;}
-
+    public TimeSpan TimeSpan {get; set;}
     [Parameter(Mandatory = true, Position = 0)]
-    public string? Format {get; set;}
+    public int Precision {get; set;}
 
     protected override void ProcessRecord()
     {
-        Debug.Assert(Format is not null);
-        WriteObject(Size.Bits().Humanize(Format));
+        WriteObject(TimeSpan.Humanize(Precision));
     }
-    
 }
