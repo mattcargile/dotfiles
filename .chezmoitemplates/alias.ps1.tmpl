@@ -204,9 +204,10 @@ New-Alias -Name 'choco.exe' -Value 'choco' # Hack for autocomplete.
 # chezmoi if gsudo {{- if lookPath ( joinPath ( env "USERPROFILE" ) "scoop" "apps" "gsudo" "current" "gsudo.exe" ) }}
 
 # chezmoi get senOnePath {{- $senOnePath := joinPath ( glob ( joinPath $prgFiles "SentinelOne" "Sentinel Agent *" ) | sortAlpha | last ) "SentinelCtl.exe" }}
-# chezmoi if get senOnePath {{- if lookPath $senOnePath }}{{ "\r\n" }}function sentinelctl { invoke-gsudo -ScriptBlock { & {{ $senOnePath | squote }} @args } -ArgumentList $args }{{- end }}
+# chezmoi if get senOnePath {{- if lookPath $senOnePath }}{{ nindent 0 ( printf "function sentinelctl { invoke-gsudo -ScriptBlock { & %s @args } -ArgumentList $args }" ( $senOnePath | squote ) ) }}{{- end }}
 
-# chezmoi if spacesniffer {{- if lookPath "SpaceSniffer" }}{{ "\r\n" }}function spacesniffer { invoke-gsudo -ScriptBlock { & SpaceSniffer.exe @args } -ArgumentList $args }{{ end }}
+# chezmoi get spcSnifPath {{- $spcSnifPath := "SpaceSniffer.exe"}}
+# chezmoi if spacesniffer {{- if lookPath $spcSnifPath }}{{ nindent 0 ( printf "function spacesniffer { invoke-gsudo -ScriptBlock { & %s @args } -ArgumentList $args }" ( $spcSnifPath | squote ) ) }}{{ end }}
 
 # chezmoi if gsudo end {{- end }}
 
