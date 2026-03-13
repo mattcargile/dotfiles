@@ -151,7 +151,7 @@ function Get-FileProcess {
                 }
 
                 if ($res -ne 0) {
-                    $errCode = $ntdll.TrlNtStatusToDosError($res)
+                    $errCode = $ntdll.RtlNtStatusToDosError($res)
                     $exp = [System.ComponentModel.Win32Exception]::new($errCode)
 
                     $err = [System.Management.Automation.ErrorRecord]::new(
