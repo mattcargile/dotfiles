@@ -5,7 +5,7 @@ function Format-TableLast {
         [Parameter(Position = 0)]
         [Alias('pr')]
         [object[]]
-        $Property = '*',
+        $Property,
         [Parameter()]
         [Alias('p', 'pa')]
         [switch]
