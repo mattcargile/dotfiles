@@ -3,6 +3,10 @@
 # end {{ end }}
 # Want to avoid running heavier code in `gsudo`, `pwsh -c`, or other non-`function:\prompt` executing contexts
 function prompt {
+
+    {{ includeTemplate "readlineoptionprediction.ps1.tmpl" . }}
+    {{ includeTemplate "readlinekeyhandler.ps1" . }}
+
     # Custom OMP Prompt Context
     function global:Set-MyOmpContext {
         [Alias('Set-PoshContext')]

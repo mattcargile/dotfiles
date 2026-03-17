@@ -1,0 +1,22 @@
+# HistorySavePath: Microsoft Defender complains about history on Onedrive
+# AddToHistoryHandler: By default PSReadline removes "password", "cred", etc items from history. This forces save of all commands to history.
+Set-PSReadLineOption -HistorySavePath ( [System.IO.Path]::Combine( $HOME, '.config', 'PSReadLine', "All$($Host.Name)_history.txt" ) ) -MaximumHistoryCount 500000 -HistoryNoDuplicates -AddToHistoryHandler {
+    param([string]$line)
+    # Do not save any command line unless it has more than 4 characters.  Prevents storing gci, gps, etc.
+    return $line.Length -gt 4
+} -Colors @{
+    Member             = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
+    Parameter          = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
+    Default            = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
+    Operator           = '{{- "\u001B[38;2;197;197;197m" -}}'                                            #c5c5c5
+    Keyword            = '{{- "\u001B[38;2;197;134;192m" -}}'                                            #c586c0
+    Command            = '{{- "\u001B[38;2;220;220;125m" -}}'                                            #dcdc7d
+    Emphasis           = '{{- "\u001B[27m\u001B[4m\u001B[48;2;40;40;40m\u001B[48;2;38;79;120m" -}}'      #264f78 With underline and background
+    Selection          = '{{- "\u001B[7m" -}}'                                                             #Swap foreground and background colors for `carapace` completers
+    Type               = '{{- "\u001B[38;2;78;201;176m" -}}'                                             #4ec9b0
+    Variable           = '{{- "\u001B[38;2;124;220;254m" -}}'                                            #7cdcfe
+    String             = '{{- "\u001B[38;2;206;145;120m" -}}'                                            #ce9178
+    Comment            = '{{- "\u001B[38;2;96;139;78m" -}}'                                              #608b4e
+    Number             = '{{- "\u001B[38;2;147;206;168m" -}}'                                            #93cea8
+    Error              = '{{- "\u001B[38;2;139;0;0m" -}}'                                                #8b0000
+}

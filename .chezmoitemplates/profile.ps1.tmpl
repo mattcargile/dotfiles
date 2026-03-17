@@ -1,8 +1,8 @@
 # isPSCore setting {{- $isPSCore := eq "profile.ps1.tmpl" ( base .chezmoi.sourceFile ) }}
-# dict downstream templates {{- $tmplDict := dict "isPSCore" $isPSCore "isWindows" ( eq .chezmoi.os "windows" ) }}
+# dict downstream templates {{- $tmplDict := dict "isPSCore" $isPSCore "isWindows" ( eq .chezmoi.os "windows" ) "sourceDir" .chezmoi.sourceDir }}
 # isPSCore if Requires {{- if eq $isPSCore true }}
 #Requires -Version 7.5
-# else Requires {{- else -}}{{- "\r\n" -}}#Requires -Version 5.1 {{- end }}
+# else Requires {{- else -}}{{- nindent 0 "#Requires -Version 5.1" -}}{{- end }}
 
 #region Using Namespace For Quick Interactive Usage
 {{ includeTemplate "usingnm.ps1" . }}
@@ -13,7 +13,7 @@
 #endregion
 
 #region Prompt
-{{ includeTemplate "prompt.ps1.tmpl" . }}
+{{ includeTemplate "prompt.ps1.tmpl" $tmplDict }}
 #endregion
 
 # Helper Visual Studio Code Command Palette operations ( i.e. EditorServicesCommandSuite )
@@ -47,7 +47,7 @@ $StringModule_DontInjectJoinString = $true
 #endregion
 
 #region ReadLine
-{{ includeTemplate "readline.ps1" . }}
+{{ includeTemplate "readlineoption.ps1.tmpl" . }}
 #endregion
 
 #region Custom Types and Format
