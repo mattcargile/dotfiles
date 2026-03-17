@@ -11,7 +11,7 @@ $ErrorActionPreference = 'Stop'
 # Below needed to output the glyphs correctly otherwise we have question mark(s) in the output
 $OutputEncoding = [System.Console]::InputEncoding = [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
-$glyphPath = Join-Path $PSScriptRoot glyphnames.json
+$glyphPath = Join-Path $PSScriptRoot '..' '..' glyphnames.json
 Write-Debug "Glyph file path is $glyphPath"
 $haveCurrentGlyph = $true
 if (Test-Path $glyphPath) {
@@ -34,8 +34,11 @@ if (-not $haveCurrentGlyph) {
 }
 $glyphNamesData = Get-Content $glyphPath -Raw | ConvertFrom-Json
 
-$fileSystemInfoIconPath = Join-Path $PSScriptRoot .\filesysteminfoicon.psd1.tmpl
+$fileSystemInfoIconPath = Join-Path $PSScriptRoot '..' .\filesysteminfoicon.psd1.tmpl
 $fileSystemInfoIconScript =  chezmoi execute-template --file $fileSystemInfoIconPath | Out-String
+if ($LASTEXITCODE -gt 0) {
+    throw [InvalidOperationException]'chezmoi execute-template failed with non-zero exit code'
+}
 
 [System.Management.Automation.Language.Token[]]$parserTokens = $null
 [System.Management.Automation.Language.ParseError[]]$parserErrors = $null

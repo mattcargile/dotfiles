@@ -6,8 +6,11 @@ param (
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$fileSystemInfoColorPath = Join-Path $PSScriptRoot .\filesysteminfocolor.psd1.tmpl
+$fileSystemInfoColorPath = Join-Path $PSScriptRoot ".." .\filesysteminfocolor.psd1.tmpl
 $fileSystemInfoColorScript =  chezmoi execute-template --file $fileSystemInfoColorPath | Out-String
+if ($LASTEXITCODE -gt 0) {
+    throw [InvalidOperationException]'chezmoi execute-template failed with non-zero exit code'
+}
 
 [System.Management.Automation.Language.Token[]]$parserTokens = $null
 [System.Management.Automation.Language.ParseError[]]$parserErrors = $null
