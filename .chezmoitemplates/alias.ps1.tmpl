@@ -17,8 +17,8 @@ New-Alias -Name 'no' -Value 'New-Object'
 New-Alias -Name 'rvdns' -Value 'Resolve-DnsName'
 New-Alias -Name 'gwe' -Value 'Get-WinEvent'
 New-Alias -Name 'gctr' -Value 'Get-Counter'
-New-Alias -Name 'epcli' -Value 'Export-CliXml'
-New-Alias -Name 'ipcli' -Value 'Import-CliXml'
+New-Alias -Name 'epclix' -Value 'Export-CliXml'
+New-Alias -Name 'ipclix' -Value 'Import-CliXml'
 New-Alias -Name 'scnt' -Value 'Set-Content'
 New-Alias -Name 'acnt' -Value 'Add-Content'
 New-Alias -Name 'ctjson' -Value 'ConvertTo-Json'
@@ -206,8 +206,9 @@ New-Alias -Name 'choco.exe' -Value 'choco' # Hack for autocomplete.
 # chezmoi get senOnePath {{- $senOnePath := joinPath ( glob ( joinPath $prgFiles "SentinelOne" "Sentinel Agent *" ) | sortAlpha | last ) "SentinelCtl.exe" }}
 # chezmoi if get senOnePath {{- if lookPath $senOnePath }}{{ nindent 0 ( printf "function sentinelctl { invoke-gsudo -ScriptBlock { & %s @args } -ArgumentList $args }" ( $senOnePath | squote ) ) }}{{- end }}
 
-# chezmoi get spcSnifPath {{- $spcSnifPath := "SpaceSniffer.exe"}}
-# chezmoi if spacesniffer {{- if lookPath $spcSnifPath }}{{ nindent 0 ( printf "function spacesniffer { invoke-gsudo -ScriptBlock { & %s @args } -ArgumentList $args }" ( $spcSnifPath | squote ) ) }}{{ end }}
+# chezmoi get spcSnifPath {{- $spcSnifPath := "SpaceSniffer.exe" }}
+# `invoke-gsudo` usage causes console to hang while `spacesniffer.exe` is open. `help` needs special handling to bypass shim.
+# chezmoi if spacesniffer {{- if lookPath $spcSnifPath }}{{ nindent 0 ( printf "function spacesniffer { if ($args -contains 'help') { & (scoop which spacesniffer.exe) help } else { gsudo { & %s @args } -args $args } }" ( output "pwsh" "-Command" "scoop" "which" $spcSnifPath | trim | squote ) ) }}{{ end }}
 
 # chezmoi if gsudo end {{- end }}
 
