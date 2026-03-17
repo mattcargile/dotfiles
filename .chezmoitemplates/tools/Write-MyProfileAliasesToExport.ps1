@@ -5,7 +5,7 @@ end {
     Set-StrictMode -Version Latest
     $ErrorActionPreference = 'Stop'
 
-    $publicFunctionsRootFiles = Get-ChildItem -Path "$PSScriptRoot\MyProfile\functions" -Filter *.ps1*
+    $publicFunctionsRootFiles = Get-ChildItem -Path "$PSScriptRoot\..\MyProfile\functions" -Filter *.ps1*
     $publicFunctionAliasesAll = [System.Collections.Generic.List[string]]::new()
     $publicFunctionAliasesDesktop = [System.Collections.Generic.List[string]]::new()
     $publicFunctionAliasesCore = [System.Collections.Generic.List[string]]::new()
