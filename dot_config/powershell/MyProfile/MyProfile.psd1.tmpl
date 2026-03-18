@@ -103,11 +103,13 @@ FunctionsToExport = @(
     # chezmoi includeTemplate {{ includeTemplate "tools/WriteMyProfileFunctionsToExport.tmpl" . -}}
 )
 
+# chezmoi if dotnet {{ if not ( lookPath "dotnet" ) }}{{ fail "Cannot find dotnet in Path" }}{{ end }}
+# chezmoi get MyProfileLib arg list {{ $cmdletAndAliasArgList := list ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "WriteMyProfileLibPublicCmdletAndAliasJson.cs" ) "--configuration" "Release" }}
+# chezmoi get json {{ $cmdletAndAliasOutJson := outputList "dotnet" $cmdletAndAliasArgList | fromJson }}
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @(
-    'ConvertTo-HmnByteSize'
-    'ConvertTo-HmnDate'
-    'ConvertTo-HmnTimeSpan'
+    # chezmoi if cmdlets {{ if $cmdletAndAliasOutJson.CmdletNames }}{{ range $currentCmdlet := $cmdletAndAliasOutJson.CmdletNames }}{{ $currentCmdlet | squote | nindent 4 }}{{ end }}
+    # chezmoi end if cmdlets {{ end }}
 )
 
 # Variables to export from this module
@@ -115,9 +117,8 @@ VariablesToExport = @()
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
 AliasesToExport = @(
-    'cthbs'
-    'cthdt'
-    'cthts'
+    # chezmoi if aliases {{ if $cmdletAndAliasOutJson.AliasNames }}{{ range $currentAlias := $cmdletAndAliasOutJson.AliasNames }}{{ $currentAlias | squote | nindent 4 }}{{ end }}
+    # chezmoi end if aliases {{ end }}
     # chezmoi outputList args {{- $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-MyProfileAliasesToExport.ps1" ) }}
     # chezmoi outputList {{ outputList "pwsh" $argCompleterArgList -}}
 ) 
