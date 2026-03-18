@@ -84,7 +84,9 @@ $publishCore = dotnet @dotnetArgs @dotnetCoreArgs
 if ($LASTEXITCODE -gt 0) {
     throw $publishCore
 }
-$publishDesktop = dotnet @dotnetArgs @dotnetDesktopArgs
-if ($LASTEXITCODE -gt 0) {
-    throw $publishDesktop
+if ($IsWindows) {
+    $publishDesktop = dotnet @dotnetArgs @dotnetDesktopArgs
+    if ($LASTEXITCODE -gt 0) {
+        throw $publishDesktop
+    }
 }
