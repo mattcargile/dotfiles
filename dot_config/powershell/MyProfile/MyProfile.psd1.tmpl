@@ -17,7 +17,7 @@ RootModule = $(
     else {
         'desktop.psm1'
     }
-    # else *nix/mac {{ else }}{{ nindent 4 "core.psm1" }}{{ end }}
+    # else *nix/mac {{ else }}{{ nindent 4 ( squote "core.psm1" ) }}{{ end }}
 ) 
 
 # Version number of this module.
