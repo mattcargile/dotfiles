@@ -1,5 +1,12 @@
 # dotfiles
-Personal cross-platform configuration using chezmoi.
+Personal cross-platform configuration using `chezmoi`.
+
+## WIP Fixes
+1. Handle `dotnet` pathing and location on _*nix_. Still relying on `shellenv pwsh` being run manually before a `chezmoi apply`.
+1. maybe only pull down `glyphnames.json` when the github release is updated. maybe can use a golang template for pull down that date with the custom `chezmoi` functions.
+1. better handling on write arg completer for missing binaries or missing completion commands like on `dotnet`
+1. sometimes `$env:PSModulePath` in `powershell` doesn't reflect the `.\OneDrive\Documents` folder and only has `.\Documents`.
+1. negotiate `TextMate` in new pager functions and handle potential `dll` hell with `PSParseHtml`. repo owner to maybe use _ALC_
 
 ## Road to Full Auto
 1. Consider setting up local admin user.
