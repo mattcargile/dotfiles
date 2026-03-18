@@ -248,8 +248,4 @@ $pwshRunSplat = @{
 }
 Set-PSReadLineKeyHandler @pwshRunSplat
 
-Remove-Variable -Name @(
-    'pwshRunSplat'
-    'pwshRunTabSplat'
-    'pwshRunReadlineHistorySplat'
-)
+# No longer need to remove the helper variables as they are created inside the `function:\prompt` on init

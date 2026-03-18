@@ -1,3 +1,4 @@
+# Reminder: File is included inside the `function:\prompt` so should declare functions, etc as `$global:`
 Register-ArgumentCompleter -Native -CommandName 'winget' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $Local:word = $wordToComplete.Replace('"', '""')

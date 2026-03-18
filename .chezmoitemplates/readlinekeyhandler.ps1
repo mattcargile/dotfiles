@@ -493,4 +493,4 @@ Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
 
 #endregion
 
-# No longer need to remove these variables as they are created inside the `function:\prompt` on init
+# No longer need to remove the helper variables as they are created inside the `function:\prompt` on init

@@ -26,20 +26,10 @@ if($env:TERM_PROGRAM -eq 'vscode' -and $Host.Name -eq 'Visual Studio Code Host')
 # Prefer core's implementation of join and have a proxied command
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments","StringModule_DontInjectJoinString",Justification="Variable required in session for future implicit string module load.")]
 $StringModule_DontInjectJoinString = $true
-
-{{ includeTemplate "powershellrun.ps1" . }}
 #endregion {{- end }}
 
 #region PSDefaultParameterValues
 {{ includeTemplate "defaultparams.ps1.tmpl" . }}
-#endregion
-
-#region ArgumentCompleter Generated
-# chezmoi outputList args {{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-ArgCompleterOutput.ps1" ) }}
-{{ outputList "pwsh" $argCompleterArgList }}
-#endregion
-#region argcompleter.ps1
-{{ includeTemplate "argcompleter.ps1" . }}
 #endregion
 
 #region Alias
