@@ -3,8 +3,7 @@ using System.Management.Automation;
 
 namespace MyProfileLib.Commands;
 
-[CmdletBinding(ConfirmImpact = ConfirmImpact.Low)]
-[Cmdlet(VerbsData.ConvertTo, "HmnTimeSpan")]
+[Cmdlet(VerbsData.ConvertTo, "HmnTimeSpan", ConfirmImpact = ConfirmImpact.Low)]
 [Alias("cthts")]
 [OutputType(typeof(string))]
 public class ConvertToHmnTimeSpan : PSCmdlet

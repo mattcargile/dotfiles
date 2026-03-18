@@ -3,8 +3,7 @@ using System.Management.Automation;
 
 namespace MyProfileLib.Commands;
 
-[CmdletBinding(ConfirmImpact = ConfirmImpact.Low)]
-[Cmdlet(VerbsData.ConvertTo, "HmnDate")]
+[Cmdlet(VerbsData.ConvertTo, "HmnDate", ConfirmImpact = ConfirmImpact.Low)]
 [Alias("cthdt")]
 [OutputType(typeof(string))]
 public class ConvertToHmnDate : PSCmdlet

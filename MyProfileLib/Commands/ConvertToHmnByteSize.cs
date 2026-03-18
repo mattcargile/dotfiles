@@ -4,8 +4,7 @@ using System.Management.Automation;
 
 namespace MyProfileLib.Commands;
 
-[CmdletBinding(ConfirmImpact = ConfirmImpact.Low)]
-[Cmdlet(VerbsData.ConvertTo, "HmnByteSize")]
+[Cmdlet(VerbsData.ConvertTo, "HmnByteSize", ConfirmImpact = ConfirmImpact.Low)]
 [Alias("cthbs")]
 [OutputType(typeof(string))]
 public class ConvertToHmnByteSize : PSCmdlet
