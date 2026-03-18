@@ -1,5 +1,5 @@
 # chezmoi HomeBrew Shell Env if block {{ if lookPath "/home/linuxbrew/.linuxbrew/bin/brew" }}
-{{ output (joinPath "home" "linuxbrew" ".linuxbrew" "bin" "brew" ) "shellenv" "pwsh" }}
+{{ output (joinPath .destDir ".." "linuxbrew" ".linuxbrew" "bin" "brew" ) "shellenv" "pwsh" }}
 # end {{ end }}
 # Want to avoid running heavier code in `gsudo`, `pwsh -c`, or other non-`function:\prompt` executing contexts
 function prompt {

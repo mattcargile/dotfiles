@@ -1,5 +1,5 @@
 # isPSCore setting {{- $isPSCore := eq "profile.ps1.tmpl" ( base .chezmoi.sourceFile ) }}
-# dict downstream templates {{- $tmplDict := dict "isPSCore" $isPSCore "isWindows" ( eq .chezmoi.os "windows" ) "sourceDir" .chezmoi.sourceDir }}
+# dict downstream templates {{- $tmplDict := dict "isPSCore" $isPSCore "isWindows" ( eq .chezmoi.os "windows" ) "sourceDir" .chezmoi.sourceDir "destDir" .chezmoi.destDir }}
 # isPSCore if Requires {{- if eq $isPSCore true }}
 #Requires -Version 7.5
 # else Requires {{- else -}}{{- nindent 0 "#Requires -Version 5.1" -}}{{- end }}
