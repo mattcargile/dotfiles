@@ -24,7 +24,7 @@ function prompt {
     # Custom OMP Prompt Context
     function global:Set-MyOmpContext {
         [Alias('Set-PoshContext')]
-        param()
+        param([bool]$originalStatus)
         # Update process level directory. Helps with .Net Methods.
         [System.Environment]::CurrentDirectory = (Get-Location -PSProvider FileSystem).ProviderPath
     }
