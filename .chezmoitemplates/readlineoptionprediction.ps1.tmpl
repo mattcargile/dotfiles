@@ -15,7 +15,7 @@ Set-PSReadLineOption -PredictionSource {{ $psrlPrediction.CorePredictionSource |
 {{- if $psrlPrediction.DesktopPredictionSource -}}
 Set-PSReadLineOption -PredictionSource {{ $psrlPrediction.DesktopPredictionSource | squote }} {{ if $psrlPrediction.DesktopHasColorsInlinePrediction }} -Colors @{
     InlinePrediction = {{ "\u001B[38;5;243m" | squote }}
-    {{- if $psrlPrediction.DesktopHasColorsListPrediction -}}
+    {{- if $psrlPrediction.DesktopHasColorsListPrediction }}
     ListPrediction = {{ "\u001B[38;2;195;100;241m" | squote }}
     ListPredictionToolTip = {{ "\u001B[38;5;243m\u001B[3m" | squote }}
     {{ end -}}
