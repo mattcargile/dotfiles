@@ -7,6 +7,7 @@ Personal cross-platform configuration using `chezmoi`.
 1. better handling on write arg completer for missing binaries or missing completion commands like on `dotnet`
 1. sometimes `$env:PSModulePath` in `powershell` doesn't reflect the `.\OneDrive\Documents` folder and only has `.\Documents`.
 1. negotiate `TextMate` in new pager functions and handle potential `dll` hell with `PSParseHtml`. repo owner to maybe use _ALC_
+1. rewrite some functions in c# for fun like `guv`
 
 ## Road to Full Auto
 1. Consider setting up local admin user.
