@@ -74,7 +74,16 @@ function Get-ChildItemWide {
             }
 
             $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('Microsoft.PowerShell.Management\Get-ChildItem', [System.Management.Automation.CommandTypes]::Cmdlet)
-            $scriptCmd = {& $wrappedCmd @PSBoundParameters | & { process { $_.pstypenames.Insert(0, 'MacSystem.IO.FileInfoWide'); $_ } } }
+            $scriptCmd = {
+                & $wrappedCmd @PSBoundParameters | & {
+                    process {
+                        if ( $_ -is [System.IO.FileSystemInfo] ) {
+                            $_.pstypenames.Insert(0, 'MacSystem.IO.FileInfoWide')
+                        }
+                        $_
+                    }
+                }
+            }
 
             $steppablePipeline = $scriptCmd.GetSteppablePipeline($MyInvocation.CommandOrigin)
             $steppablePipeline.Begin($PSCmdlet)
