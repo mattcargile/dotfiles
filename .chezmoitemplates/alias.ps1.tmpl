@@ -208,7 +208,7 @@ New-Alias -Name 'choco.exe' -Value 'choco' # Hack for autocomplete.
 
 # chezmoi get spcSnifPath {{- $spcSnifPath := "SpaceSniffer.exe" }}
 # `invoke-gsudo` usage causes console to hang while `spacesniffer.exe` is open. `help` needs special handling to bypass shim.
-# chezmoi if spacesniffer {{- if lookPath $spcSnifPath }}{{ nindent 0 ( printf "function spacesniffer { if ($args -contains 'help') { & (scoop which spacesniffer.exe) help } else { gsudo { & %s @args } -args $args } }" ( output "pwsh" "-Command" "scoop" "which" $spcSnifPath | trim | squote ) ) }}{{ end }}
+# chezmoi if spacesniffer {{- if lookPath $spcSnifPath }}{{ nindent 0 ( printf "function spacesniffer { if ($args -contains 'help') { & (scoop which spacesniffer.exe) help } else { gsudo { & %s @args } -args $args } }" ( output "pwsh" "-NoLogo" "-NoProfile" "-Command" "scoop" "which" $spcSnifPath | trim | squote ) ) }}{{ end }}
 
 # chezmoi if gsudo end {{- end }}
 
