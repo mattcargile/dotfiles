@@ -25,11 +25,17 @@ function prompt {
     function global:Set-MyOmpContext {
         [Alias('Set-PoshContext')]
         param([bool]$originalStatus)
-        # Update process level directory. Helps with .Net Methods.
+        # Helper for relative pathing on dotnet methods. They use the process level path. 
         [System.Environment]::CurrentDirectory = (Get-Location -PSProvider FileSystem).ProviderPath
     }
 
-    oh-my-posh init pwsh --config "$([System.IO.Path]::Combine( $HOME, '.config', 'oh-my-posh', 'night-owl_mac.omp.json' ))" | Invoke-Expression
+    $ompArgs = @(
+        'init'
+        'pwsh'
+        '--config'
+        $([System.IO.Path]::Combine( $HOME, '.config', 'oh-my-posh', 'night-owl_mac.omp.json' )) 
+    )
+    oh-my-posh @ompArgs | Invoke-Expression
     prompt # For first initial run or else prompt is "empty"
 }
 
