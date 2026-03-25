@@ -6,6 +6,8 @@
 [interpreters.ps1]
   command = "pwsh"
   args = ["-NoLogo", "-NoProfile"]
+[scriptEnv]
+  DOTNET_NOLOGO = "1"
 [data]
   msSqlMgmtInstance = {{ promptString "What is the SQL Server Instance hosting the Central Management Server" "" | quote }}
   vCenterComputerName = {{ promptString "What is the primary vCenter Computer Name" "" | quote }}
