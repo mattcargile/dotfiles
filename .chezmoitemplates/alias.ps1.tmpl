@@ -1,222 +1,101 @@
-# Define below in this format so as not to override the definitions in defaultparams.ps1. Need to delete at the end of script.
-# Handy definition here so as to make the below code simpler.
-$PSDefaultParameterValues['New-Alias:Description'] = "Created with `$PROFILE.CurrentUserAllHosts at $($MyInvocation.MyCommand.Path)"
-# Forcing to allow easy re-running of this script file.
-$PSDefaultParameterValues['New-Alias:Force'] = $true
+{{- define "newAliasTmpl" -}}{{- printf "New-Alias -Name %s -Value %s -Force -Description %s" ( .name | squote ) ( .value | squote ) ( "Created with $PROFILE.CurrentUserAllHosts" | squote) -}}{{- end -}}
+#region All Aliases
+{{ range $aliasKey, $aliasValue := .pwshAlias.all -}}
+{{- template "newAliasTmpl" (dict "name" $aliasKey "value" $aliasValue ) }}
+{{ end -}}
+#endregion
+#region PSEdition Desktop Aliases
+{{ if eq .isPSCore false -}}
+{{- range $aliasDeskKey, $aliasDeskValue := .pwshAlias.desktop -}}
+{{- template "newAliasTmpl" (dict "name" $aliasDeskKey "value" $aliasDeskValue ) }}
+{{ end -}}
+{{- end }}
+#endregion
+#region Windows "aliases"
+{{ if eq .isWindows true -}}
+{{- $prg86 := env "ProgramFiles(x86)" -}}
+{{- $prgFiles := env "ProgramFiles" -}}
+{{- range $aliasWinKey, $aliasWinValue := .pwshAlias.windows -}}
+{{- template "newAliasTmpl" (dict "name" $aliasWinKey "value" $aliasWinValue ) }}
+{{ end -}}
+{{- $ssmsBasePath := joinPath "Common7" "IDE" "Ssms.exe" -}}
+{{- $ssmsPrg86Path := joinPath ( glob ( joinPath $prg86 "Microsoft SQL Server Management Studio *" ) | sortAlpha | last ) $ssmsBasePath -}}
+{{- $ssmsPrgPath := joinPath ( glob ( joinPath $prgFiles "Microsoft SQL Server Management Studio *" ) | sortAlpha | last ) "Release" $ssmsBasePath -}}
+{{- $ssmsPath := "" -}}
+{{- if lookPath $ssmsPrgPath -}}
+{{- $ssmsPath = $ssmsPrgPath -}}
+{{- else if lookPath $ssmsPrg86Path -}}
+{{- $ssmsPath = $ssmsPrg86Path -}}
+{{- end -}}
+{{- if ne $ssmsPath "" -}}
+{{- template "newAliasTmpl" (dict "name" "ssms" "value" $ssmsPath ) }}
+{{ end -}}
+{{- $nppPath := joinPath $prgFiles "Notepad++" "notepad++.exe" -}}
+{{- if lookPath $nppPath -}}
+{{- template "newAliasTmpl" (dict "name" "npp" "value" $nppPath ) }}
+{{ end }}
+{{- $ostressPath := joinPath $prgFiles "Microsoft Corporation" "RMLUtils" "ostress.exe" -}}
+{{- if lookPath $ostressPath -}}
+{{- template "newAliasTmpl" (dict "name" "ostress" "value" $ostressPath ) }}
+{{ end -}}
+{{- $vsPrefix := joinPath $prgFiles "Microsoft Visual Studio" "2022" "Community" -}}
+{{- if lstat $vsPrefix -}}
+{{- $vsIDE := joinPath $vsPrefix "Common7" "IDE" -}}
+{{- $vsMsBldBin := joinPath $vsPrefix "MSBuild" "Current" "Bin" -}}
+{{- $devenvPath := joinPath $vsIDE "devenv.exe" -}}
+{{- if lookPath $devenvPath -}}
+{{- template "newAliasTmpl" (dict "name" "devenv" "value" $devenvPath ) }}
+{{ end -}}
+{{- $tfPath := joinPath $vsIDE "CommonExtensions" "Microsoft" "TeamFoundation" "Team Explorer" "tf.exe" -}}
+{{- if lookPath $tfPath -}}
+{{- template "newAliasTmpl" (dict "name" "tf" "value" $tfPath ) }}
+{{ end -}}
+{{- $sqlpackagePath := joinPath $vsIDE "Extensions" "Microsoft" "SQLDB" "DAC" "SqlPackage.exe" -}}
+{{- if lookPath $sqlpackagePath -}}
+{{- template "newAliasTmpl" (dict "name" "sqlpackage" "value" $sqlpackagePath ) }}
+{{ end -}}
+{{- $csiPath := joinPath $vsMsBldBin "Roslyn" "csi.exe" -}}
+{{- if lookPath $csiPath -}}
+{{- template "newAliasTmpl" (dict "name" "csi" "value" $csiPath ) }}
+{{ end -}}
+{{- $cscPath := joinPath $vsMsBldBin "Roslyn" "csc.exe" -}}
+{{- if lookPath $cscPath -}}
+{{- template "newAliasTmpl" (dict "name" "csc" "value" $cscPath ) }}
+{{ end -}}
+{{- $msbuildPath := joinPath $vsMsBldBin "MsBuild.exe" -}}
+{{- if lookPath $msbuildPath -}}
+{{- template "newAliasTmpl" (dict "name" "msbuild" "value" $msbuildPath ) }}
+{{ end -}}
+{{- end -}}
 
-# Following guidelines here ( https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands )
+{{ $vpncliAnyPath := joinPath $prg86 "Cisco" "Cisco AnyConnect Secure Mobility Client" "vpncli.exe" -}}
+{{ $vpncliSecPath := joinPath $prg86 "Cisco" "Cisco Secure Client" "vpncli.exe" -}}
+{{- $vpncliPath := "" -}}
+{{- if lookPath $vpncliSecPath -}}
+{{- $vpncliPath = $vpncliSecPath -}}
+{{- else if lookPath $vpncliAnyPath -}}
+{{- $vpncliPath = $vpncliAnyPath -}}
+{{- end -}}
+{{- if ne $vpncliPath "" -}}
+{{- template "newAliasTmpl" (dict "name" "vpncli" "value" $vpncliPath ) }}
+{{ end -}}
+{{- $kerbConfigPath := joinPath $prgFiles "Microsoft" "Kerberos Configuration Manager for SQL Server" "KerberosConfigMgr.exe" -}}
+{{- if lookPath $kerbConfigPath -}}
+{{- template "newAliasTmpl" (dict "name" "kerberosconfigmgr" "value" $kerbConfigPath ) }}
+{{ end -}}
 
-# Microsoft.PowerShell.PSResourceGet Module
-New-Alias -Name 'gires' -Value 'Get-InstalledPSResource'
-New-Alias -Name 'usres' -Value 'Uninstall-PSResource'
-# Core Cmdlets
-New-Alias -Name 's' -Value 'Select-Object'
-New-Alias -Name 'onl' -Value 'Out-Null'
-New-Alias -Name 'tcn' -Value 'Test-Connection'
-New-Alias -Name 'no' -Value 'New-Object'
-New-Alias -Name 'rvdns' -Value 'Resolve-DnsName'
-New-Alias -Name 'gwe' -Value 'Get-WinEvent'
-New-Alias -Name 'gctr' -Value 'Get-Counter'
-New-Alias -Name 'epclix' -Value 'Export-CliXml'
-New-Alias -Name 'ipclix' -Value 'Import-CliXml'
-New-Alias -Name 'scnt' -Value 'Set-Content'
-New-Alias -Name 'acnt' -Value 'Add-Content'
-New-Alias -Name 'ctjson' -Value 'ConvertTo-Json'
-New-Alias -Name 'cfjson' -Value 'ConvertFrom-Json'
-New-Alias -Name 'ctclix' -Value 'ConvertTo-CliXml'
-New-Alias -Name 'cfclix' -Value 'ConvertFrom-CliXml'
-New-Alias -Name 'ctsecs' -Value 'ConvertTo-SecureString'
-New-Alias -Name 'cfsecs' -Value 'ConvertFrom-SecureString'
-New-Alias -Name 'gscht' -Value 'Get-ScheduledTask'
-New-Alias -Name 'cthtml' -Value 'ConvertTo-Html'
-# ScheduledTasks
-New-Alias -Name 'gscht' -Value 'ScheduledTasks\Get-ScheduledTask'
-New-Alias -Name 'gschti' -Value 'ScheduledTasks\Get-ScheduledTaskInfo'
-# NetTCPIP Module
-New-Alias -Name 'gipa' -Value 'Get-NetIPAddress'
-New-Alias -Name 'gtcpc' -Value 'Get-NetTCPConnection'
-New-Alias -Name 'groute' -Value 'Get-NetRoute'
-# VMWare PowerCLI
-New-Alias -Name 'ccvi' -Value 'VMWare.VimAutomation.Core\Connect-VIServer'
-New-Alias -Name 'gvm' -Value 'VMWare.VimAutomation.Core\Get-VM'
-# Gsudo Binary And Module
-New-Alias -Name 'isudo' -Value 'Invoke-Gsudo'
-# ImportExcel Module
-New-Alias -Name 'epxl' -Value 'Export-Excel'
-New-Alias -Name 'ipxl' -Value 'Import-Excel'
-# string Module
-# NOTE: Using this method due to interplay with PSUtil ( which has slow load times ) and lack of aliases in the string module `psd1`
-# https://github.com/PowershellFrameworkCollective/PSUtil/issues/67
-New-Alias -Name 'add' -Value 'string\Add-String'
-New-Alias -Name 'format' -Value 'string\Format-String'
-# chezmoi if not core {{ if eq .isPSCore false }}
-# Using proxy Join-String command for Core edition.
-# Join-String only exposed in the `psd1` for the Desktop edition 
-New-Alias -Name 'join' -Value 'string\Join-String'
-# chezmoi end if not core {{- end }}
-New-Alias -Name 'replace' -Value 'string\Set-String'
-New-Alias -Name 'split' -Value 'string\Split-String'
-New-Alias -Name 'trim' -Value 'string\Get-SubString'
-New-Alias -Name 'wrap' -Value 'string\Add-String'
-# PSFzf Module
-New-Alias -Name 'frg' -Value 'Invoke-PsFzfRipgrep'
-New-Alias -name 'fscoop' -Value 'Invoke-FuzzyScoop'
-# dbatools Module
-New-Alias -Name 'gddr' -Value 'Get-DbaDbRole'
-New-Alias -Name 'nddr' -Value 'New-DbaDbRole'
-New-Alias -Name 'gddrm' -Value 'Get-DbaDbRoleMember'
-New-Alias -Name 'rddr' -Value 'Remove-DbaDbRole'
-New-Alias -Name 'rdsr' -Value 'Remove-DbaServerRole'
-New-Alias -Name 'gdsr' -Value 'Get-DbaServerRole'
-New-Alias -Name 'ndsr' -Value 'New-DbaServerRole'
-New-Alias -Name 'gdsrm' -Value 'Get-DbaServerRoleMember'
-New-Alias -Name 'adsrm' -Value 'Add-DbaServerRoleMember'
-New-Alias -Name 'rdsrm' -Value 'Remove-DbaServerRoleMember'
-New-Alias -Name 'addrm' -Value 'Add-DbaDbRoleMember'
-New-Alias -Name 'rddrm' -Value 'Remove-DbaDbRoleMember'
-New-Alias -Name 'badb' -Value 'Backup-DbaDatabase'
-New-Alias -Name 'gdreg' -Value 'Get-DbaRegServer'
-New-Alias -Name 'gdb' -Value 'Get-DbaDatabase'
-New-Alias -Name 'rdb' -Value 'Remove-DbaDatabase'
-New-Alias -Name 'fddaj' -Value 'Find-DbaAgentJob'
-New-Alias -Name 'fddb' -Value 'Find-DbaDatabase'
-New-Alias -Name 'gdaj' -Value 'Get-DbaAgentJob'
-New-Alias -Name 'gdash' -Value 'Get-DbaAgentSchedule'
-New-Alias -Name 'sdaj' -Value 'Set-DbaAgentJob'
-New-Alias -Name 'sadaj' -Value 'Start-DbaAgentJob'
-New-Alias -Name 'spdaj' -Value 'Stop-DbaAgentJob'
-New-Alias -Name 'rdaj' -Value 'Remove-DbaAgentJob'
-New-Alias -Name 'ndaj' -Value 'New-DbaAgentJob'
-New-Alias -Name 'gdajh' -Value 'Get-DbaAgentJobHistory'
-New-Alias -Name 'tdcn' -Value 'Test-DbaConnection'
-New-Alias -Name 'idq' -Value 'Invoke-DbaQuery'
-New-Alias -Name 'epdl' -Value 'Export-DbaLogin'
-New-Alias -Name 'epdu' -Value 'Export-DbaUser'
-New-Alias -Name 'epdsr' -Value 'Export-DbaServerRole'
-New-Alias -Name 'epddr' -Value 'Export-DbaDbRole'
-New-Alias -Name 'epdscr' -Value 'Export-DbaScript'
-New-Alias -Name 'gdbf' -Value 'Get-DbaDbFile'
-New-Alias -Name 'gdds' -Value 'Get-DbaDiskSpace'
-New-Alias -Name 'gdsv' -Value 'Get-DbaService'
-New-Alias -Name 'sadsv' -Value 'Start-DbaService'
-New-Alias -Name 'spdsv' -Value 'Stop-DbaService'
-New-Alias -Name 'ndb' -Value 'New-DbaDatabase'
-New-Alias -Name 'gdl' -Value 'Get-DbaLogin'
-New-Alias -Name 'ndl' -Value 'New-DbaLogin'
-New-Alias -Name 'rdl' -Value 'Remove-DbaLogin'
-New-Alias -Name 'sdl' -Value 'Set-DbaLogin'
-New-Alias -Name 'ndbu' -Value 'New-DbaDbUser'
-New-Alias -Name 'gdbu' -Value 'Get-DbaDbUser'
-New-Alias -Name 'rdbu' -Value 'Remove-DbaDbUser'
-New-Alias -Name 'gderr' -Value 'Get-DbaErrorLog'
-New-Alias -Name 'idwho' -Value 'Invoke-DbaWhoIsActive'
-New-Alias -Name 'fddcmd' -Value 'Find-DbaCommand'
-New-Alias -Name 'ccdi' -Value 'Connect-DbaInstance'
-New-Alias -Name 'gdsp' -Value 'Get-DbaDbStoredProcedure'
-New-Alias -Name 'fddsp' -Value 'Find-DbaStoredProcedure'
-New-Alias -Name 'gduf' -Value 'Get-DbaDbUdf'
-New-Alias -Name 'gdvw' -Value 'Get-DbaDbView'
-New-Alias -Name 'fddvw' -Value 'Find-DbaView'
-New-Alias -Name 'gdtb' -Value 'Get-DbaDbTable'
-New-Alias -Name 'gdps' -Value 'Get-DbaProcess'
-New-Alias -Name 'spdps' -Value 'Stop-DbaProcess'
-New-Alias -Name 'gddbh' -Value 'Get-DbaDbBackupHistory'
-New-Alias -Name 'gdxeo' -Value 'Get-DbaXEObject'
-New-Alias -Name 'gdxest' -Value 'Get-DbaXEStore'
-New-Alias -Name 'gdxesta' -Value 'Get-DbaXESessionTarget'
-New-Alias -Name 'gdxestaf' -Value 'Get-DbaXESessionTargetFile'
-New-Alias -Name 'gdxestp' -Value 'Get-DbaXESessionTemplate'
-New-Alias -Name 'gdxes' -Value 'Get-DbaXESession'
-New-Alias -Name 'rdxes' -Value 'Remove-DbaXESession'
-New-Alias -Name 'ndxes' -Value 'New-DbaXESession'
-New-Alias -Name 'epdxes' -Value 'Export-DbaXESession'
-New-Alias -Name 'sadxes' -Value 'Start-DbaXESession'
-New-Alias -Name 'spdxes' -Value 'Stop-DbaXESession'
-New-Alias -Name 'wcdxes' -Value 'Watch-DbaXESession'
-New-Alias -Name 'ctdxes' -Value 'ConvertTo-DbaXESession'
-
-# SecretManagement Module
-New-Alias -Name 'gsci' -Value 'Get-SecretInfo'
-New-Alias -Name 'gsc' -Value 'Get-Secret'
-New-Alias -Name 'ukv' -Value 'Unlock-SecretVault'
-# ActiveDirectory Module
-# Other AD aliases are proxy functions in MyProfile module
-New-Alias -Name 'gado' -Value 'Get-ADObject'
-# TerminalSessions Module
-New-Alias -Name 'gwts' -Value 'Get-WTSSession'
-New-Alias -Name 'rwts' -Value 'Remove-WTSSession'
-# PSParseHTML
-New-Alias -Name 'cfhtml' -Value 'PSParseHTML\ConvertFrom-HTML'
-
-New-Alias -Name 'git.exe' -Value 'git' # Hack for autocomplete.
-#region chezmoi if windows {{- if eq .isWindows true }}
-# chezmoi prog files 86 var {{- $prg86 := env "ProgramFiles(x86)" }}
-# chezmoi prog files var  {{- $prgFiles := env "ProgramFiles" }}
-New-Alias -Name 'choco.exe' -Value 'choco' # Hack for autocomplete.
-
-# Python Alias
-# No longer needed or functional for oh-my-posh. Need to disable the App Execution Aliases in Windows
-# Appears one would need to clear entry from `HKCU:\Software\Microsoft\Windows\CurrentVersion\App Paths` and
-# the file at `$env:LOCALAPPDATA\Microsoft\WindowsApps`. https://superuser.com/a/1746939
-# Use `py -m pip list` instead of `pip`
-
-# Additional exe's
-# chezmoi get ssmsBasePath {{- $ssmsBasePath := joinPath "Common7" "IDE" "Ssms.exe" }}
-# chezmoi get ssmsPrg86Path {{- $ssmsPrg86Path := joinPath ( glob ( joinPath $prg86 "Microsoft SQL Server Management Studio *" ) | sortAlpha | last ) $ssmsBasePath }}
-# chezmoi get ssmsPrgPath {{- $ssmsPrgPath := joinPath ( glob ( joinPath $prgFiles "Microsoft SQL Server Management Studio *" ) | sortAlpha | last ) "Release" $ssmsBasePath }}
-# chezmoi init ssmsPath {{- $ssmsPath := "" }}
-# chezmoi if get ssmsPath {{- if lookPath $ssmsPrgPath }}{{ $ssmsPath = $ssmsPrgPath }}{{ else if lookPath $ssmsPrg86Path }}{{ $ssmsPath = $ssmsPrg86Path }}{{ end }}
-# chezmoi if ssmsPath alias {{- if ne $ssmsPath "" }}{{ nindent 0 "New-Alias -Name 'ssms' -Value " }}{{ $ssmsPath | squote }}{{ end }}
-
-# chezmoi get nppPath {{- $nppPath := joinPath $prgFiles "Notepad++" "notepad++.exe" }}
-# chezmoi if nppPath alias {{- if lookPath $nppPath }}{{ nindent 0 "New-Alias -Name 'npp' -Value " }}{{ $nppPath | squote }}{{ end }}
-
-# chezmoi get ostressPath {{- $ostressPath := joinPath $prgFiles "Microsoft Corporation" "RMLUtils" "ostress.exe" }}
-# chezmoi if ostressPath alias {{- if lookPath $ostressPath }}{{ nindent 0 "New-Alias -Name 'ostress' -Value " }}{{ $ostressPath | squote }}{{ end }}
-
-# chezmoi get vsPrefix {{- $vsPrefix := joinPath $prgFiles "Microsoft Visual Studio" "2022" "Community" }}
-# chezmio if vsPrefix {{- if lstat $vsPrefix }}
-# chezmoi get vsIDE {{- $vsIDE := joinPath $vsPrefix "Common7" "IDE" }}
-# chezmoi get vsMsBldBin {{- $vsMsBldBin := joinPath $vsPrefix "MSBuild" "Current" "Bin" }}
-# chezmoi get devEnvPath {{- $devenvPath := joinPath $vsIDE "devenv.exe" }}
-# chezmoi if devenv alias {{- if lookPath $devenvPath }}{{ nindent 0 "New-Alias -Name 'devenv' -Value " }}{{ $devenvPath | squote }}{{ end }}
-# chezmoi get tfPath {{- $tfPath := joinPath $vsIDE "CommonExtensions" "Microsoft" "TeamFoundation" "Team Explorer" "tf.exe" }}
-# chezmoi if tf alias {{- if lookPath $tfPath }}{{ nindent 0 "New-Alias -Name 'tf' -Value " }}{{ $tfPath | squote }}{{ end }}
-# chezmoi get sqlpackagePath {{- $sqlpackagePath := joinPath $vsIDE "Extensions" "Microsoft" "SQLDB" "DAC" "SqlPackage.exe" }}
-# chezmoi if sqlpackage alias {{- if lookPath $sqlpackagePath }}{{ nindent 0 "New-Alias -Name 'sqlpackage' -Value " }}{{ $sqlpackagePath | squote }}{{ end }}
-# chezmoi get csiPath {{- $csiPath := joinPath $vsMsBldBin "Roslyn" "csi.exe" }}
-# chezmoi if csi alias {{- if lookPath $csiPath }}{{ nindent 0 "New-Alias -Name 'csi' -Value " }}{{ $csiPath | squote }}{{ end }}
-# chezmoi get cscPath {{- $cscPath := joinPath $vsMsBldBin "Roslyn" "csc.exe" }}
-# chezmoi if csc alias {{- if lookPath $cscPath }}{{ nindent 0 "New-Alias -Name 'csc' -Value " }}{{ $cscPath | squote }}{{ end }}
-# chezmoi get msbuildPath {{- $msbuildPath := joinPath $vsMsBldBin "MsBuild.exe" }}
-# chezmoi if msbuild alias {{- if lookPath $msbuildPath }}{{ nindent 0 "New-Alias -Name 'msbuild' -Value " }}{{ $msbuildPath | squote }}{{ end }}
-# chezmoi if vsPrefix end {{- end }}
-
-# chezmoi get vpncliAnyPath {{ $vpncliAnyPath := joinPath $prg86 "Cisco" "Cisco AnyConnect Secure Mobility Client" "vpncli.exe" }}
-# chezmoi get vpncliSecPath {{ $vpncliSecPath := joinPath $prg86 "Cisco" "Cisco Secure Client" "vpncli.exe" }}
-# chezmoi init vpncliPath {{- $vpncliPath := "" }}
-# chezmoi if get vpncliPath {{- if lookPath $vpncliSecPath }}{{ $vpncliPath = $vpncliSecPath }}{{ else if lookPath $vpncliAnyPath }}{{ $vpncliPath = $vpncliAnyPath }}{{ end }}
-# chezmoi if vpncliPath alias {{- if ne $vpncliPath "" }}{{ nindent 0 "New-Alias -Name 'vpncli' -Value " }}{{ $vpncliPath | squote }}{{ end }}
-
-# chezmoi get kerbConfigPath {{- $kerbConfigPath := joinPath $prgFiles "Microsoft" "Kerberos Configuration Manager for SQL Server" "KerberosConfigMgr.exe" }}
-# chezmoi if kerberosconfigmgr alias {{- if lookPath $kerbConfigPath }}{{ nindent 0 "New-Alias -Name 'kerberosconfigmgr' -Value " }}{{ $kerbConfigPath | squote }}{{ end }}
-
-# chezmoi if gsudo {{- if lookPath ( joinPath ( env "USERPROFILE" ) "scoop" "apps" "gsudo" "current" "gsudo.exe" ) }}
-
-# chezmoi get senOnePath {{- $senOnePath := joinPath ( glob ( joinPath $prgFiles "SentinelOne" "Sentinel Agent *" ) | sortAlpha | last ) "SentinelCtl.exe" }}
-# chezmoi if get senOnePath {{- if lookPath $senOnePath }}{{ nindent 0 ( printf "function sentinelctl { invoke-gsudo -ScriptBlock { & %s @args } -ArgumentList $args }" ( $senOnePath | squote ) ) }}{{- end }}
-
-# chezmoi get spcSnifPath {{- $spcSnifPath := "SpaceSniffer.exe" }}
+{{- if lookPath ( joinPath ( env "USERPROFILE" ) "scoop" "apps" "gsudo" "current" "gsudo.exe" ) -}}
+{{- $senOnePath := joinPath ( glob ( joinPath $prgFiles "SentinelOne" "Sentinel Agent *" ) | sortAlpha | last ) "SentinelCtl.exe" }}
+{{- if lookPath $senOnePath -}}
+{{- printf "function sentinelctl { invoke-gsudo -ScriptBlock { & %s @args } -ArgumentList $args }" ( $senOnePath | squote ) }}
+{{ end -}}
+{{- $spcSnifPath := "SpaceSniffer.exe" -}}
 # `invoke-gsudo` usage causes console to hang while `spacesniffer.exe` is open. `help` needs special handling to bypass shim.
-# chezmoi if spacesniffer {{- if lookPath $spcSnifPath }}{{ nindent 0 ( printf "function spacesniffer { if ($args -contains 'help') { & (scoop which spacesniffer.exe) help } else { gsudo { & %s @args } -args $args } }" ( output "pwsh" "-NoLogo" "-NoProfile" "-Command" "scoop" "which" $spcSnifPath | trim | squote ) ) }}{{ end }}
-
-# chezmoi if gsudo end {{- end }}
-
-#endregion chezmoi if windows end {{- end }}
-
-$PSDefaultParameterValues.Remove( 'New-Alias:Description' )
-$PSDefaultParameterValues.Remove( 'New-Alias:Force' )
-
+{{- if lookPath $spcSnifPath }}
+{{ printf "function spacesniffer { if ($args -contains 'help') { & (scoop which spacesniffer.exe) help } else { gsudo { & %s @args } -args $args } }" ( output "pwsh" "-NoLogo" "-NoProfile" "-Command" "scoop" "which" $spcSnifPath | trim | squote ) }}
+{{ end -}}
+{{- end -}}
+#endregion windows {{- end }}
 # scoop aliases
 # scoop alias add fsearch 'scoop-search.exe $args[0]' 'Fast search with scoop-search.exe'
 # scoop alias add describe 'sfsu.exe describe $args[0]' 'Fast info with sfsu.exe'

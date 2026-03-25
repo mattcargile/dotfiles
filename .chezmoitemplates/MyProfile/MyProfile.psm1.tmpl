@@ -1,6 +1,9 @@
 {{- $isPSCore := hasPrefix "core" ( base .chezmoi.sourceFile ) -}}
 {{- $isWindows := eq .chezmoi.os "windows" -}}
-{{- $tmplDict := dict "isPSCore" $isPSCore "isWindows" $isWindows "workOneDriveBusinessName" .workOneDriveBusinessName "sourceDir" .chezmoi.sourceDir -}}
+{{- $isPagingAvailableFilePath := joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Test-TextMatePagingSupport.ps1" }}
+{{- $isPagingAvailableArgList := list "-NoProfile" "-NoLogo" "-File" $isPagingAvailableFilePath }}
+{{- $isPagingAvailable := outputList "pwsh" $isPagingAvailableArgList | trim }}
+{{- $tmplDict := dict "isPSCore" $isPSCore "isWindows" $isWindows "workOneDriveBusinessName" .workOneDriveBusinessName "sourceDir" .chezmoi.sourceDir "isPagingAvailable" (eq $isPagingAvailable "True") -}}
 {{- range $file := glob ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "MyProfile" "**" "*ps1*" )  -}}
 {{ includeTemplate $file $tmplDict }}
 {{ end -}}
