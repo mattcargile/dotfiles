@@ -1,5 +1,5 @@
-function Format-PowerShell {
-    [Alias('fpsh')]
+function Format-Sql {
+    [Alias('fsql')]
     [CmdletBinding(PositionalBinding = $false)]
     [OutputType([string])]
     param(
@@ -10,12 +10,13 @@ function Format-PowerShell {
         [psobject] $InputObject
     )
     begin {
+        $batArgs = [string[]]@('--language', 'sql')
+        # chezmoi if isPSCore {{- if and .isPSCore .isPagingAvailable }}
         $txtMatSplat = @{
-            Language = 'powershell'
+            Language = 'sql'
             Page = $true
         } 
         $sb = { TextMate\Format-TextMate @txtMatSplat }
-        $batArgs = [string[]]@('--language', 'powershell')
         if (-not (Get-Module -Name TextMate)) {
             try {
                 Import-Module -Name TextMate -ErrorAction Stop
@@ -31,7 +32,9 @@ function Format-PowerShell {
                 $sb = { Out-Bat @ArgumentList }
             }
         }
-        $pipe = $sb.GetSteppablePipeline($MyInvocation.CommandOrigin) 
+        # chezmoi else {{- else }}{{ nindent 8 "$ArgumentList += $batArgs" }}{{ nindent 8 "$sb = { Out-Bat @ArgumentList }" }}
+        # chezmoi if isPSCore end {{- end }}
+        $pipe = $sb.GetSteppablePipeline($MyInvocation.CommandOrigin)
         $pipe.Begin($PSCmdlet)
     }
     process {

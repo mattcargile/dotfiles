@@ -1,6 +1,7 @@
-function Out-Paging {
-    [Alias('op')]
+function Format-CSharp {
+    [Alias('fcs')]
     [CmdletBinding(PositionalBinding = $false)]
+    [OutputType([string])]
     param(
         [Parameter(ValueFromRemainingArguments = $true)]
         [string[]] $ArgumentList,
@@ -9,27 +10,31 @@ function Out-Paging {
         [psobject] $InputObject
     )
     begin {
-        # chezmoi if isPSCore {{- if .isPSCore }}
-        # chezmoi if paging available {{- if .isPagingAvailable }}
-        $pipe = { TextMate\Out-Page }.GetSteppablePipeline($MyInvocation.CommandOrigin)
-        $pipeFallback = { Out-AnsiFormatting -Stream | less $env:LESS @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)
+        $batArgs = [string[]]@('--language', 'cs')
+        # chezmoi if isPSCore {{- if and .isPSCore .isPagingAvailable }}
+        $txtMatSplat = @{
+            Language = 'csharp'
+            Page = $true
+        } 
+        $sb = { TextMate\Format-TextMate @txtMatSplat }
         if (-not (Get-Module -Name TextMate)) {
             try {
                 Import-Module -Name TextMate -ErrorAction Stop
             }
             catch [System.IO.FileLoadException] {
                 Write-Warning 'Failed to import TextMate module due to file load and most likely dll incompatibilities. Falling back to use less pager.'
-                $pipe = $pipeFallback
+                $ArgumentList += $batArgs 
+                $sb = { Out-Bat @ArgumentList }
             }
             catch {
                 Write-Warning "Failed to import TextMate module. $_"
-                $pipe = $pipeFallback
+                $ArgumentList += $batArgs 
+                $sb = { Out-Bat @ArgumentList }
             }
         }
-        # chezmoi else paging not supported {{- else }}{{ nindent 8 "$pipe = { Out-AnsiFormatting -Stream | less $env:LESS @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)" }}
-        # chezmoi if paging supported end {{- end }}
-        # chezmoi else for desktop edition {{- else }}{{ nindent 8 "$pipe = { less $env:LESS @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)" }}
+        # chezmoi else {{- else }}{{ nindent 8 "$ArgumentList += $batArgs" }}{{ nindent 8 "$sb = { Out-Bat @ArgumentList }" }}
         # chezmoi if isPSCore end {{- end }}
+        $pipe = $sb.GetSteppablePipeline($MyInvocation.CommandOrigin)
         $pipe.Begin($PSCmdlet)
     }
     process {
