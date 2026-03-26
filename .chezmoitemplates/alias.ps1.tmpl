@@ -4,6 +4,13 @@
 {{- template "newAliasTmpl" (dict "name" $aliasKey "value" $aliasValue ) }}
 {{ end -}}
 #endregion
+#region PSEdition Core Aliases
+{{ if eq .isPSCore true -}}
+{{- range $aliasCoreKey, $aliasCoreValue := .pwshAlias.core -}}
+{{- template "newAliasTmpl" (dict "name" $aliasCoreKey "value" $aliasCoreValue ) }}
+{{ end -}}
+{{- end }}
+#endregion
 #region PSEdition Desktop Aliases
 {{ if eq .isPSCore false -}}
 {{- range $aliasDeskKey, $aliasDeskValue := .pwshAlias.desktop -}}

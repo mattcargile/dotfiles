@@ -7,9 +7,7 @@ Personal cross-platform configuration using `chezmoi`.
 1. better handling on write arg completer for missing binaries or missing completion commands like on `dotnet`
 1. sometimes `$env:PSModulePath` in `powershell` doesn't reflect the `.\OneDrive\Documents` folder and only has `.\Documents`.
 1. negotiate `TextMate` in new pager functions and handle potential `dll` hell with `PSParseHtml`. repo owner to maybe use _ALC_
-1. figure out the `format-powershell` templating for _5.1_. reworked the `Test-` script to look at `$PSVersionTable.PSVersion`.
 1. rewrite some functions in c# for fun like `guv`
-1. set up chezmoi data for the alias key and value and use range. drop the ps default values too
 1. add positional parameter expansion to alias, parameter keyhandler expansion. might be able to derive it.
 1. work on `py` handling. No longer needed or functional for oh-my-posh. Need to disable the App Execution Aliases in Windows. Appears one would need to clear entry from `HKCU:\Software\Microsoft\Windows\CurrentVersion\App Paths` and the file at `$env:LOCALAPPDATA\Microsoft\WindowsApps`. https://superuser.com/a/1746939 Use `py -m pip list` instead of `pip`
 
