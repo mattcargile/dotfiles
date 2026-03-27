@@ -8,28 +8,47 @@ Set-StrictMode -Version Latest
 
 $profileFilePath = "$env:USERPROFILE\.config\powershell\profile.ps1"
 $profileDesktopFilePath = "$env:USERPROFILE\.config\powershell\profile_desktop.ps1"
+$profileCoreRelativePath = Join-Path Documents PowerShell profile.ps1
+$profileDesktopRelativePath = Join-Path Documents WindowsPowerShell profile.ps1
 $myDocumentsParentPath = Split-Path -Path $( [Environment]::GetFolderPath('MyDocuments') ) -Parent
 Write-Verbose -Message "MyDocuments Parent Path: $myDocumentsParentPath"
 $oneDriveRedirectPathWildcard = "$( Join-Path -Path $env:USERPROFILE -ChildPath 'OneDrive' )*"
 Write-Verbose -Message "User Profile OneDrive wild card pattern: $oneDriveRedirectPathWildcard"
 if ($myDocumentsParentPath -like $oneDriveRedirectPathWildcard) {
     if ($env:OneDriveCommercial) {
-        if ($PSCmdlet.ShouldProcess( $profileFilePath, 'Copy to OneDrive Commericial location for PowerShell and Windows PowerShell.')) {
-            Copy-Item -Path $profileFilePath -Destination "$env:OneDriveCommercial\Documents\PowerShell\profile.ps1"
-            Copy-Item -Path $profileDesktopFilePath -Destination "$env:OneDriveCommercial\Documents\WindowsPowerShell\profile.ps1"
+        if ($PSCmdlet.ShouldProcess( $profileFilePath, 'Copy to OneDrive Commericial location for PowerShell.')) {
+            Copy-Item -Path $profileFilePath -Destination ( Join-Path $env:OneDriveCommercial $profileCoreRelativePath )
+        }
+        if ($PSCmdlet.ShouldProcess( $profileDesktopFilePath, 'Copy to OneDrive Commericial location for Windows PowerShell.')) {
+            Copy-Item -Path $profileDesktopFilePath -Destination ( Join-Path $env:OneDriveCommercial $profileDesktopRelativePath )
         }
     }
     if ($env:OneDriveConsumer) {
-        if ($PSCmdlet.ShouldProcess( $profileFilePath, 'Copy to OneDrive Consumer location for PowerShell and Windows PowerShell.')) {
+        if ($PSCmdlet.ShouldProcess( $profileFilePath, 'Copy to OneDrive Consumer location for PowerShell.')) {
             Copy-Item -Path $profileFilePath -Destination "$env:OneDriveConsumer\Documents\PowerShell\profile.ps1"
+        }
+        if ($PSCmdlet.ShouldProcess( $profileDesktopFilePath, 'Copy to OneDrive Consumer location for Windows PowerShell.')) {
             Copy-Item -Path $profileDesktopFilePath -Destination "$env:OneDriveConsumer\Documents\WindowsPowerShell\profile.ps1"
         }
     }
 }
-else {
-    if ($PSCmdlet.ShouldProcess( $profileFilePath, 'Copy to non-OneDrive location for PowerShell and Windows PowerShell.')) {
-        Copy-Item -Path $profileFilePath -Destination "$env:USERPROFILE\Documents\PowerShell\profile.ps1"
-        Copy-Item -Path $profileDesktopFilePath -Destination "$env:USERPROFILE\Documents\WindowsPowerShell\profile.ps1"
+# Always at least copy to the non-OneDrive location for `gsudo`, `ssh`, scenarios which aren't aware of _OneDrive_
+$profileDefaultCoreFilePath = Join-Path $env:USERPROFILE $profileCoreRelativePath
+if (-not (Test-Path $profileDefaultCoreFilePath )) {
+    if ($PSCmdlet.ShouldProcess($profileDefaultCoreFilePath, "Forcefully create new default Core Edition file.")) {
+        New-Item -Path $profileDefaultCoreFilePath -ItemType File -Force | Out-Null
     }
+}
+$profileDefaultDesktopFilePath = Join-Path $env:USERPROFILE $profileDesktopRelativePath
+if (-not (Test-Path $profileDefaultDesktopFilePath )) {
+    if ($PSCmdlet.ShouldProcess($profileDefaultDesktopFilePath, "Forcefully create new default Desktop Edition file.")) {
+        New-Item -Path $profileDefaultDesktopFilePath -ItemType File -Force | Out-Null
+    }
+}
+if ($PSCmdlet.ShouldProcess( $profileFilePath, 'Copy to non-OneDrive location for PowerShell.')) {
+    Copy-Item -Path $profileFilePath -Destination $profileDefaultCoreFilePath 
+}
+if ($PSCmdlet.ShouldProcess( $profileDesktopFilePath, 'Copy to non-OneDrive location for Windows PowerShell.')) {
+    Copy-Item -Path $profileDesktopFilePath -Destination $profileDefaultDesktopFilePath 
 }
 # end {{- end }}
