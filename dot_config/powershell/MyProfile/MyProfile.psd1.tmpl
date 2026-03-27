@@ -120,7 +120,7 @@ AliasesToExport = @(
     # chezmoi if aliases {{ if $cmdletAndAliasOutJson.AliasNames }}{{ range $currentAlias := $cmdletAndAliasOutJson.AliasNames }}{{ $currentAlias | squote | nindent 4 }}{{ end }}
     # chezmoi end if aliases {{ end }}
     # chezmoi outputList args {{- $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-MyProfileAliasesToExport.ps1" ) }}
-    # chezmoi outputList {{ outputList "pwsh" $argCompleterArgList -}}
+    # chezmoi outputList {{- println }}{{ outputList "pwsh" $argCompleterArgList -}}
 ) 
 
 # DSC resources to export from this module
