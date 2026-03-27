@@ -1,6 +1,6 @@
 # HistorySavePath: Microsoft Defender complains about history on Onedrive
 # AddToHistoryHandler: By default PSReadline removes "password", "cred", etc items from history. This forces save of all commands to history.
-Set-PSReadLineOption -HistorySavePath ( [System.IO.Path]::Combine( $HOME, '.config', 'PSReadLine', "All$($Host.Name)_history.txt" ) ) -MaximumHistoryCount 500000 -HistoryNoDuplicates -AddToHistoryHandler {
+Set-PSReadLineOption -EditMode Vi -ViModeIndicator Script -HistorySavePath ( [System.IO.Path]::Combine( $HOME, '.config', 'PSReadLine', "All$($Host.Name)_history.txt" ) ) -MaximumHistoryCount 500000 -HistoryNoDuplicates -AddToHistoryHandler {
     param([string]$line)
     # Do not save any command line unless it has more than 4 characters.  Prevents storing gci, gps, etc.
     return $line.Length -gt 4
@@ -19,4 +19,13 @@ Set-PSReadLineOption -HistorySavePath ( [System.IO.Path]::Combine( $HOME, '.conf
     Comment            = '{{- "\u001B[38;2;96;139;78m" -}}'                                              #608b4e
     Number             = '{{- "\u001B[38;2;147;206;168m" -}}'                                            #93cea8
     Error              = '{{- "\u001B[38;2;139;0;0m" -}}'                                                #8b0000
+} -ViModeChangeHandler {
+    param([Microsoft.PowerShell.ViMode]$mode)
+    if ( $mode -eq 'Command' ) {
+        $env:OMP_IS_VI_MODE_NORMAL = '1'
+    }
+    else {
+        $env:OMP_IS_VI_MODE_NORMAL = ''
+    }
+    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }
