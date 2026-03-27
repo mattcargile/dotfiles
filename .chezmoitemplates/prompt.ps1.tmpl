@@ -4,22 +4,23 @@
 # Want to avoid running heavier code in `gsudo`, `pwsh -c`, or other non-`function:\prompt` executing contexts
 function prompt {
 
-    {{ includeTemplate "readlineoptionprediction.ps1.tmpl" . }}
-    {{ includeTemplate "readlinekeyhandler.ps1" . }}
-    # chezmoi if isPSCore powershellrunkeyhandler {{ if eq .isPSCore true }}
-    {{ includeTemplate "powershellrunkeyhandler.ps1" . }}
-    # chezmoi end if isPSCore powershellrunkeyhandler {{ end }}
-    #region ArgumentCompleter Generated
-    # chezmoi outputList args {{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .sourceDir ".chezmoitemplates" "tools" "Write-ArgCompleterOutput.ps1" ) }}
-    # Some arg completers ( usually derived from golang cobra package ) define functions meant for global scope to be used in arg completer
-    New-Module -Name 'MyProfileArgCompleter' -ScriptBlock {
-    {{ outputList "pwsh" $argCompleterArgList }}
-    } | Import-Module -Global
-    #endregion
-    #region argcompleter.ps1
-    {{ includeTemplate "argcompleter.ps1" . }}
-    #endregion
-
+#region ReadLine and KeyHandler
+{{ includeTemplate "readlineoptionprediction.ps1.tmpl" . }}
+{{ includeTemplate "readlinekeyhandler.ps1" . }}
+# chezmoi if isPSCore powershellrunkeyhandler {{ if eq .isPSCore true }}
+{{ includeTemplate "powershellrunkeyhandler.ps1" . }}
+# chezmoi end if isPSCore powershellrunkeyhandler {{ end }}
+#endregion
+#region ArgumentCompleter Generated
+# chezmoi outputList args {{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .sourceDir ".chezmoitemplates" "tools" "Write-ArgCompleterOutput.ps1" ) }}
+# Some arg completers ( usually derived from golang cobra package ) define functions meant for global scope to be used in arg completer
+New-Module -Name 'MyProfileArgCompleter' -ScriptBlock {
+{{ outputList "pwsh" $argCompleterArgList }}
+} | Import-Module -Global
+#endregion
+#region argcompleter.ps1
+{{ includeTemplate "argcompleter.ps1" . }}
+#endregion
 
     # Custom OMP Prompt Context
     function global:Set-MyOmpContext {
