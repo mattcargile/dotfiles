@@ -124,3 +124,8 @@ Personal cross-platform configuration using `chezmoi`.
     ```powershell
     Add-ForcedWindowsCapability (import-PowerShellDataFile .\requirements\capability.psd1 |% gete*).name
     ```
+1. optional _hyper-v_ and _sandbox_. requires reboot. did one after the other with reboots inbetween. `gcim win32_optionalfeature` to see `Caption`. `get-windowsoptionalfeature` gets the actual feature name but the `Caption` displayed in the `OptionalFeatures.exe` UI is not shown.
+    ```powershell
+    sudo {Enable-WindowsOptionalFeature -FeatureName 'Microsoft-Hyper-V-All' -Online -NoRestart}
+    sudo {Enable-WindowsOptionalFeature -FeatureName 'Containers-DisposableClientVM' -Online -NoRestart} # Sandbox
+    ```
