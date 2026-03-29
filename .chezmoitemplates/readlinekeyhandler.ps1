@@ -438,5 +438,7 @@ Set-PSReadLineKeyHandler -Chord 'Alt+%' -BriefDescription 'ExpandAliases' -Descr
 
 #region Vi fixes, hacks, etc handlers
 Set-PSReadLineKeyHandler -Chord 'Alt+a' -Function SelectCommandArgument -ViMode Insert
+Set-PSReadLineKeyHandler -Chord 'Ctrl+Spacebar' -Function MenuComplete -ViMode Insert
+Set-PSReadLineKeyHandler -Chord 'Ctrl+Spacebar' -Function MenuComplete -ViMode Command
 
 #endregion

@@ -21,11 +21,11 @@ Set-PSReadLineOption -EditMode Vi -ViModeIndicator Script -HistorySavePath "{{ j
     Error     = '{{- "\u001B[38;2;139;0;0m" -}}'                                                #8b0000
 } -ViModeChangeHandler {
     param([Microsoft.PowerShell.ViMode]$mode)
+    # https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#cursor-shape
     if ( $mode -eq 'Command' ) {
-        $env:OMP_IS_VI_MODE_NORMAL = '1'
+        [Console]::Write("$([char]0x1B)[2 q") # Steady block cursor shape
     }
     else {
-        $env:OMP_IS_VI_MODE_NORMAL = ''
+        [Console]::Write("$([char]0x1B)[6 q") # Steady bar cursor shape
     }
-    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }
