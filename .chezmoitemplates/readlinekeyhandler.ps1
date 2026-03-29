@@ -491,4 +491,10 @@ $setPSReadLineKeyHandlerSplat = @{
 Set-PSReadLineKeyHandler @setPSReadLineKeyHandlerSplat
 #endregion
 
+#region Vi fixes, hacks, etc handlers
+Set-PSReadLineKeyHandler -Chord 'Alt+a' -Function SelectCommandArgument -ViMode Insert
+
+#endregion
+
+
 # No longer need to remove the helper variables as they are created inside the `function:\prompt` on init

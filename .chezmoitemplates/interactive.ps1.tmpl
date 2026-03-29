@@ -1,0 +1,26 @@
+# Want to avoid running heavier code in `gsudo`, `pwsh -c`, or other non-`function:\prompt` executing contexts
+# The engine already checks for the command line options for "interactivity".
+# Relying on those checks as they allow `PSReadLine` module to load.
+# Assuming `PSReadLine` is loaded if `Get-PSReadLineOption` cmdlet class is loaded
+# https://github.com/PowerShell/PowerShell/blob/master/src/Microsoft.PowerShell.ConsoleHost/host/msh/ConsoleHost.cs#L1681
+if ('Microsoft.PowerShell.GetPSReadLineOption' -as [type]) {
+{{ includeTemplate "readlineoption.ps1.tmpl" . | indent 4 }}
+    #region ReadLine and KeyHandler
+{{ includeTemplate "readlineoptionprediction.ps1.tmpl" . | indent 4 }}
+{{ includeTemplate "readlinekeyhandler.ps1" . | indent 4 }}
+    # chezmoi if isPSCore powershellrunkeyhandler {{- if eq .isPSCore true }}
+{{ includeTemplate "powershellrunkeyhandler.ps1" . | indent 4 }}
+    # chezmoi end if isPSCore powershellrunkeyhandler {{ end }}
+    #endregion
+    #region ArgumentCompleter Generated
+    # chezmoi outputList args {{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .sourceDir ".chezmoitemplates" "tools" "Write-ArgCompleterOutput.ps1" ) }}
+    # Some arg completers ( usually derived from golang cobra package ) define functions meant for global scope to be used in arg completer
+{{ outputList "pwsh" $argCompleterArgList | indent 4 }}
+    #endregion
+    #region argcompleter.ps1
+{{ includeTemplate "argcompleter.ps1" . | indent 4 }}
+    #endregion
+    #region prompt.ps1
+{{ includeTemplate "prompt.ps1.tmpl" . | indent 4 }}
+    #endregion
+}

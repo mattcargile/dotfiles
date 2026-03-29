@@ -10,6 +10,8 @@ Personal cross-platform configuration using `chezmoi`.
 1. rewrite some functions in c# for fun like `guv`
 1. add positional parameter expansion to alias, parameter keyhandler expansion. might be able to derive it.
 1. work on `py` handling. No longer needed or functional for oh-my-posh. Need to disable the App Execution Aliases in Windows. Appears one would need to clear entry from `HKCU:\Software\Microsoft\Windows\CurrentVersion\App Paths` and the file at `$env:LOCALAPPDATA\Microsoft\WindowsApps`. https://superuser.com/a/1746939 Use `py -m pip list` instead of `pip`
+1. check for missing key handlers when moving to vi mode like copy and paste and ctrl backspace.
+1. might not be able to handle the invoke prompting on changing vi mode
 
 ## Road to Full Auto
 1. Consider setting up local admin user.
