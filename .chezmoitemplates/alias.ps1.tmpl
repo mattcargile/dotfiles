@@ -1,4 +1,4 @@
-{{- define "newAliasTmpl" -}}{{- printf "New-Alias -Name %s -Value %s -Force -Description %s" ( .name | squote ) ( .value | squote ) ( "Created with $PROFILE.CurrentUserAllHosts" | squote) -}}{{- end -}}
+{{- define "newAliasTmpl" -}}{{- printf "${Alias:%s} = %s" ( .name ) ( .value | squote ) -}}{{- end -}}
 #region All Aliases
 {{ range $aliasKey, $aliasValue := .pwshAlias.all -}}
 {{- template "newAliasTmpl" (dict "name" $aliasKey "value" $aliasValue ) }}
