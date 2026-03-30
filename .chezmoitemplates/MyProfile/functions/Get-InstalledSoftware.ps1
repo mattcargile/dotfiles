@@ -21,19 +21,18 @@ function Get-InstalledSoftware {
     [CmdletBinding()]
     param(
         # Name of installed software
-        [Parameter(ValueFromPipeline, Position = 0)]
+        [Parameter(Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [SupportsWildcards()]
         [string[]]
         $Name,
         # Remote Computer Name
-        [Parameter(ParameterSetName = 'Computer', Position = 1)]
+        [Parameter(ParameterSetName = 'Computer', Position = 1, ValueFromPipelineByPropertyName)]
         [Alias('cn')]
         [string[]]
         $ComputerName
     )
     begin {
-        $allNames = $null
         # Don't use the registry provider for performance and to allow us to open the
         # 64 bit registry view from a 32 bit process.
         $hklm = $null
@@ -195,26 +194,11 @@ function Get-InstalledSoftware {
         }
     }
     process {
-        if (-not $PSBoundParameters.ContainsKey('Name') -or [string]::IsNullOrEmpty($Name)) {
-            return
-        }
-        
-        if ($null -eq $allNames) {
-            $startingCapacity = 1
-            if ($MyInvocation.ExpectingInput) {
-                $startingCapacity = 4
-            }
-            
-            $allNames = [System.Collections.Generic.List[string]]::new($startingCapacity)
-        }
-        foreach ($nm in $Name) { $allNames.Add($nm) }
-    }
-    end {
-        if ($null -ne $allNames) {
-            $wildcards = [System.Management.Automation.WildcardPattern[]]::new($allNames.Count)
-            for ($i = 0; $i -lt $allNames.Count; $i++) {
+        if ($null -ne $Name) {
+            $wildcards = [System.Management.Automation.WildcardPattern[]]::new($Name.Count)
+            for ($i = 0; $i -lt $Name.Count; $i++) {
                 $wildcards[$i] = [System.Management.Automation.WildcardPattern]::new(
-                    $allNames[$i],
+                    $Name[$i],
                     [System.Management.Automation.WildcardOptions]::IgnoreCase)
             }
         }
