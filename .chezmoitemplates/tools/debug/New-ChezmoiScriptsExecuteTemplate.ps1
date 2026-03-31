@@ -12,11 +12,17 @@ if (-not ( Test-Path $tempOutPath ) ) {
         New-Item -Path $tempOutPath -ItemType Directory | Out-Null
     }
 }
-Get-ChildItem -Path $chezmoiScriptsPath -Filter *tmpl -Recurse | ForEach-Object -Process {
-    $currentOutFilePath = Join-Path $tempOutPath $_.BaseName
-    $currentScriptTemplateFilePath = $_.FullName
-    if ($PSCmdlet.ShouldProcess($_.FullName, "Creating actual script from template")) {
-        chezmoi execute-template --file $currentScriptTemplateFilePath | Set-Content -Path $currentOutFilePath
+$chezmoiScripts = Get-ChildItem -Path $chezmoiScriptsPath -Filter *tmpl -Recurse
+foreach ( $currentScript in $chezmoiScripts ) {
+    $currentOutFilePath = Join-Path $tempOutPath $currentScript.BaseName
+    $currentScriptTemplateFilePath = $currentScript.FullName
+    if ($PSCmdlet.ShouldProcess($currentScript.FullName, "Creating actual script from template")) {
+        $currentScriptOutput = chezmoi execute-template --file $currentScriptTemplateFilePath 2>&1
+        if ($LASTEXITCODE -gt 0) {
+            Write-Error "Failed to execute template for $currentScriptTemplateFilePath | $currentScriptOutput"
+            continue
+        }
+        $currentScriptOutput | Set-Content -Path $currentOutFilePath
         Write-Verbose "Generated script $currentOutFilePath"
     }
 }
