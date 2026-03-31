@@ -51,7 +51,7 @@ if ($IsWindows) {
     }
     if ($envKeyPropPathList -contains $Path) {
         Write-Verbose "Removing $Path from temp Path variable."
-        $envKeyPropPathList.Remove($Path)
+        $envKeyPropPathList.Remove($Path) | Out-Null
     }
     if ($envKeyPropPathList.Count -lt $envKeyPropPathListStartingCount) {
         $envKeyPropPathChanged = $envKeyPropPathList -join $pathSep
