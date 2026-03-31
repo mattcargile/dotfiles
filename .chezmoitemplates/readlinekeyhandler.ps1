@@ -438,7 +438,11 @@ Set-PSReadLineKeyHandler -Chord 'Alt+%' -BriefDescription 'ExpandAliases' -Descr
 
 #region Vi fixes, hacks, etc handlers
 Set-PSReadLineKeyHandler -Chord 'Alt+a' -Function SelectCommandArgument -ViMode Insert
+Set-PSReadLineKeyHandler -Chord 'Alt+a' -Function SelectCommandArgument -ViMode Command
 Set-PSReadLineKeyHandler -Chord 'Ctrl+Spacebar' -Function MenuComplete -ViMode Insert
 Set-PSReadLineKeyHandler -Chord 'Ctrl+Spacebar' -Function MenuComplete -ViMode Command
-
+if ($env:TERM_PROGRAM -eq 'vscode') {
+    # code doesn't handle typical `Ctrl+Spacebar` usage for some reason
+    Set-PSReadLineKeyHandler -Chord 'Ctrl+@' -Function MenuComplete
+}
 #endregion
