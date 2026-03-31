@@ -1,0 +1,2 @@
+windows = ["%ProgramFiles(x86)%\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64", "%OneDrive%\\Documents\\exe", "%APPDATA%\\carapace\\bin"]
+

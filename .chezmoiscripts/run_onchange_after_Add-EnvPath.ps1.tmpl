@@ -1,0 +1,64 @@
+# chezmoi windows path if block {{ if eq .chezmoi.os "windows" }}
+#Requires -Modules ctypes
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+param (
+)
+
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+$winPaths = @(
+    # chezmoi get path {{- $paths := include ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "envPath.toml" ) | fromToml }}
+    # chezmoi range paths {{- range $currentWinPath := $paths.windows }}{{ nindent 4 ($currentWinPath | squote) }}{{ end }}
+    # chezmoi lookPath py {{ if lookPath "py" }}
+    # Something broke in Windows with py.exe Launcher and oh-my-posh.exe
+    # This keeps the python segment from breaking on the Downloads folder and others
+    # Additionally python.exe and python3.exe exist in the path as stubs that further complicate things.
+    [System.IO.Directory]::GetParent( (py -3 -c "import sys; print (sys.executable)")).FullName
+    # end lookPath py {{ end }}
+)
+$pathSep = [System.IO.Path]::PathSeparator
+try {
+    $envKey = Get-Item -Path 'HKCU:\Environment'
+    $envKeyPropPath = $envKey.GetValue( 'Path', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames )
+    Write-Verbose "Current HKCU:\Environment Path is $envKeyPropPath"
+    $envKeyPropPathList = [System.Collections.Generic.List[string]]@($envKeyPropPath -split $pathSep)
+    $envKeyPropPathListStartingCount = $envKeyPropPathList.Count
+}
+catch {
+    Write-Error -ErrorRecord $_
+    return
+}
+finally {
+    if ($envKey) {
+        $envKey.Dispose()
+    }
+}
+foreach ($currentPath in $winPaths) {
+    $currentExpandedValue = [Environment]::ExpandEnvironmentVariables($currentPath)
+    if ($envKeyPropPathList -notcontains $currentPath -and $envKeyPropPathList -notcontains $currentExpandedValue) {
+        Write-Verbose "Adding $currentPath to temp Path variable."
+        $envKeyPropPathList.Add($currentPath)
+    }
+}
+if ($envKeyPropPathList.Count -gt $envKeyPropPathListStartingCount) {
+    $envKeyPropPathChanged = $envKeyPropPathList -join $pathSep
+    if ($PSCmdlet.ShouldProcess('HKCU:\Environment', "Setting Path to $envKeyPropPathChanged")) {
+        Set-ItemProperty -Path 'HKCU:\Environment' -Name Path -Value $envKeyPropPathChanged -Type ExpandString
+        $usr = New-CtypesLib -Name user32.dll
+        $res = [UIntPtr]::Zero # Purposefully ignoring this output as information on return data isn't readily available
+        $out = $usr.CharSet('Unicode').SetLastError().SendMessageTimeout(
+            [IntPtr]0xFFFF <# HWND_BROADCAST #>,
+            0x1A <# WM_SETTINGSCHANGE #>,
+            $null,
+            'Environment',
+            2 <# SMTO_ABORTIFHUNG #>,
+            5000,
+            [ref]$res
+        )
+        if ($out -eq 0) {
+            throw [InvalidOperationException]'Failed to send message to all windows for environment. There may be a hung window.'
+        }
+    }
+}
+# end {{ end }}
