@@ -47,7 +47,9 @@ end {
         $env:CARAPACE_ENV = 0 # Don't add environment helper functions
         $env:CARAPACE_EXCLUDES = 'ls,bat,rg,fd,gh,chezmoi,glow,bb,dotnet,winget,get-env,set-env,unset-env,ov,sudo,cp,ps,cat,rm,mv,mkdir,code,code-insiders,op' # Exclude completions that conflict or already exist from software creator.
         # Need to add this to the path before running script because there is logic in the script to add this to the process. Need to make the script more consistent
-        $env:Path += ";$env:APPDATA\carapace\bin" -replace '\\', '/' # carapace golang binary uses forward slashes to check for path
+        # carapace golang binary uses forward slashes to check for path
+        $carapaceCfgDir = $IsWindows ? "$env:APPDATA/carapace/bin" -replace '\\', '/' : "$env:HOME/.config/carapace/bin"
+        $env:Path += "$([System.IO.Path]::PathSeparator)$carapaceCfgDir"
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (carapace _carapace powershell | Out-String) -Comment 'Carapace Various Completions' ) )
         Remove-Item Env:\CARAPACE_ENV, Env:\CARAPACE_EXCLUDES
     }
