@@ -9,7 +9,7 @@ Set-StrictMode -Version Latest
 
 $winPaths = @(
     # chezmoi get path {{- $paths := include ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "envPath.toml" ) | fromToml }}
-    # chezmoi range paths {{- range $currentWinPath := $paths.windows }}{{ nindent 4 ($currentWinPath | squote) }}{{ end }}
+    # chezmoi range paths {{- range $currentWinPath := $paths.windows }}{{ nindent 4 ($currentWinPath.path | squote) }}{{ end }}
     # chezmoi lookPath py {{ if lookPath "py" }}
     # Something broke in Windows with py.exe Launcher and oh-my-posh.exe
     # This keeps the python segment from breaking on the Downloads folder and others
@@ -36,12 +36,28 @@ finally {
 }
 foreach ($currentPath in $winPaths) {
     $currentExpandedValue = [Environment]::ExpandEnvironmentVariables($currentPath)
-    if ($envKeyPropPathList -notcontains $currentPath -and $envKeyPropPathList -notcontains $currentExpandedValue) {
-        Write-Verbose "Adding $currentPath to temp Path variable."
-        $envKeyPropPathList.Add($currentPath)
+    $currentPathExists = Test-Path -Path $currentExpandedValue
+    if ($currentPathExists) {
+        if ($envKeyPropPathList -notcontains $currentPath -and
+            $envKeyPropPathList -notcontains $currentExpandedValue
+        ) {
+            Write-Verbose "Adding $currentPath to temp Path variable."
+            $envKeyPropPathList.Add($currentPath)
+        }
+    }
+    else {
+        Write-Verbose "$currentPath expanded to $currentExpandedValue and doesn't exist or isn't accessible."
+        if ($envKeyPropPathList -contains $currentPath) {
+            Write-Verbose "Removing $currentPath from temp Path variable."
+            $envKeyPropPathList.Remove($currentPath) | Out-Null
+        }
+        if ($envKeyPropPathList -contains $currentExpandedValue) {
+            Write-Verbose "Removing $currentExpandedValue from temp Path variable."
+            $envKeyPropPathList.Remove($currentExpandedValue) | Out-Null
+        }
     }
 }
-if ($envKeyPropPathList.Count -gt $envKeyPropPathListStartingCount) {
+if ($envKeyPropPathList.Count -ne $envKeyPropPathListStartingCount) {
     $envKeyPropPathChanged = $envKeyPropPathList -join $pathSep
     if ($PSCmdlet.ShouldProcess('HKCU:\Environment', "Setting Path to $envKeyPropPathChanged")) {
         Set-ItemProperty -Path 'HKCU:\Environment' -Name Path -Value $envKeyPropPathChanged -Type ExpandString

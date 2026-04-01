@@ -1,5 +1,5 @@
 #Requires -Modules PSToml, ctypes
-[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
 param(
     [Parameter(Mandatory)]
     [string]
@@ -19,7 +19,9 @@ $data = Get-Content -Path $tomlPath -Raw | ConvertFrom-Toml
 switch ($Platform) {
     'Windows' {
         $platformLower = $Platform.ToLower()
-        $newWinArray = $data.$platformLower | Where-Object -FilterScript { $_ -ne $Path }
+        # Force cast due to boxing otherwise we get extra properties
+        # https://github.com/jborean93/PSToml/issues/15
+        $newWinArray = [System.Collections.Specialized.OrderedDictionary[]]@($data.$platformLower | Where-Object -FilterScript { $_.path -ne $Path } )
     }
     Default { throw [System.InvalidOperationException]'Default Platform not implemented' }
 }

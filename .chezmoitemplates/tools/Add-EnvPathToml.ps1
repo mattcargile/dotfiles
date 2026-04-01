@@ -5,7 +5,10 @@ param(
     [string]
     $Path,
     [Parameter(Mandatory)]
-    [ValidateSet('windows')]
+    [string]
+    $Comment,
+    [Parameter(Mandatory)]
+    [ValidateSet('Windows')]
     [string]
     $Platform
 )
@@ -16,11 +19,15 @@ Set-StrictMode -Version Latest
 $tomlPath = "$PSScriptRoot\envPath.toml"
 $data = Get-Content -Path $tomlPath -Raw | ConvertFrom-Toml
 
+$objToAdd = @{
+    path = $Path
+    comment = $Comment
+}
 switch ($Platform) {
     'windows' {
         $platformLower = $Platform.ToLower()
         if ($data.$platformLower -notcontains $Path) {
-            $data.$platformLower += $Path
+            $data.$platformLower += $objToAdd
         }
         else {
             Write-Verbose "$Path is already contained in file."
@@ -30,6 +37,6 @@ switch ($Platform) {
     Default { throw [System.InvalidOperationException]'Default Platform not implemented' }
 }
 
-if ($PSCmdlet.ShouldProcess($tomlPath, "Adding $Path")) {
+if ($PSCmdlet.ShouldProcess($tomlPath, "Adding $Path and Comment ($Comment)")) {
     $data | ConvertTo-Toml -Depth 3 | Set-Content -Path $tomlPath
 }
