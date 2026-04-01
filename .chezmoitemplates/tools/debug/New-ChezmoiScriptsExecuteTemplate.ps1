@@ -14,9 +14,13 @@ if (-not ( Test-Path $tempOutPath ) ) {
 }
 $chezmoiScripts = Get-ChildItem -Path $chezmoiScriptsPath -Filter *tmpl -Recurse
 foreach ( $currentScript in $chezmoiScripts ) {
-    $currentOutFilePath = Join-Path $tempOutPath $currentScript.BaseName
+    $currentOutFileName = $currentScript.BaseName -replace '^run_(before_|after_|once_|onchange_)+', ''
+    if ($currentScript.Extension -ne '.tmpl') {
+        $currentOutFileName += $currentScript.Extension
+    }
+    $currentOutFilePath = Join-Path $tempOutPath $currentOutFileName
     $currentScriptTemplateFilePath = $currentScript.FullName
-    if ($PSCmdlet.ShouldProcess($currentScript.FullName, "Creating actual script from template")) {
+    if ($PSCmdlet.ShouldProcess($currentScript.FullName, "Creating actual script $currentOutFilePath from template")) {
         $currentScriptOutput = chezmoi execute-template --file $currentScriptTemplateFilePath 2>&1
         if ($LASTEXITCODE -gt 0) {
             Write-Error "Failed to execute template for $currentScriptTemplateFilePath | $currentScriptOutput"
