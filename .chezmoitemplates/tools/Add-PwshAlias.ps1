@@ -1,4 +1,4 @@
-#Requires -Modules PSToml
+#Requires -Modules @{ ModuleName = 'PSToml'; ModuleVersion = '0.4.0' }
 [CmdletBinding(DefaultParameterSetName = 'All')]
 param (
     [Parameter(Mandatory, Position = 0)]

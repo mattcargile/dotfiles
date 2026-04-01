@@ -8,8 +8,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $winPaths = @(
-    # chezmoi get path {{- $paths := include ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "envPath.toml" ) | fromToml }}
-    # chezmoi range paths {{- range $currentWinPath := $paths.windows }}{{ nindent 4 ($currentWinPath.path | squote) }}{{ end }}
+    # chezmoi range paths {{- range $currentWinPath := .envPath.windows }}{{ nindent 4 ($currentWinPath.path | squote) }}{{ end }}
     # chezmoi lookPath py {{ if lookPath "py" }}
     # Something broke in Windows with py.exe Launcher and oh-my-posh.exe
     # This keeps the python segment from breaking on the Downloads folder and others

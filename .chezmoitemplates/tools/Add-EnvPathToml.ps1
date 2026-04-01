@@ -1,4 +1,4 @@
-#Requires -Modules PSToml
+#Requires -Modules @{ ModuleName = 'PSToml'; ModuleVersion = '0.4.0' }
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 param(
     [Parameter(Mandatory)]
@@ -16,18 +16,18 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$tomlPath = "$PSScriptRoot\envPath.toml"
+$tomlPath = Join-Path (chezmoi source-path) .chezmoidata envPath.toml
 $data = Get-Content -Path $tomlPath -Raw | ConvertFrom-Toml
 
 $objToAdd = @{
-    path = $Path
     comment = $Comment
+    path = $Path
 }
 switch ($Platform) {
     'windows' {
         $platformLower = $Platform.ToLower()
-        if ($data.$platformLower -notcontains $Path) {
-            $data.$platformLower += $objToAdd
+        if ($data.envPath.$platformLower.path -notcontains $Path) {
+            $data.envPath.$platformLower += $objToAdd
         }
         else {
             Write-Verbose "$Path is already contained in file."
@@ -38,5 +38,5 @@ switch ($Platform) {
 }
 
 if ($PSCmdlet.ShouldProcess($tomlPath, "Adding $Path and Comment ($Comment)")) {
-    $data | ConvertTo-Toml -Depth 3 | Set-Content -Path $tomlPath
+    $data | ConvertTo-Toml -Depth 4 | Set-Content -Path $tomlPath
 }

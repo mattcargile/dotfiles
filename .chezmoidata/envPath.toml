@@ -1,10 +1,11 @@
-[[windows]]
+[envPath]
+[[envPath.windows]]
 path = "%ProgramFiles(x86)%\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
 comment = "For wsdl.exe to handle SOAP endpoints to web services."
-[[windows]]
+[[envPath.windows]]
 path = "%OneDrive%\\Documents\\exe"
 comment = "Custom miscellaneous exe folder"
-[[windows]]
+[[envPath.windows]]
 path = "%APPDATA%\\carapace\\bin"
 comment = "carapace likes to have this in the process path for a feature. The binary does use forward slashes though"
 

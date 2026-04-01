@@ -1,4 +1,4 @@
-#Requires -Modules PSToml, ctypes
+#Requires -Modules @{ ModuleName = 'PSToml'; ModuleVersion = '0.5.0' }, ctypes
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
 param(
     [Parameter(Mandatory)]
@@ -13,7 +13,7 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$tomlPath = "$PSScriptRoot\envPath.toml"
+$tomlPath = Join-Path (chezmoi source-path) .chezmoidata envPath.toml
 $data = Get-Content -Path $tomlPath -Raw | ConvertFrom-Toml
 
 switch ($Platform) {
@@ -21,15 +21,15 @@ switch ($Platform) {
         $platformLower = $Platform.ToLower()
         # Force cast due to boxing otherwise we get extra properties
         # https://github.com/jborean93/PSToml/issues/15
-        $newWinArray = [System.Collections.Specialized.OrderedDictionary[]]@($data.$platformLower | Where-Object -FilterScript { $_.path -ne $Path } )
+        $newWinArray = $data.envPath.$platformLower.Where( { $_.path -ne $Path } )
     }
     Default { throw [System.InvalidOperationException]'Default Platform not implemented' }
 }
 
-if ($newWinArray.Count -lt $data.$platformLower.Count) {
+if ($newWinArray.Count -lt $data.envPath.$platformLower.Count) {
     if ($PSCmdlet.ShouldProcess($tomlPath, "Removing $Path")) {
-        $data.$platformLower = $newWinArray
-        $data | ConvertTo-Toml -Depth 3 | Set-Content -Path $tomlPath
+        $data.envPath.$platformLower = $newWinArray
+        $data | ConvertTo-Toml -Depth 4 | Set-Content -Path $tomlPath
     }
 }
 
