@@ -4,23 +4,23 @@
 {{- template "newAliasTmpl" (dict "name" $aliasKey "value" $aliasValue ) }}
 {{ end -}}
 #endregion
-#region PSEdition Core Aliases
 {{ if eq .isPSCore true -}}
-{{- range $aliasCoreKey, $aliasCoreValue := .pwshAlias.core -}}
+#region PSEdition Core Aliases
+{{ range $aliasCoreKey, $aliasCoreValue := .pwshAlias.core -}}
 {{- template "newAliasTmpl" (dict "name" $aliasCoreKey "value" $aliasCoreValue ) }}
 {{ end -}}
-{{- end }}
 #endregion
-#region PSEdition Desktop Aliases
+{{- end }}
 {{ if eq .isPSCore false -}}
-{{- range $aliasDeskKey, $aliasDeskValue := .pwshAlias.desktop -}}
+#region PSEdition Desktop Aliases
+{{ range $aliasDeskKey, $aliasDeskValue := .pwshAlias.desktop -}}
 {{- template "newAliasTmpl" (dict "name" $aliasDeskKey "value" $aliasDeskValue ) }}
 {{ end -}}
-{{- end }}
 #endregion
-#region Windows "aliases"
+{{- end }}
 {{ if eq .isWindows true -}}
-{{- $prg86 := env "ProgramFiles(x86)" -}}
+#region Windows "aliases"
+{{ $prg86 := env "ProgramFiles(x86)" -}}
 {{- $prgFiles := env "ProgramFiles" -}}
 {{- range $aliasWinKey, $aliasWinValue := .pwshAlias.windows -}}
 {{- template "newAliasTmpl" (dict "name" $aliasWinKey "value" $aliasWinValue ) }}
@@ -90,19 +90,16 @@
 {{- if lookPath $kerbConfigPath -}}
 {{- template "newAliasTmpl" (dict "name" "kerberosconfigmgr" "value" $kerbConfigPath ) }}
 {{ end -}}
-
 {{- if lookPath ( joinPath ( env "USERPROFILE" ) "scoop" "apps" "gsudo" "current" "gsudo.exe" ) -}}
-{{- $senOnePath := joinPath ( glob ( joinPath $prgFiles "SentinelOne" "Sentinel Agent *" ) | sortAlpha | last ) "SentinelCtl.exe" }}
+{{- $senOnePath := joinPath ( glob ( joinPath $prgFiles "SentinelOne" "Sentinel Agent *" ) | sortAlpha | last ) "SentinelCtl.exe" -}}
 {{- if lookPath $senOnePath -}}
 {{- printf "function sentinelctl { invoke-gsudo -ScriptBlock { & %s @args } -ArgumentList $args }" ( $senOnePath | squote ) }}
 {{ end -}}
 {{- $spcSnifPath := "SpaceSniffer.exe" -}}
-# `invoke-gsudo` usage causes console to hang while `spacesniffer.exe` is open. `help` needs special handling to bypass shim.
+{{- /* `invoke-gsudo` usage causes console to hang while `spacesniffer.exe` is open. `help` needs special handling to bypass shim. */ -}}
 {{- if lookPath $spcSnifPath }}
-{{ printf "function spacesniffer { if ($args -contains 'help') { & (scoop which spacesniffer.exe) help } else { gsudo { & %s @args } -args $args } }" ( output "pwsh" "-NoLogo" "-NoProfile" "-Command" "scoop" "which" $spcSnifPath | trim | squote ) }}
+{{- printf "function spacesniffer { if ($args -contains 'help') { & (scoop which spacesniffer.exe) help } else { gsudo { & %s @args } -args $args } }" ( output "pwsh" "-NoLogo" "-NoProfile" "-Command" "scoop" "which" $spcSnifPath | trim | squote ) }}
 {{ end -}}
 {{- end -}}
-#endregion windows {{- end }}
-# scoop aliases
-# scoop alias add fsearch 'scoop-search.exe $args[0]' 'Fast search with scoop-search.exe'
-# scoop alias add describe 'sfsu.exe describe $args[0]' 'Fast info with sfsu.exe'
+#endregion windows
+{{- end }}

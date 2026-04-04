@@ -1,16 +1,28 @@
-# isPSCore setting {{- $isPSCore := eq "profile.ps1.tmpl" ( base .chezmoi.sourceFile ) }}
-# dict downstream templates {{- $tmplDict := dict "isPSCore" $isPSCore "isWindows" ( eq .chezmoi.os "windows" ) "sourceDir" .chezmoi.sourceDir "destDir" .chezmoi.destDir "homeDir" .chezmoi.homeDir "pathListSeparator" .chezmoi.pathListSeparator "os" .chezmoi.os "pwshAlias" .pwshAlias }}
-# isPSCore if Requires {{- if eq $isPSCore true }}
+{{- $isPSCore := eq "profile.ps1.tmpl" ( base .chezmoi.sourceFile ) -}}
+{{- $isWindows := eq .chezmoi.os "windows" }}
+{{- $tmplDict := dict "isPSCore" $isPSCore
+    "isWindows" $isWindows
+    "sourceDir" .chezmoi.sourceDir
+    "destDir" .chezmoi.destDir
+    "homeDir" .chezmoi.homeDir
+    "pathListSeparator" .chezmoi.pathListSeparator
+    "pwshAlias" .pwshAlias
+-}}
+{{- if eq $isPSCore true -}}
 #Requires -Version 7.5
-# else Requires {{- else -}}{{- nindent 0 "#Requires -Version 5.1" -}}{{- end }}
+{{ else -}}
+#Requires -Version 5.1
+{{ end -}}
 
-#region Using Namespace For Quick Interactive Usage {{- println }}{{ includeTemplate "usingnm.ps1" . }}
+#region Using Namespace For Quick Interactive Usage
+{{ includeTemplate "usingnm.ps1" . -}}
 #endregion
 
-# Helps work with `less` output. Could impact native command impact with cmdlets
+{{/* Helps work with `less` output. Could impact native command impact with cmdlets */ -}}
 $OutputEncoding = [System.Console]::InputEncoding = [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
-#region Environment Variables {{- println }}{{ includeTemplate "env.ps1.tmpl" $tmplDict }}
+#region Environment Variables
+{{ includeTemplate "env.ps1.tmpl" $tmplDict -}}
 #endregion
 
 #region Helper Visual Studio Code Command Palette operations ( i.e. EditorServicesCommandSuite )
@@ -20,27 +32,29 @@ if($env:TERM_PROGRAM -eq 'vscode' -and $Host.Name -eq 'Visual Studio Code Host')
 #endegion
 
 #region isPSCore
-# chezmoi if CoreCLR related {{- if eq $isPSCore true }}
-# Prefer core's implementation of join and have a proxied command
+{{ if eq $isPSCore true -}}
+{{- /* Prefer core's implementation of join and have a proxied command */ -}}
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
     "PSUseDeclaredVarsMoreThanAssignments",
     "StringModule_DontInjectJoinString",
     Justification="Variable required in session for future implicit string module load."
 )]
 $StringModule_DontInjectJoinString = $true
-# chezmoi end {{- end }}
+{{- end }}
 #endregion
 
-#region PSDefaultParameterValues {{- println }}{{ includeTemplate "defaultparams.ps1.tmpl" . }}
+#region PSDefaultParameterValues
+{{ includeTemplate "defaultparams.ps1.tmpl" . -}}
 #endregion
 
-#region Alias {{- println }}{{ includeTemplate "alias.ps1.tmpl" $tmplDict }}
+#region Alias
+{{ includeTemplate "alias.ps1.tmpl" $tmplDict -}}
 #endregion
 
-#region Interative {{- println }}{{ includeTemplate "interactive.ps1.tmpl" $tmplDict }}
+#region Interative
+{{ includeTemplate "interactive.ps1.tmpl" $tmplDict -}}
 #endregion
 
 #region Custom Types and Format
-Update-FormatData -PrependPath '{{ joinPath .chezmoi.homeDir ".config" "powershell" "profile.format.ps1xml" }}'
+Update-FormatData -PrependPath '{{- joinPath .chezmoi.homeDir ".config" "powershell" "profile.format.ps1xml" -}}'
 #endregion
-

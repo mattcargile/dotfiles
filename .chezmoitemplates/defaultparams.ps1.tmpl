@@ -1,5 +1,5 @@
-# chezmoi cred admin {{- $credAdmSbk := "{ Get-Secret -Name da -Vault dp }" -}}
-# chezmoi cred ssp {{- $credSspAdmSbk := "{ if ($args.BoundParameters -contains 'Authentication') { Get-Secret -Name da -Vault dp } }" }}
+{{- $credAdmSbk := "{ Get-Secret -Name da -Vault dp }" -}}
+{{- $credSspAdmSbk := "{ if ($args.BoundParameters -contains 'Authentication') { Get-Secret -Name da -Vault dp } }" -}}
 $PSDefaultParameterValues = @{
   'Get-ADUserProxy:Properties' = [string[]]@(
     'Description'
@@ -12,10 +12,12 @@ $PSDefaultParameterValues = @{
     'msDS-AllowedToDelegateTo'
     'whenCreated'
     'whenChanged'
-    # chezmoi if company {{- if ne .workOneDriveBusinessName "" }}
-    # chezmoi get company Property {{- $companyProp := list "extensionAttribute2" "extensionAttribute4" "extensionAttribute11" "extensionAttribute12" "EmployeeID" }}
-    # chezmoi range {{ range $currentCompProp := $companyProp }}{{ $currentCompProp | squote | nindent 4 }}{{ end }}
-    # chezmoi end if company {{- end }}
+{{- if ne .workOneDriveBusinessName "" -}}
+{{- $companyProp := list "extensionAttribute2" "extensionAttribute4" "extensionAttribute11" "extensionAttribute12" "EmployeeID" -}}
+{{- range $currentCompProp := $companyProp -}}
+{{- $currentCompProp | squote | nindent 4 }}
+{{- end -}}
+{{- end }}
   )
   'Get-ADGroupProxy:Properties' = [string[]]@(
     'Description'
@@ -24,22 +26,24 @@ $PSDefaultParameterValues = @{
     'whenChanged'
   )
   'Search-Giphy:ApiKey' = { Get-Secret -Name giphy -Vault dp }
-  'Invoke-DbaWhoIsActive:FormatOutput' = 2 # Not perfect. This does line up the output better. Using 0 removes the default first column for time spent.
+{{- /* Not perfect. This does line up the output better. Using 0 removes the default first column for time spent. */}}
+  'Invoke-DbaWhoIsActive:FormatOutput' = 2
   'Invoke-Mstsc:Credential' = {{ $credAdmSbk }}
   'Invoke-Command:Credential' = {{ $credSspAdmSbk }}
   'Enter-PSSession:Credential' = {{ $credSspAdmSbk }}
   'New-PSSession:Credential' = {{ $credSspAdmSbk }}
-  'Out-Default:OutVariable' = '__' # "All" output is written to $__ to make it easier to work interactively like if a user forgets to assign the output.
+{{- /* "All" output is written to $__ to make it easier to work interactively like if a user forgets to assign the output. */}}
+  'Out-Default:OutVariable' = '__'
   'Format-Table:AutoSize' = $true
   'Format-Table:Wrap' = $true
-  # chezmoi if mgmt sql {{- if ne .msSqlMgmtInstance "" }}
+{{- if ne .msSqlMgmtInstance "" }}
   'Get-DbaRegServer:SqlInstance' = {{ .msSqlMgmtInstance | squote }}
-  # chezmoi end {{- end }}
-  # chezmoi if vCenter {{- if ne .vCenterComputerName "" }}
+{{- end }}
+{{- if ne .vCenterComputerName "" }}
   'Connect-VIServer:Server' = {{ .vCenterComputerName | squote }} 
-  # chezmoi end {{- end }}
-  # chezmoi if mgmt sql {{- if ne .workKeepassName "" }}
+{{- end }}
+{{- if ne .workKeepassName "" }}
   'Unlock-SecretVault:Name' = {{ .workKeepassName | squote }}
   'Unlock-SecretVault:Password' = { Get-Secret -Name dbakey -Vault dp }
-  # chezmoi end {{- end }}
+{{- end }}
 }

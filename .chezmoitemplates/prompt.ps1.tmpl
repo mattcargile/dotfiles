@@ -1,11 +1,15 @@
-# Custom OMP Prompt Context
 function Set-MyOmpContext {
-    [Alias('Set-PoshContext')]
     param([bool]$originalStatus)
-    # Helper for relative pathing on dotnet methods. They use the process level path. 
+{{- /* Helper for relative pathing on dotnet methods. They use the process level path. */}}
     [System.Environment]::CurrentDirectory = (Get-Location -PSProvider FileSystem).ProviderPath
 }
-
+{{/*
+     * scoop `Set-Alias` on each run
+     * Want to prevent it from setting this over and over and causing `$WhatIfPreference = $true` to trigger
+     * https://github.com/ScoopInstaller/Scoop/pull/4794
+     * https://github.com/ScoopInstaller/Scoop/blob/b588a06e41d920d2123ec70aee682bae14935939/bin/scoop.ps1#L11-L15
+     */}}
+Set-Alias -Name 'Set-PoshContext' -Value 'Set-MyOmpContext' -Option ReadOnly -Force
 oh-my-posh @(
     'init'
     'pwsh'

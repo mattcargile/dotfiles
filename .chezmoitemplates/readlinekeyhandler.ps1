@@ -13,7 +13,6 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+RightArrow' -BriefDescription 'NextWordAnd
     }
 }
 #endregion
-
 #region Save current line to history ( without execution ) and clear line.
 Set-PSReadLineKeyHandler -Key 'Alt+y' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {
     param($key, $arg)
@@ -23,7 +22,6 @@ Set-PSReadLineKeyHandler -Key 'Alt+y' -BriefDescription 'SaveInHistory' -Descrip
     [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
 }
 #endregion
-
 #region SmartInsertQuote
 Set-PSReadLineKeyHandler -Chord '"', "'" -BriefDescription 'SmartInsertQuote' -Description "Insert paired quotes if not already on a quote" -ScriptBlock {
     param($key, $arg)
@@ -128,7 +126,6 @@ Set-PSReadLineKeyHandler -Chord '"', "'" -BriefDescription 'SmartInsertQuote' -D
     [Microsoft.PowerShell.PSConsoleReadLine]::Insert($quote)
 }
 #endregion
-
 #region InsertPariedBraces
 Set-PSReadLineKeyHandler -Chord '(', '{', '[' -BriefDescription 'InsertPairedBraces' -Description "Insert matching braces" -ScriptBlock {
     param($key, $arg)
@@ -160,7 +157,6 @@ Set-PSReadLineKeyHandler -Chord '(', '{', '[' -BriefDescription 'InsertPairedBra
     }
 }
 #endregion
-
 #region SmartCloseBraces
 Set-PSReadLineKeyHandler -Chord ')', ']', '}' -BriefDescription 'SmartCloseBraces' -Description "Insert closing brace or skip" -ScriptBlock {
     param($key, $arg)
@@ -179,7 +175,6 @@ Set-PSReadLineKeyHandler -Chord ')', ']', '}' -BriefDescription 'SmartCloseBrace
     }
 }
 #endregion
-
 #region SmartBackspace
 Set-PSReadLineKeyHandler -Chord 'Backspace' -BriefDescription 'SmartBackspace' -Description "Delete previous character or matching quotes/parens/braces" -ScriptBlock {
     param($key, $arg)
@@ -214,7 +209,6 @@ Set-PSReadLineKeyHandler -Chord 'Backspace' -BriefDescription 'SmartBackspace' -
     }
 }
 #endregion
-
 #region ParenthesizeSelection
 Set-PSReadLineKeyHandler -Chord 'Alt+(' -BriefDescription 'ParenthesizeSelection' -Description "Put parenthesis around the selection or entire line and move the cursor to after the closing parenthesis" -ScriptBlock {
     param($key, $arg)
@@ -238,7 +232,6 @@ Set-PSReadLineKeyHandler -Chord 'Alt+(' -BriefDescription 'ParenthesizeSelection
     }
 }
 #endregion
-
 #region ToggleQuoteArgument
 Set-PSReadLineKeyHandler -Chord "Alt+'" -BriefDescription 'ToggleQuoteArgument' -Description 'Toggle quotes on the argument under the cursor' -ScriptBlock {
     param($key, $arg)
@@ -298,7 +291,6 @@ Set-PSReadLineKeyHandler -Chord "Alt+'" -BriefDescription 'ToggleQuoteArgument' 
     }
 }
 #endregion
-
 #region ExpandAliases
 # Expands command aliases + parameter aliases / unique prefixes.
 # Ambiguous params are left unexpanded and marked with a trailing '?' to force PSReadLine error-coloring.
@@ -435,7 +427,6 @@ Set-PSReadLineKeyHandler -Chord 'Alt+%' -BriefDescription 'ExpandAliases' -Descr
     }
 }
 #endregion
-
 #region Vi fixes, hacks, etc handlers
 Set-PSReadLineKeyHandler -Chord 'Alt+a' -Function SelectCommandArgument -ViMode Insert
 Set-PSReadLineKeyHandler -Chord 'Ctrl+Spacebar' -Function MenuComplete -ViMode Insert

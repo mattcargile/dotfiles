@@ -1,8 +1,10 @@
-# HistorySavePath: Microsoft Defender complains about history on Onedrive
-# AddToHistoryHandler: By default PSReadline removes "password", "cred", etc items from history. This forces save of all commands to history.
+{{- /*
+     * HistorySavePath: Microsoft Defender complains about history on Onedrive
+     * AddToHistoryHandler: By default PSReadline removes "password", "cred", etc items from history. This forces save of all commands to history.
+     */ -}}
 Set-PSReadLineOption -EditMode Vi -ViModeIndicator Script -HistorySavePath "{{ joinPath .homeDir `.config` `PSReadLine` `All$($Host.Name)_history.txt` }}" -MaximumHistoryCount 500000 -HistoryNoDuplicates -AddToHistoryHandler {
     param([string]$line)
-    # Do not save any command line unless it has more than 4 characters.  Prevents storing gci, gps, etc.
+{{- /* Do not save any command line unless it has more than 4 characters.  Prevents storing gci, gps, etc. */}}
     return $line.Length -gt 4
 } -Colors @{
     Member    = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
@@ -21,11 +23,13 @@ Set-PSReadLineOption -EditMode Vi -ViModeIndicator Script -HistorySavePath "{{ j
     Error     = '{{- "\u001B[38;2;139;0;0m" -}}'                                                #8b0000
 } -ViModeChangeHandler {
     param([Microsoft.PowerShell.ViMode]$mode)
-    # https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#cursor-shape
+{{- /* https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#cursor-shape */}}
     if ( $mode -eq 'Command' ) {
-        [Console]::Write("$([char]0x1B)[2 q") # Steady block cursor shape
+{{- /* Steady block cursor shape */}}
+        [Console]::Write("$([char]0x1B)[2 q")
     }
     else {
-        [Console]::Write("$([char]0x1B)[6 q") # Steady bar cursor shape
+{{- /* Steady bar cursor shape */}}
+        [Console]::Write("$([char]0x1B)[6 q")
     }
 }
