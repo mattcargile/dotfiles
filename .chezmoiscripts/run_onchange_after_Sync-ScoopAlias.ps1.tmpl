@@ -39,7 +39,7 @@ if ($null -eq $scoopAliasCurrent) {
     if ($PSCmdlet.ShouldProcess('scoop alias', 'Adding all aliases for new install')) {
         Write-Verbose 'New install. Adding all aliases'
         foreach ($currentAliasToSync in $scoopAliasToSync) {
-            scoop alias add $currentAliasToSync.Name $scoopAliasCurrent.Command $scoopAliasCurrent.Summary
+            scoop alias add $currentAliasToSync.Name $scoopAliasToSync.Command $scoopAliasToSync.Summary
             if ($LASTEXITCODE -gt 0) {
                 throw [InvalidOperationException]"Failed to add alias $($currentAliasToSync.Name)"
             }
