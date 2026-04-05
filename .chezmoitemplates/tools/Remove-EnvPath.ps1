@@ -19,8 +19,6 @@ $data = Get-Content -Path $tomlPath -Raw | ConvertFrom-Toml
 switch ($Platform) {
     'Windows' {
         $platformLower = $Platform.ToLower()
-        # Force cast due to boxing otherwise we get extra properties
-        # https://github.com/jborean93/PSToml/issues/15
         $newWinArray = $data.envPath.$platformLower.Where( { $_.path -ne $Path } )
     }
     Default { throw [System.InvalidOperationException]'Default Platform not implemented' }
