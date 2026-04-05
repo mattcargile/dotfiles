@@ -49,7 +49,8 @@ end {
         # Need to add this to the path before running script because there is logic in the script to add this to the process. Need to make the script more consistent
         # carapace golang binary uses forward slashes to check for path
         $carapaceCfgDir = $IsWindows ? "$env:APPDATA/carapace/bin" -replace '\\', '/' : "$env:HOME/.config/carapace/bin"
-        $env:Path += "$([System.IO.Path]::PathSeparator)$carapaceCfgDir"
+        # Case sensitive on *nix systems and Windows is insensitive
+        $env:PATH += "$([System.IO.Path]::PathSeparator)$carapaceCfgDir"
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (carapace _carapace powershell | Out-String) -Comment 'Carapace Various Completions' ) )
         Remove-Item Env:\CARAPACE_ENV, Env:\CARAPACE_EXCLUDES
     }
