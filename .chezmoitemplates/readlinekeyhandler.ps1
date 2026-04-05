@@ -95,7 +95,7 @@ Set-PSReadLineKeyHandler -Chord '"', "'" -BriefDescription 'SmartInsertQuote' -D
             $token.Kind -eq [System.Management.Automation.Language.TokenKind]::RCurly -or
             $token.Kind -eq [System.Management.Automation.Language.TokenKind]::RBracket
         ) {
-        if ($line[0..$cursor].Where{$_ -eq $quote}.Count % 2 -eq 1) {
+        if ($cursor -lt $line.Length -and $line[0..$cursor].Where{$_ -eq $quote}.Count % 2 -eq 1) {
             # Odd number of quotes before the cursor, insert a single quote
             [Microsoft.PowerShell.PSConsoleReadLine]::Insert($quote)
         }
