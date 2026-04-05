@@ -1,0 +1,127 @@
+#chezmoi if windows {{- if eq .chezmoi.os "windows" }}
+#Requires -Version 7.1
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+param()
+
+
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+$scoopConfigToSync = @{
+    use_lessmsi = $true
+}
+try {
+    Get-Command -Name scoop | Out-Null
+}
+catch {
+    Write-Error -ErrorRecord $_
+    return
+}
+$scoopConfigCurrent = scoop config
+if ($LASTEXITCODE -gt 0) {
+    throw [InvalidOperationException]'Failed to get config.'
+}
+$scoopPropToIgnore = @(
+    'scoop_repo'
+    'scoop_branch'
+)
+$scoopPropNonConfig = @(
+    'last_update'
+    'alias'
+)
+$scoopConfigHelp = scoop config --help
+if ($LASTEXITCODE -gt 0) {
+    throw [InvalidOperationException]'Failed to get config help.'
+}
+$scoopConfigHelpSplit = $scoopConfigHelp[1] -split '\r?\n'
+$settingsBeginLineNumber = $scoopConfigHelpSplit | Select-String -Pattern 'Settings' -CaseSensitive | ForEach-Object -MemberName LineNumber -WhatIf:$false
+if ($settingsBeginLineNumber -eq '' -or $null -eq $settingsBeginLineNumber) {
+    throw [System.IO.InvalidDataException]'Cannot find the Settings line in config help'
+}
+$availableSettings = @{}
+$scoopConfigHelpSplit[$settingsBeginLineNumber..$($scoopConfigHelpSplit.Count - 1)] |
+    Where-Object { $_ -notmatch '^[\s-]' } | # Remove dash line breaks and indented setting descriptions
+    Where-Object { $_ -ne '' } |
+    Where-Object { $_ -cne 'ARIA2 configuration' } |
+    ForEach-Object -Process {
+        $currentSetting = $_ -split ':', 2
+        $currentKey = $currentSetting[0]
+        $currentVal = $currentSetting[1].Trim()
+        $availableSettings[$currentKey] = $currentVal
+    }
+$scoopConfigCurrentRelevantProperties = $scoopConfigCurrent.psobject.Properties.Name | Where-Object { $_ -notin $scoopPropNonConfig }
+foreach ($currentRelevantConfigProp in $scoopConfigCurrentRelevantProperties) {
+    if ($currentRelevantConfigProp -notin $availableSettings.Keys) {
+        throw [InvalidOperationException]"scoop config returns property, $currentRelevantConfigProp, not within the help"
+    }
+}
+if ($scoopConfigCurrent.psobject.Properties.Name -notcontains 'scoop_repo' -or
+    ${scoopConfigCurrent}?.scoop_repo -eq '' -or
+    $null -eq ${scoopConfigCurrent}?.scoop_repo
+) {
+    throw [InvalidOperationException]'Cannot find property scoop_repo or it is empty or null on current config.'
+}
+if ($availableSettings.Keys -notcontains 'scoop_repo' -or
+    ${availableSettings}?.scoop_repo -eq '' -or
+    $null -eq ${availableSettings}?.scoop_repo
+) {
+    throw [InvalidOperationException]'Cannot find property scoop_repo or it is empty or null on scoop config help.'
+}
+# help uses http and actual config uses https
+$normalScoopRepoRegex = '^http[s]?://'
+$normalScoopRepoHttps = 'https://'
+$scoopRepoCurrentNormal = ${scoopConfigCurrent}?.scoop_repo -replace $normalScoopRepoRegex, $normalScoopRepoHttps
+$scoopRepoAvailSettingsNormal = ${availableSettings}?.scoop_repo -replace $normalScoopRepoRegex, $normalScoopRepoHttps
+if ($scoopRepoCurrentNormal -ne $scoopRepoAvailSettingsNormal) {
+    throw [InvalidOperationException]'scoop_repo value in current config doesn''t match the help''s config.'
+}
+
+if ($scoopConfigCurrent.psobject.Properties.Name -notcontains 'scoop_branch' -or
+    ${scoopConfigCurrent}?.scoop_branch -eq '' -or
+    $null -eq ${scoopConfigCurrent}?.scoop_branch
+) {
+    throw [InvalidOperationException]'Cannot find property scoop_branch or it is empty or null on current config.'
+}
+if ($availableSettings.Keys -notcontains 'scoop_branch' -or
+    ${availableSettings}?.scoop_branch -eq '' -or
+    $null -eq ${availableSettings}?.scoop_branch
+) {
+    throw [InvalidOperationException]'Cannot find property scoop_branch or it is empty or null on scoop config help.'
+}
+$availableSettingsScoopBranchList = ${availableSettings}?.scoop_branch -split '\|'
+if (${scoopConfigCurrent}?.scoop_branch -notin $availableSettingsScoopBranchList ) {
+    throw [InvalidOperationException]'Cannot find current scoop branch in the config help settings scoop_branch pipe delimited list.'
+}
+
+foreach ($currentConfigToSync in $scoopConfigToSync.GetEnumerator()) {
+    if ($scoopConfigCurrent.psobject.Properties.Name -notcontains $currentConfigToSync.Key) {
+        if ($PSCmdlet.ShouldProcess('scoop config', "Adding $($currentConfigToSync.Key) as it doesn't exist.")) {
+            scoop config $currentConfigToSync.Key $currentConfigToSync.Value 6>$null
+            if ($LASTEXITCODE -gt 0) {
+                throw [InvalidOperationException]"Failed to set $($currentConfigToSync.Key)"
+            }
+        }
+    }
+    elseif ($scoopConfigCurrent.$($currentConfigToSync.Key) -ne $currentConfigToSync.Value) {
+        if ($PSCmdlet.ShouldProcess('scoop config', "Setting $($currentConfigToSync.Key) from $($scoopConfigCurrent.$($currentConfigToSync.Key)) to $($currentConfigToSync.Value)")) {
+            scoop config $currentConfigToSync.Key $currentConfigToSync.Value 6>$null
+            if ($LASTEXITCODE -gt 0) {
+                throw [InvalidOperationException]"Failed to set $($currentConfigToSync.Key)"
+            }
+        }
+    }
+}
+
+$configPropToRemove = $scoopConfigCurrent.psobject.Properties.Name |
+    Where-Object { $_ -notin $scoopPropToIgnore } |
+    Where-Object { $_ -notin $scoopPropNonConfig } |
+    Where-Object { $_ -notin $scoopConfigToSync.Keys }
+foreach ($currentToRemove in $configPropToRemove) {
+    if ($PSCmdlet.ShouldProcess('scoop config', "Removing $currentToRemove as it isn't in the chezmoi sync script.")) {
+        scoop config rm $currentToRemove 6>$null
+        if ($LASTEXITCODE -gt 0) {
+            throw [InvalidOperationException]"Failed to remove $currentToRemove"
+        }
+    }
+}
+# chezmoi windows end {{- end }}

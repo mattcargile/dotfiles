@@ -1,0 +1,87 @@
+#chezmoi if windows {{- if eq .chezmoi.os "windows" }}
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+param()
+
+
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+$scoopAliasToSync = @(
+    @{
+        Name = 'finfo'
+        Command = 'sfsu.exe info $args[0]'
+        Summary = 'Fast info with sfsu.exe'
+    }
+    @{
+        Name = 'fsearch'
+        Command = 'sfsu.exe search $args[0]'
+        Summary = 'Fast search with sfsu.exe'
+    }
+    @{
+        Name = 'upsts'
+        Command = 'scoop update; scoop status'
+        Summary = 'Update scoop and check status'
+    }
+)
+
+try {
+    Get-Command -Name scoop | Out-Null
+}
+catch {
+    Write-Error -ErrorRecord $_
+    return
+}
+$scoopAliasCurrent = scoop alias list --verbose
+if ($LASTEXITCODE -gt 0) {
+    throw [InvalidOperationException]'Failed to get current aliases'
+}
+if ($scoopAliasCurrent.Count -eq 0 -or $null -eq $scoopAliasCurrent) {
+    if ($PSCmdlet.ShouldProcess('scoop alias', 'Adding all aliases for new install')) {
+        Write-Verbose 'New install. Adding all aliases'
+        foreach ($currentAliasToSync in $scoopAliasToSync) {
+            scoop alias add $currentAliasToSync.Name $scoopAliasCurrent.Command $scoopAliasCurrent.Summary
+            if ($LASTEXITCODE -gt 0) {
+                throw [InvalidOperationException]"Failed to add alias $($currentAliasToSync.Name)"
+            }
+        }
+    }
+}
+else {
+    foreach ($currentAliasToSync in $scoopAliasToSync) {
+        if ($currentAliasToSync.Name -notin $scoopAliasCurrent.Name) {
+            if ($PSCmdlet.ShouldProcess('scoop alias', "New alias, $($currentAliasToSync.Name), to add.")) {
+                Write-Verbose "New alias, $($currentAliasToSync.Name), to add."
+                scoop alias add $currentAliasToSync.Name $currentAliasToSync.Command $currentAliasToSync.Summary
+            }
+        }
+        else {
+            $currentAliasData = $scoopAliasCurrent | Where-Object -Property Name -EQ -Value $currentAliasToSync.Name
+            if ($currentAliasToSync.Command -ne $currentAliasData.Command -or $currentAliasToSync.Summary -ne $currentAliasData.Summary) {
+                if ($PSCmdlet.ShouldProcess('scoop alias', "Removing and adding $($currentAliasToSync.Name) as they have a different command or summary")) {
+                    Write-Verbose "$($currentAliasToSync.Name) has a different command or summary. Attempting to remove and add."
+                    scoop alias rm $currentAliasToSync.Name
+                    if ($LASTEXITCODE -gt 0) {
+                        throw [InvalidOperationException]"Failed to remove current alias $($currentAliasToSync.Name)"
+                    }
+                    scoop alias add $currentAliasToSync.Name $currentAliasToSync.Command $currentAliasToSync.Summary
+                    if ($LASTEXITCODE -gt 0) {
+                        throw [InvalidOperationException]"Failed to add current alias $($currentAliasToSync.Name)"
+                    }
+                }
+            }
+        }
+    }
+}
+
+foreach ($currentAlias in $scoopAliasCurrent) {
+    if ($currentAlias.Name -notin $scoopAliasToSync.Name) {
+        if ($PSCmdlet.ShouldProcess('scoop alias', "Alias $($currentAlias.Name) doesn't exist on sync data. Removing.")) {
+            Write-Verbose "Attempting to remove $($currentAlias.Name) as it isn't in the sync data."
+            scoop alias rm $currentAlias.Name
+            if ($LASTEXITCODE -gt 0) {
+                throw [InvalidOperationException]"Failed to remove alias $($currentAliasToSync.Name) not in the chezmoi sync data."
+            }
+        }
+    }
+}
+# chezmoi windows end {{- end }}
