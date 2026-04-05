@@ -4,8 +4,11 @@ MyProfileLib
 chezmoi.slnx
 outchezmoiscripts
 glyphnames.json
-{{ if ne .chezmoi.os "windows" }}
+{{- if ne .chezmoi.os "windows" }}
 .config/powershell/MyProfile/desktop.psm1
-.config/powershell/profile_desktop.ps1
 .config/powershell/MyProfile/lib/desktop
-{{ end }}
+Documents/PowerShell
+Documents/WindowsPowerShell
+{{- else }}
+.config/powershell/profile.ps1
+{{- end }}

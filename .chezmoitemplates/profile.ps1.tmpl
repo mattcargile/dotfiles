@@ -1,7 +1,6 @@
-{{- $isPSCore := eq "profile.ps1.tmpl" ( base .chezmoi.sourceFile ) -}}
-{{- $isWindows := eq .chezmoi.os "windows" }}
+{{- $isPSCore := ne "WindowsPowerShell" ( base ( dir .chezmoi.sourceFile ) ) -}}
 {{- $tmplDict := dict "isPSCore" $isPSCore
-    "isWindows" $isWindows
+    "isWindows" ( eq .chezmoi.os "windows" )
     "sourceDir" .chezmoi.sourceDir
     "destDir" .chezmoi.destDir
     "homeDir" .chezmoi.homeDir
