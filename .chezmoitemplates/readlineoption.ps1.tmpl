@@ -1,12 +1,33 @@
+{{- $argList := list "-NoProfile" "-NoLogo" "-File" (joinPath .sourceDir ".chezmoitemplates" "tools" "Write-PSReadLinePredictionJson.ps1" ) -}}
+{{- $psrlPrediction := outputList "pwsh" $argList | fromJson -}}
+{{- $predictionSource := "" -}}
+{{- $hasColorsInlinePrediction := false }}
+{{- $hasColorsListPrediction := false }}
+{{- if .isPSCore -}}
+{{- $predictionSource = $psrlPrediction.CorePredictionSource -}}
+{{- $hasColorsInlinePrediction = $psrlPrediction.CoreHasColorsInlinePrediction -}}
+{{- $hasColorsListPrediction = $psrlPrediction.CoreHasColorsListPrediction -}}
+{{- else -}}
+{{- $predictionSource = $psrlPrediction.DesktopPredictionSource -}}
+{{- $hasColorsInlinePrediction = $psrlPrediction.DesktopHasColorsInlinePrediction -}}
+{{- $hasColorsListPrediction = $psrlPrediction.DesktopHasColorsListPrediction -}}
+{{- end -}}
 {{- /*
      * HistorySavePath: Microsoft Defender complains about history on Onedrive
      * AddToHistoryHandler: By default PSReadline removes "password", "cred", etc items from history. This forces save of all commands to history.
      */ -}}
-Set-PSReadLineOption -EditMode Vi -ViModeIndicator Script -HistorySavePath "{{ joinPath .homeDir `.config` `PSReadLine` `All$($Host.Name)_history.txt` }}" -MaximumHistoryCount 500000 -HistoryNoDuplicates -AddToHistoryHandler {
+Set-PSReadLineOption {{- if $predictionSource }} -PredictionSource {{ $predictionSource | squote -}}{{- end }} -EditMode Vi -ViModeIndicator Script -HistorySavePath "{{ joinPath .homeDir ".config" "PSReadLine" "All$($Host.Name)_history.txt" | replace `"` `""` }}" -MaximumHistoryCount 500000 -HistoryNoDuplicates -AddToHistoryHandler {
     param([string]$line)
 {{- /* Do not save any command line unless it has more than 4 characters.  Prevents storing gci, gps, etc. */}}
     return $line.Length -gt 4
 } -Colors @{
+{{- if $hasColorsInlinePrediction }}
+    InlinePrediction = '{{ "\u001B[38;5;243m" }}'
+{{- end }}
+{{- if $hasColorsListPrediction }}
+    ListPrediction = '{{ "\u001B[38;2;195;100;241m" }}'
+    ListPredictionToolTip = '{{ "\u001B[38;5;243m\u001B[3m" }}'
+{{- end }}
     Member    = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
     Parameter = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
     Default   = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
