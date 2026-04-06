@@ -1,0 +1,9 @@
+{{- /* PSReadline KeyHandler Version specific features for Core versus Desktop */ -}}
+{{- $psrlCheckCode := "Import-Module PSReadLine; if ( [version](Get-Module PSReadLine).Version -ge [version]'2.2.1' ) { $true } else { $false }" -}}
+{{- $hasSelArgPsrlCore := eq ( output "pwsh" "-NoProfile" "-Command" $psrlCheckCode | trim ) "True" -}}
+{{- $hasSelArgPsrlDesktop := eq ( output "powershell" "-NoProfile" "-Command" $psrlCheckCode | trim ) "True" -}}
+{{- if or ( and .isPSCore $hasSelArgPsrlCore ) ( and (eq .isPSCore false) $hasSelArgPsrlDesktop ) -}}
+#region PSReadLine Version Specific
+Set-PSReadLineKeyHandler -Chord 'Alt+a' -Function SelectCommandArgument -ViMode Insert
+#endregion
+{{- end }}
