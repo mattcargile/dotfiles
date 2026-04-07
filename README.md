@@ -1,17 +1,12 @@
 # dotfiles
-Personal cross-platform configuration using `chezmoi`.
+Personal cross-platform ( with primary focus on _Windows_ ) configuration using `chezmoi`.
 
 ## WIP Fixes
 1. Handle `dotnet` pathing and location on _*nix_. Still relying on `shellenv pwsh` being run manually before a `chezmoi apply`.
-1. maybe only pull down `glyphnames.json` when the github release is updated. maybe can use a golang template for pull down that date with the custom `chezmoi` functions.
-1. better handling on write arg completer for missing binaries or missing completion commands like on `dotnet`
 1. sometimes `$env:PSModulePath` in `powershell` doesn't reflect the `.\OneDrive\Documents` folder and only has `.\Documents`.
-1. negotiate `TextMate` in new pager functions and handle potential `dll` hell with `PSParseHtml`. repo owner to maybe use _ALC_
-1. rewrite some functions in c# for fun like `guv`
 1. add positional parameter expansion to alias, parameter keyhandler expansion. might be able to derive it.
 1. work on `py` handling. No longer needed or functional for oh-my-posh. Need to disable the App Execution Aliases in Windows. Appears one would need to clear entry from `HKCU:\Software\Microsoft\Windows\CurrentVersion\App Paths` and the file at `$env:LOCALAPPDATA\Microsoft\WindowsApps`. https://superuser.com/a/1746939 Use `py -m pip list` instead of `pip`
 1. check for missing key handlers when moving to vi mode like copy and paste and ctrl backspace.
-1. `Alt+a` key handler isn't supported on native `2.0.0` `PSReadLine` on _5.1_
 
 ## Road to Full Auto
 1. Consider setting up local admin user.
@@ -42,12 +37,15 @@ Personal cross-platform configuration using `chezmoi`.
     ```
 1. `scoop` requires a `scoop install git` first for buckets and such
     * Should run `scoop update` after
-1. Then run `scoop install lessmsi` prior to `scoop import`.
-1. Add aliases back.
+1. Hard requirements in bootstrapper.
     ```powershell
-    Import-CliXml $env:onedrive\backup\scoop_export_alias_cli.xml | % { scoop alias add $_.Name $_.Command $_.Summary }
+    scoop install pwsh chezmoi dotnet-sdk oh-my-posh
     ```
-1. Import the scoop json.
+1. `chezmoi init mattcargile`
+1. `isres ctypes,EZOut`
+1. `chezmoi apply`
+1. Then run `scoop install lessmsi` prior to `scoop import`.
+1. Import the scoop json excluding above.
 1. Set the trust on the repos and maybe install `Microsoft.PowerShell.PSResourceGet` first in `powershell`.
    ```powershell
    sudo install-module microsoft.powershell.psresourceget -Scope AllUsers
