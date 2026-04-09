@@ -31,19 +31,21 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
     set-secret alt -Secret (credential first.name@publicEmailDomain.org) -v dp
     set-secret dubr -Secret ([pscredential]::new( 'workUser@publicEmailDomain.org', (gsc dund dp).password ) ) -v dp
     ```
+1. `Set-ExecutionPolicy RemoteSigned CurrentUser -Confirm:$false -Force`
 1. Install scoop with the below.
     ```powershell
     irm get.scoop.sh | iex
     ```
 1. `scoop` requires a `scoop install git` first for buckets and such
     * Should run `scoop update` after
-1. Hard requirements in bootstrapper.
+1. Hard requirements in bootstrapper. (NOTE: Should `pwsh` be `choco` or `scoop`?)
     ```powershell
     scoop install pwsh chezmoi dotnet-sdk oh-my-posh
     ```
-1. `chezmoi init mattcargile`
+1. Need to figure the flow to go from `powershell` to `pwsh`.
 1. `isres ctypes,EZOut`
-1. `chezmoi apply`
+1. `chezmoi init mattcargile --apply`
+1. Need admin script for `vcredist2022` for `delta` and `sfsu`
 1. Then run `scoop install lessmsi` prior to `scoop import`.
 1. Import the scoop json excluding above.
 1. Set the trust on the repos and maybe install `Microsoft.PowerShell.PSResourceGet` first in `powershell`.

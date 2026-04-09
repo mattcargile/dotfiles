@@ -22,26 +22,26 @@ Set-PSReadLineOption {{- if $predictionSource }} -PredictionSource {{ $predictio
     return $line.Length -gt 4
 } -Colors @{
 {{- if $hasColorsInlinePrediction }}
-    InlinePrediction = '{{ "\u001B[38;5;243m" }}'
+    InlinePrediction      = '{{ "\u001B[38;5;243m" }}'
 {{- end }}
 {{- if $hasColorsListPrediction }}
-    ListPrediction = '{{ "\u001B[38;2;195;100;241m" }}'
+    ListPrediction        = '{{ "\u001B[38;2;195;100;241m" }}'
     ListPredictionToolTip = '{{ "\u001B[38;5;243m\u001B[3m" }}'
 {{- end }}
-    Member    = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
-    Parameter = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
-    Default   = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
-    Operator  = '{{- "\u001B[38;2;197;197;197m" -}}'                                            #c5c5c5
-    Keyword   = '{{- "\u001B[38;2;197;134;192m" -}}'                                            #c586c0
-    Command   = '{{- "\u001B[38;2;220;220;125m" -}}'                                            #dcdc7d
-    Emphasis  = '{{- "\u001B[27m\u001B[4m\u001B[48;2;40;40;40m\u001B[48;2;38;79;120m" -}}'      #264f78 With underline and background
-    Selection = '{{- "\u001B[7m" -}}'                                                             #Swap foreground and background colors for `carapace` completers
-    Type      = '{{- "\u001B[38;2;78;201;176m" -}}'                                             #4ec9b0
-    Variable  = '{{- "\u001B[38;2;124;220;254m" -}}'                                            #7cdcfe
-    String    = '{{- "\u001B[38;2;206;145;120m" -}}'                                            #ce9178
-    Comment   = '{{- "\u001B[38;2;96;139;78m" -}}'                                              #608b4e
-    Number    = '{{- "\u001B[38;2;147;206;168m" -}}'                                            #93cea8
-    Error     = '{{- "\u001B[38;2;139;0;0m" -}}'                                                #8b0000
+    Member                = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
+    Parameter             = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
+    Default               = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
+    Operator              = '{{- "\u001B[38;2;197;197;197m" -}}'                                            #c5c5c5
+    Keyword               = '{{- "\u001B[38;2;197;134;192m" -}}'                                            #c586c0
+    Command               = '{{- "\u001B[38;2;220;220;125m" -}}'                                            #dcdc7d
+    Emphasis              = '{{- "\u001B[27m\u001B[4m\u001B[48;2;40;40;40m\u001B[48;2;38;79;120m" -}}'      #264f78 With underline and background
+    Selection             = '{{- "\u001B[7m" -}}'                                                             #Swap foreground and background colors for `carapace` completers
+    Type                  = '{{- "\u001B[38;2;78;201;176m" -}}'                                             #4ec9b0
+    Variable              = '{{- "\u001B[38;2;124;220;254m" -}}'                                            #7cdcfe
+    String                = '{{- "\u001B[38;2;206;145;120m" -}}'                                            #ce9178
+    Comment               = '{{- "\u001B[38;2;96;139;78m" -}}'                                              #608b4e
+    Number                = '{{- "\u001B[38;2;147;206;168m" -}}'                                            #93cea8
+    Error                 = '{{- "\u001B[38;2;139;0;0m" -}}'                                                #8b0000
 } -ViModeChangeHandler {
     param([Microsoft.PowerShell.ViMode]$mode)
 {{- /* https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#cursor-shape */}}
