@@ -1,5 +1,6 @@
 .vs
 MyProfileLib/bin
 MyProfileLib/obj
+MyProfileLib/MyProfileLib.csproj.lscache
 outchezmoiscripts
 glyphnames.json
