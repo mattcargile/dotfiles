@@ -9,6 +9,10 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. check for missing key handlers when moving to vi mode like copy and paste and ctrl backspace.
 
 ## Road to Full Auto
+1. Core hard dep to get to prompt.
+    ```powershell
+    set-executionpolicy remotesigned currentuser -force ; irm get.scoop.sh | iex; scoop install git; scoop update; scoop install chezmoi pwsh oh-my-posh dotnet-sdk; pwsh -c {Install-PSResource ctypes, ezout -TrustRepository -Quiet -Confirm:$false}; chezmoi init mattcargile --apply
+    ```
 1. Consider setting up local admin user.
    ```powershell
    New-LocalUser -AccountNeverExpires -Name matt -PasswordNeverExpires -Password (credential na).password
