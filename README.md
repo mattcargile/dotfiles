@@ -11,7 +11,7 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
     ```powershell
-    set-executionpolicy remotesigned currentuser -force ; irm get.scoop.sh | iex; scoop install git; scoop update; scoop install chezmoi pwsh oh-my-posh dotnet-sdk; pwsh -c {Install-PSResource ctypes, ezout -TrustRepository -Quiet -Confirm:$false}; chezmoi init mattcargile --apply
+    Set-ExecutionPolicy RemoteSigned CurrentUser -Force; Invoke-RestMethod get.scoop.sh | Invoke-Expression; scoop install git; scoop update; scoop install chezmoi pwsh oh-my-posh dotnet-sdk; pwsh -Command { Install-PSResource ctypes, ezout -TrustRepository -Quiet -Confirm:$false }; chezmoi init mattcargile --apply
     ```
 1. Consider setting up local admin user.
    ```powershell
