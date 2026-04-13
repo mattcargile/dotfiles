@@ -70,7 +70,6 @@ function Format-TSQL
 
     $stringreader = New-Object -TypeName System.IO.StreamReader -ArgumentList ([MemoryStream]::new([Encoding]::UTF8.GetBytes($InputObject)))
    
-    $generate = [Microsoft.SqlServer.TransactSql.ScriptDom.Sql150ScriptGenerator]($generator)
     $parser = [Microsoft.SqlServer.TransactSql.ScriptDom.TSql150Parser]($true)::New();
     if($null -eq $parser ){
         throw 'ScriptDOM not installed or not accessible'
@@ -83,6 +82,6 @@ function Format-TSQL
     } 
 
     $formattedoutput = [string]::Empty
-    $generate.GenerateScript($fragment,([ref]$formattedoutput)) 
+    $generator.GenerateScript($fragment, [ref]$formattedoutput)
     $formattedoutput.ToString()
 }
