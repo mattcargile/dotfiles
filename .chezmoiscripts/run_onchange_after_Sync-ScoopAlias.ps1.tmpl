@@ -19,8 +19,8 @@ $scoopAliasToSync = @(
     }
     @{
         Name = 'upsts'
-        Command = 'scoop update; scoop status'
-        Summary = 'Update scoop and check status'
+        Command = 'sfsu update 2>$null; scoop status 6>$null'
+        Summary = 'Update scoop fast and check status'
     }
 )
 
