@@ -9,6 +9,23 @@ end {
     #region Collect formatter Xml
     $formatList = [System.Collections.Generic.List[string]]::new()
 
+    #region Scoop sfsu
+    $writeFormatViewSplat = @{
+        TypeName = 'Profile.ScoopSfsuPackagesStatus'
+        Property = 'Name', 'Installed Version', 'Latest Version', 'Missing Dependencies', 'Info'
+        Width = 20, 25, 25, 25, 20
+        AliasProperty = @{
+            'Name' = 'name'
+            'Installed Version' = 'current'
+            'Latest Version' = 'available'
+            'Missing Dependencies' = 'missing_dependencies'
+            'Info' = 'info'
+        }
+    }
+    $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
+
+    #endregion
+
     #region ActiveDirectory
     $writeFormatViewSplat = @{
         TypeName = 'Microsoft.ActiveDirectory.Management.ADUser'

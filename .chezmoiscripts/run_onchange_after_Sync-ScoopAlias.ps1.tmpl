@@ -19,7 +19,7 @@ $scoopAliasToSync = @(
     }
     @{
         Name = 'upsts'
-        Command = 'sfsu update 2>$null; scoop status 6>$null'
+        Command = 'sfsu update 2>$null; (sfsu status --json --no-color 2>$null | ConvertFrom-Json ).packages | & { process { if ( $_.current -ne $_.available ) { $_.pstypenames.Insert(0, ''Profile.ScoopSfsuPackagesStatus''); $_ } } }'
         Summary = 'Update scoop fast and check status'
     }
 )
