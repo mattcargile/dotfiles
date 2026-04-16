@@ -112,6 +112,8 @@ usres = "Uninstall-PSResource"
 wcdxes = "Watch-DbaXESession"
 wrap = "string\\Add-String"
 gdagd = "Get-DbaAgDatabase"
+cfcsv = "ConvertFrom-Csv"
+ctcsv = "ConvertTo-Csv"
 [pwshAlias.windows]
 "choco.exe" = "choco"
 [pwshAlias.core]
@@ -122,3 +124,4 @@ gsci = "Get-SecretInfo"
 ukv = "Unlock-SecretVault"
 [pwshAlias.desktop]
 join = "string\\Join-String"
+
