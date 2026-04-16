@@ -51,7 +51,7 @@ if ($parserErrors) {
 Write-Information -MessageData $ast -Tags Ast
 Write-Information -MessageData $parserTokens -Tags Tokens
 if ($ast.BeginBlock -or $ast.CleanBlock -or $ast.DynamicParamBlock -or $ast.ProcessBlock -or $ast.ParamBlock -or $ast.ScriptRequirements) {
-    Write-Error -Message "[$($currentFile.Name)] Ast in a form that isn't expected and includes more code blocks than only End Block. Continuing to next item."
+    Write-Error -Message "[$($currentFile.Name)] Ast in a form that isn't expected and includes more code blocks than only End Block."
     return
 }
 $outStringBuilder = [System.Text.StringBuilder]::new($ast.Extent.EndOffset)

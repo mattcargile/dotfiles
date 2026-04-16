@@ -13,7 +13,7 @@ function Format-FileSystemInfoName {
     .INPUTS
         System.IO.FileSystemInfo
 
-        You can pipe an objects that derive from System.IO.FileSystemInfo (System.IO.DIrectoryInfo and System.IO.FileInfo) to 'Format-FileSystemInfoName'.
+        You can pipe an objects that derive from System.IO.FileSystemInfo (System.IO.DirectoryInfo and System.IO.FileInfo) to 'Format-FileSystemInfoName'.
     .OUTPUTS
         System.String
 
