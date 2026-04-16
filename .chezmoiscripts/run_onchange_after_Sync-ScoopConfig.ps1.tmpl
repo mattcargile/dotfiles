@@ -24,11 +24,25 @@ if ($LASTEXITCODE -gt 0) {
 $scoopPropToIgnore = @(
     'scoop_repo'
     'scoop_branch'
+    # scoop added the below paths along the way. They are default and can be removed it appears. Ignoring for now.
+    'root_path'
+    'global_path'
+    # scoop or an app may add the below as `$false`. Removing it deletes the `HKCU:\Environment` `Path`
+    # https://github.com/ScoopInstaller/Scoop/issues/6638
+    'use_isolated_path'
 )
 $scoopPropNonConfig = @(
     'last_update'
     'alias'
 )
+foreach ( $currentConfigIgnore in $scoopConfigToSync.Keys) {
+    if ($currentConfigIgnore -in $scoopPropToIgnore) {
+        throw [InvalidOperationException]'Cannot sync a config in the properties to ignore'
+    }
+    if ($currentConfigIgnore -in $scoopPropNonConfig) {
+        throw [InvalidOperationException]'Cannot sync a config in the non config properties'
+    }
+}
 $scoopConfigHelp = scoop config --help
 if ($LASTEXITCODE -gt 0) {
     throw [InvalidOperationException]'Failed to get config help.'
