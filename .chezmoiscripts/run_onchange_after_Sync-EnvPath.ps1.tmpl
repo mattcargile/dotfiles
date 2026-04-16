@@ -33,6 +33,12 @@ finally {
         $envKey.Dispose()
     }
 }
+if ($envKeyPropPath -match '"') {
+    throw [InvalidOperationException]'There is a double quote in the path. Something weird is going on with the path. Maybe there is embedded spacing or embedded semicolons.'
+}
+if ($winPaths -match '"' -or $winPaths -match ';') {
+    throw [InvalidOperationException]'There is a double quote or semicolon in the paths to sync. This could cause issues. Hopefully no embedded semicolons are used?'
+}
 foreach ($currentPath in $winPaths) {
     $currentExpandedValue = [Environment]::ExpandEnvironmentVariables($currentPath)
     $currentPathExists = Test-Path -Path $currentExpandedValue
@@ -57,7 +63,8 @@ foreach ($currentPath in $winPaths) {
     }
 }
 if ($envKeyPropPathList.Count -ne $envKeyPropPathListStartingCount) {
-    $envKeyPropPathChanged = $envKeyPropPathList -join $pathSep
+    # Changing Path in the Windows UI adds a trailing semicolon
+    $envKeyPropPathChanged = ( $envKeyPropPathList | Where-Object {$_ -ne ''}) -join $pathSep
     if ($PSCmdlet.ShouldProcess('HKCU:\Environment', "Setting Path to $envKeyPropPathChanged")) {
         Set-ItemProperty -Path 'HKCU:\Environment' -Name Path -Value $envKeyPropPathChanged -Type ExpandString
         $usr = New-CtypesLib -Name user32.dll
