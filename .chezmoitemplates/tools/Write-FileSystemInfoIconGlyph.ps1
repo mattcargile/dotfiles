@@ -1,38 +1,32 @@
 #Requires -Version 7.5.4
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory)]
-    [int]
-    $RefreshSeconds
 )
 
-Set-StrictMode -Version Latest
+# Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 # Below needed to output the glyphs correctly otherwise we have question mark(s) in the output
 $OutputEncoding = [System.Console]::InputEncoding = [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
 $glyphPath = Join-Path $PSScriptRoot '..' '..' glyphnames.json
 Write-Debug "Glyph file path is $glyphPath"
-$haveCurrentGlyph = $true
 if (Test-Path $glyphPath) {
-    $glyphPathFileInfoLastWrite = (Get-Item $glyphPath).LastWriteTime
-    $currentDatetime = Get-Date
-    $refreshSecondsTimespan = [timespan]::new(0, 0, $RefreshSeconds)
-    Write-Debug "LastWriteTime On $glyphPath is $glyphPathFileInfoLastWrite"
-    Write-Debug "Current Date Time is $currentDatetime"
-    Write-Debug "Refresh Seconds Timespan is $refreshSecondsTimespan"
-    if ( $currentDatetime - $glyphPathFileInfoLastWrite -gt $refreshSecondsTimespan) {
-        $haveCurrentGlyph = $false
-    }
+    $glyphData = Get-Content -Path $glyphPath -Raw | ConvertFrom-Json
 }
-else {
-    $haveCurrentGlyph = $false
+try {
+    $glyphRemoteData = Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/glyphnames.json' -Verbose:$false -Debug:$false
 }
-if (-not $haveCurrentGlyph) {
-    Write-Verbose 'Do not have current glyph based on RefreshSeconds. Downloading the file.'
-    Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/glyphnames.json' -OutFile $glyphPath -Verbose:$false -Debug:$false
+catch {
+    Write-Warning "Using current glyphs on disk. Cannot get latest glyphnames.json. $_"
 }
-$glyphNamesData = Get-Content $glyphPath -Raw | ConvertFrom-Json
+if (-not $glyphData -and -not $glyphRemoteData) {
+    throw [InvalidOperationException]'Cannot find glyph data on disk or on remote. Maybe retry or check internet.'
+}
+if ($glyphRemoteData -and $glyphData.METADATA.date -ne $glyphRemoteData.METADATA.date) {
+    Write-Verbose 'Glyph data on disk has a different date than one from remote. Writing new file.'
+    $glyphRemoteData | ConvertTo-Json | Set-Content -Path $glyphPath
+    $glyphData = $glyphRemoteData
+}
 
 $fileSystemInfoIconPath = Join-Path $PSScriptRoot '..' .\filesysteminfoicon.psd1.tmpl
 $fileSystemInfoIconScript =  chezmoi execute-template --file $fileSystemInfoIconPath | Out-String
@@ -96,7 +90,7 @@ for ($tkIdx = 0; $tkIdx -lt $parserTokens.Count; $tkIdx++) {
     elseif (${previousToken}?.TokenFlags -contains 'AssignmentOperator' -and $currentToken.Kind -eq 'StringLiteral' ) {
         $currentGlyphProperty = $currentToken.Value.Substring(3) # Trim leading nf- as json download doesn't have it while the website does
         Write-Debug "Current modified Glyph Property for Json look up is $currentGlyphProperty"
-        $currentGlyphData = $glyphNamesData.$currentGlyphProperty
+        $currentGlyphData = $glyphData.$currentGlyphProperty
         $outStringBuilder.
             Append( "'" ).
             Append( $currentGlyphData.char ).
