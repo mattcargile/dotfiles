@@ -24,10 +24,10 @@ if ($LASTEXITCODE -gt 0) {
 $scoopPropToIgnore = @(
     'scoop_repo'
     'scoop_branch'
-    # scoop added the below paths along the way. They are default and can be removed it appears. Ignoring for now.
+    # sfsu adds the below paths along the way using update and/or status command. They are default and can be removed it appears. Ignoring for now.
     'root_path'
     'global_path'
-    # scoop or an app may add the below as `$false`. Removing it deletes the `HKCU:\Environment` `Path`
+    # sfsu adds the below as `$false`. Removing it deletes the `HKCU:\Environment` `Path`
     # https://github.com/ScoopInstaller/Scoop/issues/6638
     'use_isolated_path'
 )

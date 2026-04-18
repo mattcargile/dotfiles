@@ -19,8 +19,10 @@ $scoopAliasToSync = @(
     }
     @{
         Name = 'upsts'
+        # `sfsu update` causes unsupportable churn in the `config`
+        # https://github.com/winpax/sfsu/issues/1123
         Command = @'
-sfsu.exe update 2>$null
+scoop update 6>$null
 (sfsu.exe status --json 2>$null | ConvertFrom-Json ).packages |
     & {
         process {
