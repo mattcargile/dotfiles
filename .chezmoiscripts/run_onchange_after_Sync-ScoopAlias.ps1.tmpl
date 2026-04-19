@@ -22,7 +22,10 @@ $scoopAliasToSync = @(
         # `sfsu update` causes unsupportable churn in the `config`
         # https://github.com/winpax/sfsu/issues/1123
         Command = @'
-scoop update 6>$null
+scoop update --quiet 2>$null 6>$null
+if ($LASTEXITCODE -gt 0) {
+    Write-Error "scoop update has exit code of $LASTEXITCODE"
+}
 (sfsu.exe status --json 2>$null | ConvertFrom-Json ).packages |
     & {
         process {
