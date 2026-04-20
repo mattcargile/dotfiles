@@ -20,10 +20,10 @@ function Format-TableLast {
 
     process {
         if ($Pager) {
-            $global:__ | Format-Table -Property $Property | Out-Paging
+            $global:__ | Format-Table -Property $Property -Wrap -AutoSize | Out-Paging
         }
         else {
-            $global:__ | Format-Table -Property $Property
+            $global:__ | Format-Table -Property $Property -Wrap -AutoSize
         }
     }
 }
