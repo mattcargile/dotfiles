@@ -87,6 +87,9 @@ end {
     if (Get-Command bb -CommandType Application -ErrorAction Ignore) {
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (bb completion powershell | Out-String) -Comment 'bb Bitbucket Prompt Completions' ) ) 
     }
+    if (Get-Command bkt -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (bkt completion powershell | Out-String) -Comment 'bkt Bitbucket Prompt Completions' ) ) 
+    }
     if (Get-Command ov -CommandType Application -ErrorAction Ignore) {
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (ov --completion powershell | Out-String) -Comment 'ov Pager Prompt Completions' ) ) 
     }
