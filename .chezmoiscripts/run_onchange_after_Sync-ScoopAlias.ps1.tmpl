@@ -52,6 +52,21 @@ if ($null -eq $args[0]) {
 '@
         Summary = 'Fast list using sfsu search. sfsu list is deprecated. No args defaults to .*'
     }
+    @{
+        Name = 'fsts'
+        Command = @'
+(sfsu.exe status --json 2>$null | ConvertFrom-Json ).packages |
+    & {
+        process {
+            if ( $_.current -ne $_.available ) {
+                $_.pstypenames.Insert(0, 'Profile.ScoopSfsuPackagesStatus')
+                $_
+            }
+        }
+    }
+'@
+        Summary = 'Fast sfsu status ( removing held packages without updates. sfsu maintainer has different semantics )'
+    }
 )
 
 try {
