@@ -9,6 +9,7 @@ Set-StrictMode -Version Latest
 
 $scoopConfigToSync = @{
     use_lessmsi = $true
+    show_update_log = $false
 }
 try {
     Get-Command -Name scoop | Out-Null
