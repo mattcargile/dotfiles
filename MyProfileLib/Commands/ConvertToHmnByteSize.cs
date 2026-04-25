@@ -19,7 +19,7 @@ public class ConvertToHmnByteSize : PSCmdlet
     protected override void ProcessRecord()
     {
         Debug.Assert(Format is not null);
-        WriteObject(Size.Bits().Humanize(Format));
+        WriteObject(Size.Bytes().Humanize(Format));
     }
     
 }
