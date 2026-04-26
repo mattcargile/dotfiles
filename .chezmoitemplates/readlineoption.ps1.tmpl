@@ -16,7 +16,7 @@
      * HistorySavePath: Microsoft Defender complains about history on Onedrive
      * AddToHistoryHandler: By default PSReadline removes "password", "cred", etc items from history. This forces save of all commands to history.
      */ -}}
-Set-PSReadLineOption {{- if $predictionSource }} -PredictionSource {{ $predictionSource | squote -}}{{- end }} -EditMode Vi -ViModeIndicator Script -HistorySavePath "{{ joinPath .homeDir ".config" "PSReadLine" "All$($Host.Name)_history.txt" | replace `"` `""` }}" -MaximumHistoryCount 500000 -HistoryNoDuplicates -AddToHistoryHandler {
+Set-PSReadLineOption {{- if $predictionSource }} -PredictionSource {{ $predictionSource | squote -}}{{- end }} -BellStyle None -EditMode Vi -ViModeIndicator Script -HistorySavePath "{{ joinPath .homeDir ".config" "PSReadLine" "All$($Host.Name)_history.txt" | replace `"` `""` }}" -MaximumHistoryCount 500000 -HistoryNoDuplicates -AddToHistoryHandler {
     param([string]$line)
 {{- /* Do not save any command line unless it has more than 4 characters.  Prevents storing gci, gps, etc. */}}
     return $line.Length -gt 4
