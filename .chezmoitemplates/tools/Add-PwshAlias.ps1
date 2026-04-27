@@ -31,12 +31,10 @@ if (-not (Test-Path $pwshAliasFile)) {
 
 $tomlData = Get-Content -Path $pwshAliasFile -Raw | ConvertFrom-Toml
 
-switch ($PSCmdlet.ParameterSetName) {
-    'All' { $tomlData.pwshAlias.all.Add($Name, $Value) }
-    'Windows' { $tomlData.pwshAlias.windows.Add($Name, $Value) }
-    'Desktop' { $tomlData.pwshAlias.desktop.Add($Name, $Value) }
-    'Core' { $tomlData.pwshAlias.core.Add($Name, $Value) }
-    Default {}
-}
+$dictName = $PSCmdlet.ParameterSetName.ToLower()
+$tomlData.pwshAlias.$dictName.Add($Name, $Value)
+$workingDic = [System.Collections.Generic.OrderedDictionary[string,string]]::new($tomlData.pwshAlias.$dictName.Count)
+$tomlData.pwshAlias.$dictName.GetEnumerator() | Sort-Object -Property Name | ForEach-Object -Process { $workingDic.Add($_.Name, $_.Value) }
+$tomlData.pwshAlias.$dictName = $workingDic
 
 $tomlData | ConvertTo-Toml -Depth 3 | Set-Content $pwshAliasFile
