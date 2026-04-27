@@ -165,7 +165,7 @@ Set-PSReadLineKeyHandler -Chord ')', ']', '}' -BriefDescription 'SmartCloseBrace
     $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
 
-    if ($line[$cursor] -eq $key.KeyChar)
+    if ($line.Length -ne $cursor -and $line[$cursor] -eq $key.KeyChar)
     {
         [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor + 1)
     }
