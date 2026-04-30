@@ -434,8 +434,6 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+a' -Function SelectAll -ViMode Insert
 Set-PSReadLineKeyHandler -Chord 'Ctrl+a' -Function SelectAll -ViMode Command
 Set-PSReadLineKeyHandler -Chord 'Ctrl+c' -Function CopyOrCancelLine -ViMode Insert
 Set-PSReadLineKeyHandler -Chord 'Ctrl+c' -Function CopyOrCancelLine -ViMode Command
-if ($env:TERM_PROGRAM -eq 'vscode') {
-    # code doesn't handle typical `Ctrl+Spacebar` usage for some reason
-    Set-PSReadLineKeyHandler -Chord 'Ctrl+@' -Function MenuComplete
-}
+# code and wezterm terminals don't handle typical `Ctrl+Spacebar` usage for some reason
+Set-PSReadLineKeyHandler -Chord 'Ctrl+@' -Function MenuComplete -ViMode Insert
 #endregion
