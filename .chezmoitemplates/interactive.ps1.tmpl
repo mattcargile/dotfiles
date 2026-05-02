@@ -25,4 +25,6 @@ if ('Microsoft.PowerShell.GetPSReadLineOption' -as [type]) {
     #region prompt.ps1
 {{ includeTemplate "prompt.ps1.tmpl" . | indent 4 -}}
     #endregion
+{{- /* Ensure new shells are in Insert Mode Steady bar cursor shape */}}
+    [Console]::Write("$([char]0x1B)[6 q")
 }
