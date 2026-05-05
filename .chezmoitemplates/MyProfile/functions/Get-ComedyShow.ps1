@@ -16,6 +16,7 @@ function Get-ComedyShow {
             ForEach-Object innerhtml |
             ConvertFrom-Json |
             Where-Object '@type' -ma ComedyEvent |
+            Where-Object name -notma 'stoned vs drunk|stoned vs stoned|roast battle league|comedy teabag|work the crowd' |
             Select-Object @{n='Name'; e={$_.name}},
                 @{n='StartDate'; e={$_.startdate}},
                 @{n='Location'; e={$_.location.name}}
@@ -25,6 +26,7 @@ function Get-ComedyShow {
             ForEach-Object innerhtml |
             ConvertFrom-Json |
             Where-Object '@type' -ma ComedyEvent |
+            Where-Object name -notma 'stoned vs drunk|stoned vs stoned|roast battle league|glitz & giggles' |
             Select-Object @{n='Name'; e={$_.name}},
                 @{n='StartDate'; e={$_.startdate}},
                 @{n='Location'; e={$_.location.name}}
@@ -32,7 +34,7 @@ function Get-ComedyShow {
             PSParseHTML\ConvertFrom-HTML |
             ForEach-Object SelectNodes '/html/body//a[@target="_parent"]' |
             Select-Object @{n='Name';e={ $_.innertext.trim()}},@{n='StartDate';e={[datetime]::Parse($_.ParentNode.NextSibling.NextSibling.InnerText.trim())}} |
-            Where-Object { $_.name -notmatch 'open gym|film_pod|moral panic|community night|spoonful of sugar|tropical trivia|new orleans spelling bee|Ted &amp'} |
+            Where-Object { $_.name -notmatch 'open gym|film_pod|moral panic|community night|spoonful of sugar|tropical trivia|new orleans spelling bee|Ted &amp|Karaoke Night'} |
             Select-Object Name,StartDate,@{n='Location'; e={'Sports Drink'}}
 
     }
