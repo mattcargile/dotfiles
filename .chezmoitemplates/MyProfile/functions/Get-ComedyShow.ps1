@@ -33,8 +33,17 @@ function Get-ComedyShow {
         Invoke-RestMethod https://app.opendate.io/v/sports-drink-1939 |
             PSParseHTML\ConvertFrom-HTML |
             ForEach-Object SelectNodes '/html/body//a[@target="_parent"]' |
-            Select-Object @{n='Name';e={ $_.innertext.trim()}},@{n='StartDate';e={[datetime]::Parse($_.ParentNode.NextSibling.NextSibling.InnerText.trim())}} |
-            Where-Object { $_.name -notmatch 'open gym|film_pod|moral panic|community night|spoonful of sugar|tropical trivia|new orleans spelling bee|Ted &amp|Karaoke Night'} |
+            Select-Object @{n='Name';e={ $_.innertext.trim()}},
+                @{
+                    Name = 'StartDate'
+                    Expression = {
+                        $selectedDate = [datetime]::Parse($_.ParentNode.NextSibling.NextSibling.InnerText.Trim())
+                        $selectedShowTimeText = ($_.ParentNode.NextSibling.NextSibling.NextSibling.NextSibling.InnerText.Trim() -split '- Show: ')[1] 
+                        $selectedTimeOfDay = [datetime]::Parse($selectedShowTimeText).TimeOfDay
+                        $selectedDate.Add($selectedTimeOfDay)
+                    }
+                } |
+            Where-Object Name -notmatch 'open gym|film_pod|moral panic|community night|spoonful of sugar|tropical trivia|new orleans spelling bee|Ted &amp|Karaoke Night' |
             Select-Object Name,StartDate,@{n='Location'; e={'Sports Drink'}}
 
     }
