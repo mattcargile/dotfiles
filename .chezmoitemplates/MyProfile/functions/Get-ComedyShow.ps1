@@ -76,5 +76,18 @@ function Get-ComedyShow {
                     }
                 },
                 @{n='Location'; e={'The Joy Theater'}}
+        Invoke-RestMethod https://orpheumnola.com/em-ajax/get_listings/ -Method Post -Body @{ 'search_categories[]' = 'live-comedy'; per_page = 15; orderby = 'event_start_date'; order = 'ASC'; page = 1} |
+            ForEach-Object -MemberName html |
+            PSParseHTML\ConvertFrom-HTML |
+            ForEach-Object SelectNodes '/div//div[@class="wpem-event-details"]' |
+            Select-Object @{n='Name'; e={$_.selectnodes('.//h3[@class="wpem-heading-text"]/text()').Text}},
+                @{
+                    Name = 'StartDate'
+                    Expression = {
+                        $currentEvtDateAndTimeString = $_.SelectNodes('.//span[@class="wpem-event-date-time-text"]/text()').Text.Trim() -replace '\s{2,}', ' '
+                        [datetime]::ParseExact( $currentEvtDateAndTimeString, 'dddd, MMMM d, yyyy @ hh:mm tt', $null)
+                    }
+                },
+                @{n='Location'; e={'Orpheum Theater'}}
     }
 }
