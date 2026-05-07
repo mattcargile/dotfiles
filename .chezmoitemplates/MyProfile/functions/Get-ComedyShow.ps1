@@ -76,6 +76,35 @@ function Get-ComedyShow {
                     }
                 },
                 @{n='Location'; e={'The Joy Theater'}}
+        $civicCurrentEventUri = 'https://civicnola.com/tm-venue/'
+        try {
+            # For some reason the intial attempt to access the site throws an access denied.
+            # Tried various headers with user agents, etc which don't matter
+            $civicHtml = Invoke-RestMethod $civicCurrentEventUri
+        }
+        catch {
+            $civicHtml = Invoke-RestMethod $civicCurrentEventUri
+        }
+        $civicComedyArchiveNameList = Invoke-RestMethod 'https://civicnola.com/tm_genre/comedy' |
+            PSParseHTML\ConvertFrom-HTML |
+            ForEach-Object SelectNodes '/html/body//div[@class="tw-name event-title"]/text()' |
+            ForEach-Object Text |
+            ForEach-Object Trim
+        # Google /recaptcha/enterprise/anchor for TicketMaster prevents access to the ComedyEvent `eventSchema` object in the `html
+        $civicHtml |
+            PSParseHTML\ConvertFrom-HTML |
+            ForEach-Object SelectNodes '/html/body//div[@class="seven columns"]' |
+            Select-Object @{n='Name'; e={[HtmlAgilityPack.HtmlEntity]::DeEntitize($_.selectnodes('.//a/text()').text)}},
+                @{
+                    Name = 'StartDate'
+                    Expression = {
+                        $currentEvtDate = [datetime]::Parse($_.SelectNodes('.//span[@class="tw-event-date"]/text()').text)
+                        $currentEvtTimeOfDay = [datetime]::Parse($_.SelectNodes('.//span[@class="tw-event-time"]/text()').text).TimeOfDay
+                        $currentEvtDate.Add($currentEvtTimeOfDay)
+                    }
+                },
+                @{n='Location'; e={'Civic Theatre'}} |
+            Where-Object Name -in $civicComedyArchiveNameList
         Invoke-RestMethod https://orpheumnola.com/em-ajax/get_listings/ -Method Post -Body @{ 'search_categories[]' = 'live-comedy'; per_page = 15; orderby = 'event_start_date'; order = 'ASC'; page = 1} |
             ForEach-Object -MemberName html |
             PSParseHTML\ConvertFrom-HTML |
