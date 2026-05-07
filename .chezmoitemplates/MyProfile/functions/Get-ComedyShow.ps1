@@ -46,14 +46,40 @@ function Get-ComedyShow {
             ForEach-Object SelectNodes '/html/body//div[@class="MuiCardContent-root mui-15seape"]' |
             Where-Object { $_.selectnodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-sq0p4m"]/text()').text -eq 'Comedy'} |
             Select-Object @{n='Name'; e={[HtmlAgilityPack.HtmlEntity]::DeEntitize($_.selectnodes('.//h2[@class="MuiBox-root mui-10n19ke"]/text()').text) -replace $nameReplace}},
-                @{n='StartDate'; e={[datetime]::Parse($_.selectnodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-b806a2"]/text()').text)}},
+                @{
+                    Name = 'StartDate'
+                    Expression = {
+                        $currentEventDateTimeHtmlObj = Invoke-RestMethod "https://us.atgtickets.com/$($_.SelectNodes( './/a[@data-type="composed" and @type="button"]' ).getattributevalue('href', '<EMPTY>'))" |
+                            PSParseHTML\ConvertFrom-HTML |
+                            ForEach-Object -MemberName SelectNodes -ArgumentList '/html/body/main//div[@class="MuiBox-root mui-1kknxc2"]'
+                        $currentEventDateAndTime = $currentEventDateTimeHtmlObj.SelectNodes( './p[@class="MuiTypography-root MuiTypography-bodySmall mui-1lkazsm"]/text()').Text
+                        $currentEventDate = [datetime]::Parse($currentEventDateAndTime[0])
+                        if ($currentEventDateAndTime[1] -match '[0-9]{1,2}:[0-9]{2} [aApP][mM]') {
+                            $currentEventTimeOfDay = [datetime]::Parse($Matches[0]).TimeOfDay
+                        }
+                        $currentEventDate.Add($currentEventTimeOfDay)
+                    }
+                },
                 @{n='Location'; e={$_.selectnodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-lnhdee"]/text()').text}}
         Invoke-RestMethod us.atgtickets.com/venues/mahalia-jackson-theater/whats-on/ |
             PSParseHTML\ConvertFrom-HTML |
             ForEach-Object SelectNodes '/html/body//div[@class="MuiCardContent-root mui-15seape"]' |
             Where-Object { $_.selectnodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-sq0p4m"]/text()').text -eq 'Comedy'} |
             Select-Object @{n='Name'; e={[HtmlAgilityPack.HtmlEntity]::DeEntitize($_.selectnodes('.//h2[@class="MuiBox-root mui-10n19ke"]/text()').text) -replace $nameReplace}},
-                @{n='StartDate'; e={[datetime]::Parse($_.selectnodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-b806a2"]/text()').text)}},
+                @{
+                    Name = 'StartDate'
+                    Expression = {
+                        $currentEventDateTimeHtmlObj = Invoke-RestMethod "https://us.atgtickets.com/$($_.SelectNodes( './/a[@data-type="composed" and @type="button"]' ).getattributevalue('href', '<EMPTY>'))" |
+                            PSParseHTML\ConvertFrom-HTML |
+                            ForEach-Object -MemberName SelectNodes -ArgumentList '/html/body/main//div[@class="MuiBox-root mui-1kknxc2"]'
+                        $currentEventDateAndTime = $currentEventDateTimeHtmlObj.SelectNodes( './p[@class="MuiTypography-root MuiTypography-bodySmall mui-1lkazsm"]/text()').Text
+                        $currentEventDate = [datetime]::Parse($currentEventDateAndTime[0])
+                        if ($currentEventDateAndTime[1] -match '[0-9]{1,2}:[0-9]{2} [aApP][mM]') {
+                            $currentEventTimeOfDay = [datetime]::Parse($Matches[0]).TimeOfDay
+                        }
+                        $currentEventDate.Add($currentEventTimeOfDay)
+                    }
+                },
                 @{n='Location'; e={$_.selectnodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-lnhdee"]/text()').text}}
         Invoke-RestMethod https://thejoytheater.com/shows/ |
             PSParseHTML\ConvertFrom-HTML |
@@ -79,7 +105,7 @@ function Get-ComedyShow {
                 @{n='Location'; e={'The Joy Theater'}}
         $civicCurrentEventUri = 'https://civicnola.com/tm-venue/'
         try {
-            # For some reason the intial attempt to access the site throws an access denied.
+            # For some reason the intial attempt to access the site throws an access denied and a robots page.
             # Tried various headers with user agents, etc which don't matter
             $civicHtml = Invoke-RestMethod $civicCurrentEventUri
         }
