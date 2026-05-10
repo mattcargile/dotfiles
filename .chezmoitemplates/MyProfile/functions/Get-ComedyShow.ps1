@@ -12,7 +12,7 @@ function Get-ComedyShow {
             ForEach-Object innerhtml |
             ConvertFrom-Json |
             Where-Object '@type' -ma ComedyEvent |
-            Where-Object name -notma 'stoned vs drunk|stoned vs stoned|roast battle league|comedy teabag|work the crowd|anger management: comedy meets|certified killers comedy showcase' |
+            Where-Object name -notma 'stoned vs drunk|stoned vs stoned|roast battle league|comedy teabag|work the crowd|anger management: comedy meets|certified killers comedy showcase|gun control: comedy show' |
             Select-Object @{n='Name'; e={$_.name -replace $nameReplace}},
                 @{n='StartDate'; e={$_.startdate}},
                 @{n='Location'; e={$_.location.name}}
