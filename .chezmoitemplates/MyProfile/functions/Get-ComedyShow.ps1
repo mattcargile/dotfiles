@@ -12,7 +12,7 @@ function Get-ComedyShow {
             ForEach-Object InnerHtml |
             ConvertFrom-Json |
             Where-Object '@type' -ma ComedyEvent |
-            Where-Object name -notma 'stoned vs drunk|stoned vs stoned|roast battle league|comedy teabag|work the crowd|anger management: comedy meets|certified killers comedy showcase|gun control: comedy show' |
+            Where-Object name -notma 'stoned vs\.? drunk|stoned vs\.? stoned|roast battle league|comedy teabag|work the crowd|anger management: comedy meets|certified killers comedy showcase|gun control: comedy show' |
             Select-Object @{n='Name'; e={$_.name -replace $nameReplace}},
                 @{n='StartDate'; e={$_.startdate}},
                 @{n='Location'; e={$_.location.name}}
@@ -22,14 +22,14 @@ function Get-ComedyShow {
             ForEach-Object InnerHtml |
             ConvertFrom-Json |
             Where-Object '@type' -ma ComedyEvent |
-            Where-Object name -notma 'stoned vs drunk|stoned vs stoned|roast battle league|glitz & giggles|bun intended \- a standup comedy show|hair of the dog comedy night' |
+            Where-Object name -notma 'stoned vs\.? drunk|stoned vs\.? stoned|roast battle league|glitz & giggles|bun intended \- a standup comedy show|hair of the dog comedy night' |
             Select-Object @{n='Name'; e={$_.name -replace $nameReplace}},
                 @{n='StartDate'; e={$_.startdate}},
                 @{n='Location'; e={$_.location.name}}
         Invoke-RestMethod https://app.opendate.io/v/sports-drink-1939 |
             PSParseHTML\ConvertFrom-HTML |
             ForEach-Object SelectNodes '/html/body//a[@target="_parent"]' |
-            Select-Object @{n='Name';e={ [HtmlAgilityPack.HtmlEntity]::DeEntitize($_.innertext.trim()) -replace $nameReplace}},
+            Select-Object @{n='Name';e={ [Net.WebUtility]::HtmlDecode($_.innertext.trim()) -replace $nameReplace}},
                 @{
                     Name = 'StartDate'
                     Expression = {
@@ -45,7 +45,7 @@ function Get-ComedyShow {
             PSParseHTML\ConvertFrom-HTML |
             ForEach-Object SelectNodes '/html/body//div[@class="MuiCardContent-root mui-15seape"]' |
             Where-Object { $_.SelectNodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-sq0p4m"]/text()').text -eq 'Comedy'} |
-            Select-Object @{n='Name'; e={[HtmlAgilityPack.HtmlEntity]::DeEntitize($_.SelectNodes('.//h2[@class="MuiBox-root mui-10n19ke"]/text()').text) -replace $nameReplace}},
+            Select-Object @{n='Name'; e={[Net.WebUtility]::HtmlDecode($_.SelectNodes('.//h2[@class="MuiBox-root mui-10n19ke"]/text()').text) -replace $nameReplace}},
                 @{
                     Name = 'StartDate'
                     Expression = {
@@ -65,7 +65,7 @@ function Get-ComedyShow {
             PSParseHTML\ConvertFrom-HTML |
             ForEach-Object SelectNodes '/html/body//div[@class="MuiCardContent-root mui-15seape"]' |
             Where-Object { $_.SelectNodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-sq0p4m"]/text()').text -eq 'Comedy'} |
-            Select-Object @{n='Name'; e={[HtmlAgilityPack.HtmlEntity]::DeEntitize($_.SelectNodes('.//h2[@class="MuiBox-root mui-10n19ke"]/text()').text) -replace $nameReplace}},
+            Select-Object @{n='Name'; e={[Net.WebUtility]::HtmlDecode($_.SelectNodes('.//h2[@class="MuiBox-root mui-10n19ke"]/text()').text) -replace $nameReplace}},
                 @{
                     Name = 'StartDate'
                     Expression = {
@@ -84,7 +84,7 @@ function Get-ComedyShow {
         Invoke-RestMethod https://thejoytheater.com/shows/ |
             PSParseHTML\ConvertFrom-HTML |
             ForEach-Object SelectNodes '/html/body//div[@class="seven columns"]' |
-            Select-Object @{n='Name'; e={[HtmlAgilityPack.HtmlEntity]::DeEntitize($_.SelectNodes('.//a/text()').text) -replace $nameReplace}},
+            Select-Object @{n='Name'; e={[Net.WebUtility]::HtmlDecode($_.SelectNodes('.//a/text()').text) -replace $nameReplace}},
                 @{
                     Name = 'EventHtmlObject'
                     Expression = { Invoke-RestMethod $_.SelectNodes('.//a').getattributeValue('href', '<EMPTY>') | PSParseHTML\ConvertFrom-HTML }
@@ -121,7 +121,7 @@ function Get-ComedyShow {
         $civicHtml |
             PSParseHTML\ConvertFrom-HTML |
             ForEach-Object SelectNodes '/html/body//div[@class="seven columns"]' |
-            Select-Object @{n='Name'; e={[HtmlAgilityPack.HtmlEntity]::DeEntitize($_.SelectNodes('.//a/text()').text) -replace $nameReplace}},
+            Select-Object @{n='Name'; e={[Net.WebUtility]::HtmlDecode($_.SelectNodes('.//a/text()').text) -replace $nameReplace}},
                 @{
                     Name = 'StartDate'
                     Expression = {
