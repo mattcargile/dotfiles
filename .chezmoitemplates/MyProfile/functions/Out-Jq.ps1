@@ -11,7 +11,7 @@ function Out-Jq {
     )
     begin {
         $ArgumentList += '--color-output'
-        $pipe = { jq.exe @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)
+        $pipe = { jq @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)
         $pipe.Begin($PSCmdlet)
     }
     process {
