@@ -22,6 +22,16 @@ function Get-ADComputerProxy {
         [Alias('nm')]
         [string]
         $Name,
+        # Uses -Filter with -eq $true on Enabled property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias()]
+        [switch]
+        $Enabled,
+        # Uses -Filter with -eq $false on Enabled property
+        [Parameter(ParameterSetName = 'Filter')]
+        [Alias('dis', 'de')]
+        [switch]
+        $Disabled,
         # -Filter on Get-ADComputer without mandatory attribute to handle dynamic parameter and -Name.
         # See help on Get-ADComputer for additional information.
         [Parameter(ParameterSetName = 'Filter')]
@@ -35,6 +45,8 @@ function Get-ADComputerProxy {
         try {
             # Need to remove non-default bound parameters otherwise `GetCommand` doesn't return `.Parameters`
             $PSBoundParameters.Remove('Name') | Out-Null # Returns true or false if it removed or didn't remove the key
+            $PSBoundParameters.Remove('Enabled') | Out-Null
+            $PSBoundParameters.Remove('Disabled') | Out-Null
             $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('ActiveDirectory\Get-ADComputer', [System.Management.Automation.CommandTypes]::Cmdlet, $PSBoundParameters)
             $dynamicParams = @($targetCmd.Parameters.GetEnumerator() | Microsoft.PowerShell.Core\Where-Object { $_.Value.IsDynamic })
             if ($dynamicParams.Length -gt 0)
@@ -67,14 +79,31 @@ function Get-ADComputerProxy {
                 $PSBoundParameters['OutBuffer'] = 1
             }
             if ($PSCmdlet.ParameterSetName -eq 'Filter') {
-                if (-not $Name -and -not $Filter) {
+                if (-not $Name -and
+                    -not $Filter -and
+                    -not $Enabled -and
+                    -not $Disabled
+                ) {
                     throw 'Must provide at least Name or Filter parameter.'
                 }
+                if ($Enabled -and $Disabled) {
+                    throw [ArgumentException]::new('Can''t supply both Disabled and Enabled parameters. Use only one of them.', 'Disabled,Enabled')
+                }
+                $enabledFilterValue = $null
+                if ($Enabled) {
+                    $enabledFilterValue = $true
+                }
+                elseif ($Disabled) {
+                    $enabledFilterValue = $false 
+                }
                 $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
-                    Write-ADAndFilter Name $Name -Verbose:$false
+                    Write-ADAndFilter Name $Name -Verbose:$false |
+                    Write-ADAndFilter Enabled $enabledFilterValue -EQ -Verbose:$false
                 Write-Verbose "[Filter]: $($PSBoundParameters['Filter'])"
                 # Removing parameters not included on proxied command
                 $PSBoundParameters.Remove('Name') | Out-Null
+                $PSBoundParameters.Remove('Enabled') | Out-Null
+                $PSBoundParameters.Remove('Disabled') | Out-Null
             }
 
 
