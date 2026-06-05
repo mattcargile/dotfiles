@@ -3,47 +3,104 @@ function Get-ComedyShow {
     [Alias('gcmdy')]
     param (
     )
+    begin {
+        filter Select-OpenDate {
+            [CmdletBinding()]
+            param(
+                [Parameter(Mandatory, ValueFromPipeline)]
+                [object]
+                $HtmlNode
+            )
+            $selectSplat = @{
+                Property = @(
+                    @{
+                        Name = 'NameInnerText'
+                        Expression = { $_ | Select-HtmlInnerText -DeEntitize }
+                    }
+                    @{
+                        Name = 'StartDate'
+                        Expression = {
+                            $selectedDate = [datetime]::Parse($_.ParentNode.NextSibling.NextSibling.InnerText.Trim())
+                            $selectedShowTimeText = ($_.ParentNode.NextSibling.NextSibling.NextSibling.NextSibling.InnerText.Trim() -split '- Show: ')[1] 
+                            $selectedTimeOfDay = [datetime]::Parse($selectedShowTimeText).TimeOfDay
+                            $selectedDate.Add($selectedTimeOfDay)
+                        }
+                    }
+                )
+            }
+            $HtmlNode | Select-HtmlNode -Tag a -AttributeName target -AttributeValue _parent | Select-Object @selectSplat
+        }
+        filter Select-SportsDrink {
+            [CmdletBinding()]
+            param(
+                [Parameter(Mandatory, ValueFromPipeline)]
+                [object]
+                $OpenDateObject,
+                [Parameter(Mandatory)]
+                [string]
+                $NameReplaceRegex
+            )
+            $regexNotMatch = 'open gym|film_pod|moral panic|community night|spoonful of sugar|tropical trivia|new orleans spelling bee|Ted & Kev|Karaoke Night|no br lft|thank you for your purchase|bing-oh'
+            $selectSplat  = @{
+                Property = @(
+                    @{
+                        Name = 'Name'
+                        Expression = { $_.NameInnerText -replace $NameReplaceRegex }
+
+                    }
+                    'StartDate'
+                    @{
+                        Name = 'Location'
+                        Expression = {'Sports Drink'}
+                    }
+                )
+            }
+            $OpenDateObject | Where-Object NameInnerText -notmatch $regexNotMatch | Select-Object @selectSplat 
+        }
+    }
 
     process {
         $nameReplace = '(\s?\(.*\)\s?.*)|(\s[aA]t\s.*$)|(\sLive\s[iI]n\s.*$)|(:.*$)|(\s?-\s?.*)|(\sLive[!\s]?.*$)'
+
         Invoke-RestMethod laughlife.standuptix.com |
             PSParseHTML\ConvertFrom-HTML |
-            ForEach-Object SelectNodes '/html/head/script[@type="application/ld+json"]' |
-            ForEach-Object InnerHtml |
+            Select-HtmlNode -Tag script -AttributeName type -AttributeValue 'application/ld+json' |
+            Select-HtmlInnerText -NoTrim |
             ConvertFrom-Json |
             Where-Object '@type' -ma ComedyEvent |
             Where-Object name -notma 'stoned vs\.? drunk|stoned vs\.? stoned|roast battle league|comedy teabag|work the crowd|anger management: comedy meets|certified killers comedy showcase|gun control: comedy show' |
             Select-Object @{n='Name'; e={$_.name -replace $nameReplace}},
                 @{n='StartDate'; e={$_.startdate}},
                 @{n='Location'; e={$_.location.name}}
+
         Invoke-RestMethod lafayettecomedy.com |
             PSParseHTML\ConvertFrom-HTML |
-            ForEach-Object SelectNodes '/html/head/script[@type="application/ld+json"]' |
-            ForEach-Object InnerHtml |
+            Select-HtmlNode -Tag script -AttributeName type -AttributeValue 'application/ld+json' |
+            Select-HtmlInnerText -NoTrim |
             ConvertFrom-Json |
             Where-Object '@type' -ma ComedyEvent |
             Where-Object name -notma 'stoned vs\.? drunk|stoned vs\.? stoned|roast battle league|glitz & giggles|bun intended \- a standup comedy show|hair of the dog comedy night' |
             Select-Object @{n='Name'; e={$_.name -replace $nameReplace}},
                 @{n='StartDate'; e={$_.startdate}},
                 @{n='Location'; e={$_.location.name}}
-        Invoke-RestMethod https://app.opendate.io/v/sports-drink-1939 |
-            PSParseHTML\ConvertFrom-HTML |
-            ForEach-Object SelectNodes '/html/body//a[@target="_parent"]' |
-            Select-Object @{n='Name';e={ [Net.WebUtility]::HtmlDecode($_.innertext.trim()) -replace $nameReplace}},
-                @{
-                    Name = 'StartDate'
-                    Expression = {
-                        $selectedDate = [datetime]::Parse($_.ParentNode.NextSibling.NextSibling.InnerText.Trim())
-                        $selectedShowTimeText = ($_.ParentNode.NextSibling.NextSibling.NextSibling.NextSibling.InnerText.Trim() -split '- Show: ')[1] 
-                        $selectedTimeOfDay = [datetime]::Parse($selectedShowTimeText).TimeOfDay
-                        $selectedDate.Add($selectedTimeOfDay)
-                    }
-                } |
-            Where-Object Name -notmatch 'open gym|film_pod|moral panic|community night|spoonful of sugar|tropical trivia|new orleans spelling bee|Ted & Kev|Karaoke Night|no br lft' |
-            Select-Object Name,StartDate,@{n='Location'; e={'Sports Drink'}}
+
+        $sportsDrinkBaseUri = 'https://app.opendate.io/v/sports-drink-1939'
+        $sportsDrinkPageQueryParamFormat = 'page={0}'
+        $sportsDrinkFirstPage = Invoke-RestMethod $sportsDrinkBaseUri |
+            PSParseHTML\ConvertFrom-HTML
+        $sportsDrinkLastPageNumber = $sportsDrinkFirstPage | Select-HtmlNode -Tag a -AttributeName 'class' -AttributeValue 'page-link' |
+            Select-HtmlInnerText -DeEntitize |
+            Select-Object -Last 2 |
+            Select-Object -First 1
+        $sportsDrinkFirstPage | Select-OpenDate | Select-SportsDrink -NameReplaceRegex $nameReplace
+        foreach ($currentSportsDrinkPage in 2..$sportsDrinkLastPageNumber) {
+            $currentSportsDrinkUri = "${sportsDrinkBaseUri}?$($sportsDrinkPageQueryParamFormat -f $currentSportsDrinkPage)"
+            Invoke-RestMethod $currentSportsDrinkUri | PSParseHTML\ConvertFrom-HTML | Select-OpenDate | Select-SportsDrink -NameReplaceRegex $nameReplace
+        }
+
         Invoke-RestMethod us.atgtickets.com/venues/saenger-theatre/whats-on/ |
             PSParseHTML\ConvertFrom-HTML |
-            ForEach-Object SelectNodes '/html/body//div[@class="MuiCardContent-root mui-15seape"]' |
+            Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'MuiCardContent-root mui-15seape' |
             Where-Object { $_.SelectNodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-sq0p4m"]/text()').text -eq 'Comedy'} |
             Select-Object @{n='Name'; e={[Net.WebUtility]::HtmlDecode($_.SelectNodes('.//h2[@class="MuiBox-root mui-10n19ke"]/text()').text) -replace $nameReplace}},
                 @{
@@ -61,9 +118,10 @@ function Get-ComedyShow {
                     }
                 },
                 @{n='Location'; e={$_.SelectNodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-lnhdee"]/text()').text}}
+
         Invoke-RestMethod us.atgtickets.com/venues/mahalia-jackson-theater/whats-on/ |
             PSParseHTML\ConvertFrom-HTML |
-            ForEach-Object SelectNodes '/html/body//div[@class="MuiCardContent-root mui-15seape"]' |
+            Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'MuiCardContent-root mui-15seape' |
             Where-Object { $_.SelectNodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-sq0p4m"]/text()').text -eq 'Comedy'} |
             Select-Object @{n='Name'; e={[Net.WebUtility]::HtmlDecode($_.SelectNodes('.//h2[@class="MuiBox-root mui-10n19ke"]/text()').text) -replace $nameReplace}},
                 @{
@@ -83,7 +141,7 @@ function Get-ComedyShow {
                 @{n='Location'; e={$_.SelectNodes('.//p[@class="MuiTypography-root MuiTypography-bodySmall mui-lnhdee"]/text()').text}}
         Invoke-RestMethod https://thejoytheater.com/shows/ |
             PSParseHTML\ConvertFrom-HTML |
-            ForEach-Object SelectNodes '/html/body//div[@class="seven columns"]' |
+            Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'seven columns' |
             Select-Object @{n='Name'; e={[Net.WebUtility]::HtmlDecode($_.SelectNodes('.//a/text()').text) -replace $nameReplace}},
                 @{
                     Name = 'EventHtmlObject'
@@ -103,6 +161,7 @@ function Get-ComedyShow {
                     }
                 },
                 @{n='Location'; e={'The Joy Theater'}}
+
         $civicCurrentEventUri = 'https://civicnola.com/tm-venue/'
         try {
             # For some reason the initial attempt to access the site throws an access denied and a robots page.
@@ -114,13 +173,12 @@ function Get-ComedyShow {
         }
         $civicComedyArchiveNameList = Invoke-RestMethod 'https://civicnola.com/tm_genre/comedy' |
             PSParseHTML\ConvertFrom-HTML |
-            ForEach-Object SelectNodes '/html/body//div[@class="tw-name event-title"]/text()' |
-            ForEach-Object Text |
-            ForEach-Object Trim
+            Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'tw-name event-title' |
+            Select-HtmlInnerText
         # Google /recaptcha/enterprise/anchor for TicketMaster prevents access to the ComedyEvent `eventSchema` object in the `html
         $civicHtml |
             PSParseHTML\ConvertFrom-HTML |
-            ForEach-Object SelectNodes '/html/body//div[@class="seven columns"]' |
+            Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'seven columns' |
             Select-Object @{n='Name'; e={[Net.WebUtility]::HtmlDecode($_.SelectNodes('.//a/text()').text) -replace $nameReplace}},
                 @{
                     Name = 'StartDate'
@@ -132,10 +190,11 @@ function Get-ComedyShow {
                 },
                 @{n='Location'; e={'Civic Theatre'}} |
             Where-Object Name -in $civicComedyArchiveNameList
+
         Invoke-RestMethod https://orpheumnola.com/em-ajax/get_listings/ -Method Post -Body @{ 'search_categories[]' = 'live-comedy'; per_page = 15; orderby = 'event_start_date'; order = 'ASC'; page = 1} |
             ForEach-Object -MemberName html |
             PSParseHTML\ConvertFrom-HTML |
-            ForEach-Object SelectNodes '/div//div[@class="wpem-event-details"]' |
+            Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'wpem-event-details' |
             Select-Object @{n='Name'; e={$_.SelectNodes('.//h3[@class="wpem-heading-text"]/text()').Text -replace $nameReplace}},
                 @{
                     Name = 'StartDate'
