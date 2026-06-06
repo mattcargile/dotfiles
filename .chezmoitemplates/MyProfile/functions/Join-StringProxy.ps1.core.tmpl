@@ -1,4 +1,4 @@
-# Join-StringProxy chezmoi if block {{ if eq .isPSCore true }}
+# Join-StringProxy chezmoi if block {{- if eq .isPSCore true }}
 function Join-StringProxy {
     [CmdletBinding(DefaultParameterSetName = 'default', RemotingCapability = 'None')]
     [Alias('join')]
@@ -84,4 +84,4 @@ function Join-StringProxy {
     }
 }
 # Forwarding help doesn't work because parameter positions are different
-# end {{ end }}
+# end {{- end }}
