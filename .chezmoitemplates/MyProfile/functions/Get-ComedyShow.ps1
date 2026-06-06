@@ -162,21 +162,14 @@ function Get-ComedyShow {
                 },
                 @{n='Location'; e={'The Joy Theater'}}
 
-        $civicCurrentEventUri = 'https://civicnola.com/tm-venue/'
-        try {
-            # For some reason the initial attempt to access the site throws an access denied and a robots page.
-            # Tried various headers with user agents, etc which don't matter
-            $civicHtml = Invoke-RestMethod $civicCurrentEventUri
-        }
-        catch {
-            $civicHtml = Invoke-RestMethod $civicCurrentEventUri
-        }
-        $civicComedyArchiveNameList = Invoke-RestMethod 'https://civicnola.com/tm_genre/comedy' |
+        # civicnola.com has some of fingerprinting related to TLS state. Upping to HTTP/2 "fixes" the initial error.
+        # curl doesn't appear to have this issue on http versions. User agent doesn't immediately fix the issue either. 
+        # Using `$env:DOTNET_SYSTEM_NET_SECURITY_DISABLETLSRESUME` creates a scenario where connection never succeeds
+        $civicComedyArchiveNameList = Invoke-RestMethod 'https://civicnola.com/tm_genre/comedy' -HttpVersion 2.0 |
             PSParseHTML\ConvertFrom-HTML |
             Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'tw-name event-title' |
-            Select-HtmlInnerText
-        # Google /recaptcha/enterprise/anchor for TicketMaster prevents access to the ComedyEvent `eventSchema` object in the `html
-        $civicHtml |
+            Select-HtmlInnerText -DeEntitize
+        Invoke-RestMethod 'https://civicnola.com/tm-venue/' -HttpVersion 2.0 |
             PSParseHTML\ConvertFrom-HTML |
             Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'seven columns' |
             Select-Object @{n='Name'; e={[Net.WebUtility]::HtmlDecode($_.SelectNodes('.//a/text()').text) -replace $nameReplace}},
