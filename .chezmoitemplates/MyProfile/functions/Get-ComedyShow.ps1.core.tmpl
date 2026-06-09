@@ -87,10 +87,10 @@ function Get-ComedyShow {
             }
             $HtmlNode |
                 Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'MuiCardContent-root' -StartsWith |
-                Where-Object { $_ | Select-HtmlNode -Tag p -Single | Select-HtmlInnerText -DeEntitize | Where-Object { $_ -eq 'Comedy'} } |
+                Select-HtmlNode -Tag a -Single |
+                Select-HtmlAttributeValue -AttributeName 'href' -DefaultValue '<EMPTY>' |
                 ForEach-Object -Process {
-                    $currentPathPart = $_ | Select-HtmlNode -Tag a -Single | Select-HtmlAttributeValue -AttributeName 'href' -DefaultValue '<EMPTY>'
-                    $currentJson = ConvertFrom-HtmlJsonLd -Url "https://us.atgtickets.com/$currentPathPart" |
+                    $currentJson = ConvertFrom-HtmlJsonLd -Url "https://us.atgtickets.com$_" |
                         Where-Object Type -eq 'TheaterEvent' |
                         ForEach-Object -MemberName RawJson |
                         ConvertFrom-Json
@@ -140,10 +140,10 @@ function Get-ComedyShow {
             Invoke-RestMethod $currentSportsDrinkUri | PSParseHTML\ConvertFrom-HTML | Select-OpenDate | Select-SportsDrink -NameReplaceRegex $nameReplace
         }
 
-        PSParseHTML\ConvertFrom-HTML -Url https://us.atgtickets.com/venues/saenger-theatre/whats-on/ |
+        PSParseHTML\ConvertFrom-HTML -Url https://us.atgtickets.com/venues/saenger-theatre/whats-on/us/comedy?sort=newest-onsale |
             Select-AtgTicket -NameReplaceRegex $nameReplace
 
-        PSParseHTML\ConvertFrom-HTML -Url https://us.atgtickets.com/venues/mahalia-jackson-theater/whats-on/ |
+        PSParseHTML\ConvertFrom-HTML -Url https://us.atgtickets.com/venues/mahalia-jackson-theater/whats-on/us/comedy?sort=newest-onsale |
             Select-AtgTicket -NameReplaceRegex $nameReplace
 
         $joyInterSelSplat = @{
