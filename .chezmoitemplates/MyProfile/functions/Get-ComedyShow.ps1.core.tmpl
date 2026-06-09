@@ -73,7 +73,7 @@ function Get-ComedyShow {
                 Property = @(
                     @{
                         Name = 'Name'
-                        Expression = { $_.name }
+                        Expression = { $_.name -replace $NameReplaceRegex }
                     }
                     @{
                         Name = 'StartDate'
@@ -90,13 +90,17 @@ function Get-ComedyShow {
                 Where-Object { $_ | Select-HtmlNode -Tag p -Single | Select-HtmlInnerText -DeEntitize | Where-Object { $_ -eq 'Comedy'} } |
                 ForEach-Object -Process {
                     $currentPathPart = $_ | Select-HtmlNode -Tag a -Single | Select-HtmlAttributeValue -AttributeName 'href' -DefaultValue '<EMPTY>'
-                    PSParseHTML\ConvertFrom-HTML -Url "https://us.atgtickets.com/$currentPathPart" |
-                        Select-HtmlNode -Tag script -AttributeName type -AttributeValue 'application/ld+json' |
-                        Select-Object -Last 1 |
-                        Select-HtmlInnerText -NoTrim |
+                    $currentJson = ConvertFrom-HtmlJsonLd -Url "https://us.atgtickets.com/$currentPathPart" |
+                        Where-Object Type -eq 'TheaterEvent' |
+                        ForEach-Object -MemberName RawJson |
                         ConvertFrom-Json
+                    if ($currentJson.subEvent) {
+                        $currentJson.subEvent
+                    }
+                    else {
+                        $currentJson # Events may not have multiple dates
+                    }
                 } |
-                ForEach-Object -MemberName subEvent |
                 Select-Object @selSplat
         }
     }
