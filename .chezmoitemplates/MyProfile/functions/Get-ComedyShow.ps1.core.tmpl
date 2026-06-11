@@ -41,7 +41,7 @@ function Get-ComedyShow {
                 [string]
                 $NameReplaceRegex
             )
-            $regexNotMatch = 'open gym|film_pod|moral panic|community night|spoonful of sugar|tropical trivia|new orleans spelling bee|Ted & Kev|Karaoke Night|no br lft|thank you for your purchase|bing-oh|track limits'
+            $regexNotMatch = 'open gym|film_pod|moral panic|community night|spoonful of sugar|tropical trivia|new orleans spelling bee|Ted & Kev|Karaoke Night|no br lft|thank you for your purchase|bing-oh|track limits|Show To Be Announced|burn this records|black girl giggles|Trust Me I''m A Professional|christmas comedy show|joke beats'
             $selectSplat  = @{
                 Property = @(
                     @{
@@ -112,7 +112,7 @@ function Get-ComedyShow {
             Where-Object Type -eq ComedyEvent |
             ForEach-Object -MemberName RawJson |
             ConvertFrom-Json |
-            Where-Object name -notma 'stoned vs\.? drunk|stoned vs\.? stoned|roast battle league|comedy teabag|work the crowd|anger management: comedy meets|certified killers comedy showcase|gun control: comedy show' |
+            Where-Object name -notma 'stoned vs\.? drunk|stoned vs\.? stoned|roast battle league|comedy teabag|work the crowd|anger management: comedy meets|certified killers comedy showcase|gun control: comedy show|Comedy At The ''Funk' |
             Select-Object @{n='Name'; e={$_.name -replace $nameReplace}},
                 @{n='StartDate'; e={$_.startdate}},
                 @{n='Location'; e={$_.location.name}}
@@ -121,7 +121,7 @@ function Get-ComedyShow {
             Where-Object Type -eq ComedyEvent |
             ForEach-Object -MemberName RawJson |
             ConvertFrom-Json |
-            Where-Object name -notma 'stoned vs\.? drunk|stoned vs\.? stoned|roast battle league|glitz & giggles|bun intended \- a standup comedy show|hair of the dog comedy night' |
+            Where-Object name -notma 'stoned vs\.? drunk|stoned vs\.? stoned|roast battle league|glitz & giggles|bun intended \- a standup comedy show|hair of the dog comedy night|cereal killers|we''re dying down here podcast|best of the fest' |
             Select-Object @{n='Name'; e={$_.name -replace $nameReplace}},
                 @{n='StartDate'; e={$_.startdate}},
                 @{n='Location'; e={$_.location.name}}
