@@ -1,3 +1,2 @@
-{{- /* 7 day refresh cycle */ -}}
 {{- $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .sourceDir ".chezmoitemplates" "tools" "Write-FileSystemInfoIconGlyph.ps1" ) -}}
 {{- outputList "pwsh" $argCompleterArgList -}}
