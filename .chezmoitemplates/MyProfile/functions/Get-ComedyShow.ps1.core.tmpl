@@ -128,8 +128,7 @@ function Get-ComedyShow {
 
         $sportsDrinkBaseUri = 'https://app.opendate.io/v/sports-drink-1939'
         $sportsDrinkPageQueryParamFormat = 'page={0}'
-        $sportsDrinkFirstPage = Invoke-RestMethod $sportsDrinkBaseUri |
-            PSParseHTML\ConvertFrom-HTML
+        $sportsDrinkFirstPage = PSParseHTML\ConvertFrom-HTML -Url $sportsDrinkBaseUri
         $sportsDrinkLastPageNumber = $sportsDrinkFirstPage | Select-HtmlNode -Tag a -AttributeName 'class' -AttributeValue 'page-link' |
             Select-HtmlInnerText -DeEntitize |
             Select-Object -Last 2 |
@@ -137,7 +136,7 @@ function Get-ComedyShow {
         $sportsDrinkFirstPage | Select-OpenDate | Select-SportsDrink -NameReplaceRegex $nameReplace
         foreach ($currentSportsDrinkPage in 2..$sportsDrinkLastPageNumber) {
             $currentSportsDrinkUri = "${sportsDrinkBaseUri}?$($sportsDrinkPageQueryParamFormat -f $currentSportsDrinkPage)"
-            Invoke-RestMethod $currentSportsDrinkUri | PSParseHTML\ConvertFrom-HTML | Select-OpenDate | Select-SportsDrink -NameReplaceRegex $nameReplace
+            PSParseHTML\ConvertFrom-HTML -Url $currentSportsDrinkUri | Select-OpenDate | Select-SportsDrink -NameReplaceRegex $nameReplace
         }
 
         PSParseHTML\ConvertFrom-HTML -Url https://us.atgtickets.com/venues/saenger-theatre/whats-on/us/comedy?sort=newest-onsale |
