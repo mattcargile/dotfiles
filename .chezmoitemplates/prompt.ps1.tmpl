@@ -4,11 +4,11 @@ function Set-MyOmpContext {
     [System.Environment]::CurrentDirectory = (Get-Location -PSProvider FileSystem).ProviderPath
 }
 {{/*
-     * scoop `Set-Alias` on each run
-     * Want to prevent it from setting this over and over and causing `$WhatIfPreference = $true` to trigger
-     * https://github.com/ScoopInstaller/Scoop/pull/4794
-     * https://github.com/ScoopInstaller/Scoop/blob/b588a06e41d920d2123ec70aee682bae14935939/bin/scoop.ps1#L11-L15
-     */}}
+   * scoop runs `Set-Alias` on every call
+   * Want to prevent it from setting this over and over and causing `$WhatIfPreference = $true` to trigger
+   * https://github.com/ScoopInstaller/Scoop/pull/4794
+   * https://github.com/ScoopInstaller/Scoop/blob/b588a06e41d920d2123ec70aee682bae14935939/bin/scoop.ps1#L11-L15
+   */}}
 Set-Alias -Name 'Set-PoshContext' -Value 'Set-MyOmpContext' -Option ReadOnly -Force
 oh-my-posh @(
     'init'
