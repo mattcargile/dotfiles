@@ -9,12 +9,20 @@ Set-StrictMode -Version Latest
 $scoopAliasToSync = @(
     @{
         Name = 'finfo'
-        Command = 'sfsu.exe info @args'
+        Command = 'sfsu.exe info --json @args | ConvertFrom-Json'
         Summary = 'Fast info with sfsu.exe'
     }
     @{
         Name = 'fsearch'
-        Command = 'sfsu.exe search @args'
+        Command = @'
+(sfsu.exe search --json @args | ConvertFrom-Json).psobject.Properties.Value |
+        & {
+            process {
+                $_.pstypenames.Insert(0, 'MyProfile.ScoopSfsuPackagesSearch')
+                $_
+            }
+        }
+'@
         Summary = 'Fast search with sfsu.exe'
     }
     @{
@@ -31,7 +39,7 @@ if ($LASTEXITCODE -ne 0) {
     & {
         process {
             if ( $_.current -ne $_.available ) {
-                $_.pstypenames.Insert(0, 'Profile.ScoopSfsuPackagesStatus')
+                $_.pstypenames.Insert(0, 'MyProfile.ScoopSfsuPackagesStatus')
                 $_
             }
         }

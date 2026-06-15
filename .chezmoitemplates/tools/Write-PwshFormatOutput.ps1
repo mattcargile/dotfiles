@@ -11,7 +11,7 @@ end {
 
     #region Scoop sfsu
     $writeFormatViewSplat = @{
-        TypeName = 'Profile.ScoopSfsuPackagesStatus'
+        TypeName = 'MyProfile.ScoopSfsuPackagesStatus'
         Property = 'Name', 'Installed Version', 'Latest Version', 'Missing Dependencies', 'Info'
         Width = 20, 25, 25, 25, 20
         AliasProperty = @{
@@ -20,6 +20,20 @@ end {
             'Latest Version' = 'available'
             'Missing Dependencies' = 'missing_dependencies'
             'Info' = 'info'
+        }
+    }
+    $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
+
+    $writeFormatViewSplat = @{
+        TypeName = 'MyProfile.ScoopSfsuPackagesSearch'
+        Property = 'Name', 'Version', 'Source', 'Binaries', 'Installed'
+        Width = 15, 15, 15, 15, 10
+        AliasProperty = @{
+            'Name' = 'name'
+            'Version' = 'version'
+            'Source' = 'bucket'
+            'Binaries' = 'bin'
+            'Installed' = 'installed'
         }
     }
     $formatList.Add( (Write-FormatView @writeFormatViewSplat) )
