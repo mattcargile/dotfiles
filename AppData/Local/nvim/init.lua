@@ -251,6 +251,14 @@ do
     group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
     callback = function() vim.hl.on_yank() end,
   })
+
+  -- mssql.nvim disable wrap on the query results
+  vim.api.nvim_create_autocmd( { 'BufEnter', 'BufWinEnter' }, {
+    pattern = 'results *',
+    callback = function()
+      vim.wo.wrap = false
+    end
+  })
 end
 
 -- ============================================================
