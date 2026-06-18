@@ -8,6 +8,21 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. work on `py` handling. No longer needed or functional for oh-my-posh. Need to disable the App Execution Aliases in Windows. Appears one would need to clear entry from `HKCU:\Software\Microsoft\Windows\CurrentVersion\App Paths` and the file at `$env:LOCALAPPDATA\Microsoft\WindowsApps`. https://superuser.com/a/1746939 Use `py -m pip list` instead of `pip`
 1. check for missing key handlers when moving to vi mode like copy and paste and ctrl backspace.
 1. handle `@''@` and `@""@` in psrl
+1. Handle `nvim` folders on for _*nix_
+1. Handle missing `scoop` and avoid the publish script
+1. Handle dependencies on `vim.pack` like `cl.exe`. Need the below
+   ```powershell
+    sudo choco install visualstudio2026buildtools -y
+    sudo choco install visualstudio2026-workload-vctools -y
+    ```
+1. Handle other binaries like `make`, `unzip`, `gzip`, `mingw`, `tree-sitter`, `luarocks` ( main lua package has old verison ). Can use `scoop` to install these.
+1. add `gsudo` change token to non-admin to install `scoop` in certain scenarios.
+   ```powershell
+    gsudo --integrity Medium 'pwsh -c { irm get.scoop.sh | iex}'
+   ```
+1. Explore `nvim` mini status line with `mssql.nvim`.
+1. explore `vim.pack` plugin which makes jumping easier with `f` an `t`. something easy jump or the like that highlights the second or third `t` or the like to go further than word, etc.
+1. figure out why `at` and `top` won't work inside `s { $_.commandline | slexe | at 1}` context initiall until `at` is run once outside. Might need to initialize the class somehow on module load before
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
