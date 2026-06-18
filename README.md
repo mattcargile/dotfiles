@@ -23,6 +23,7 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. Explore `nvim` mini status line with `mssql.nvim`.
 1. explore `vim.pack` plugin which makes jumping easier with `f` an `t`. something easy jump or the like that highlights the second or third `t` or the like to go further than word, etc.
 1. figure out why `at` and `top` won't work inside `s { $_.commandline | slexe | at 1}` context initiall until `at` is run once outside. Might need to initialize the class somehow on module load before
+1. handle none found on `scoop fsearch vimdiff`. Need to check output of `sfsu` as it must be piping something in a native fashion into the pipe.
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
