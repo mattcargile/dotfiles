@@ -440,24 +440,34 @@ do
   -- - sr)'  - [S]urround [R]eplace [)] [']
   require('mini.surround').setup()
 
+  vim.pack.add { gh 'Kurren123/mssql.nvim' }
+  local msSql = require( 'mssql' )
+  msSql.setup { keymap_prefix = '<leader>m' }
+  local msSqlStatusLineComponent = msSql.lualine_component
+
   -- Simple and easy statusline.
   --  You could remove this setup call if you don't like it,
   --  and try some other statusline plugin
-  local statusline = require 'mini.statusline'
   -- Set `use_icons` to true if you have a Nerd Font
-  statusline.setup { use_icons = vim.g.have_nerd_font }
+  require('mini.statusline').setup { use_icons = vim.g.have_nerd_font }
 
   -- You can configure sections in the statusline by overriding their
   -- default behavior. For example, here we set the section for
   -- cursor location to LINE:COLUMN
   ---@diagnostic disable-next-line: duplicate-set-field
-  statusline.section_location = function() return '%2l:%-2v' end
+  MiniStatusline.section_location = function()
+    local out = ''
+    local lineColumn = '%2l:%-2v'
+    if msSqlStatusLineComponent.cond() then
+      out = lineColumn .. msSqlStatusLineComponent[1]()
+    else
+      out = lineColumn
+    end
+    return out
+  end
 
   -- ... and there is more!
   --  Check out: https://github.com/nvim-mini/mini.nvim
-
-  vim.pack.add { gh 'Kurren123/mssql.nvim' }
-  require( 'mssql' ).setup { keymap_prefix = '<leader>m' }
 
 end
 
