@@ -2,6 +2,11 @@ function Set-MyOmpContext {
     param([bool]$originalStatus)
 {{- /* Helper for relative pathing on dotnet methods. They use the process level path. */}}
     [System.Environment]::CurrentDirectory = (Get-Location -PSProvider FileSystem).ProviderPath
+{{- /* Ensure nvim exited shells are in Insert Mode Steady bar cursor shape. With wezterm and Windows Terminal the default appears to be a block. nvim may be reseting and terminals aren't handling well. */}}
+    if ([Microsoft.PowerShell.PSConsoleReadLine]::InViInsertMode()) {
+{{- /* Steady bar cursor shape */}}
+        [Console]::Write("$([char]0x1B)[6 q")
+    }
 }
 {{/*
    * scoop runs `Set-Alias` on every call
