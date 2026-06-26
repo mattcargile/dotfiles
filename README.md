@@ -20,10 +20,16 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
    ```powershell
     gsudo --integrity Medium 'pwsh -c { irm get.scoop.sh | iex}'
    ```
-1. Explore `nvim` mini status line with `mssql.nvim`.
+1. Explore `nvim` mini status line with `mssql.nvim`. add it to the left side instead maybe.
 1. explore `vim.pack` plugin which makes jumping easier with `f` an `t`. something easy jump or the like that highlights the second or third `t` or the like to go further than word, etc.
 1. figure out why `at` and `top` won't work inside `s { $_.commandline | slexe | at 1}` context initiall until `at` is run once outside. Might need to initialize the class somehow on module load before
 1. handle none found on `scoop fsearch vimdiff`. Need to check output of `sfsu` as it must be piping something in a native fashion into the pipe.
+1. alias psrl key handler doesn't work when using an alias like `badb` before the module is loaded. need to add `get-command` lookup or `ipmo` or maybe `if` with `gmo`.
+1. `mssql.nvim`, handle results output opt. maybe make the bottom window have a different size depending on results size.
+1. `mssql.nvim` has another op delegate for the handle for the messages. would need a `function()` to collect all the messages into one and then write it to a buffer.
+1. maybe disable arrow keys to force keyboard changing. need better special characters
+1. set up lsp for `pwsh` and `.cs`
+1. handle carapace excludes better between unix and windows. `strings` is an example which breaks on windows.
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
