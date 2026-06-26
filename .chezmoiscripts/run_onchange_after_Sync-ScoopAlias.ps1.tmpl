@@ -6,6 +6,7 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
+# sfsu search returns empty json `{}` upon no finding data
 $scoopAliasToSync = @(
     @{
         Name = 'finfo'
@@ -16,12 +17,13 @@ $scoopAliasToSync = @(
         Name = 'fsearch'
         Command = @'
 (sfsu.exe search --json @args | ConvertFrom-Json).psobject.Properties.Value |
-        & {
-            process {
-                $_.pstypenames.Insert(0, 'MyProfile.ScoopSfsuPackagesSearch')
-                $_
-            }
+    Where-Object { $null -ne $_ } |
+    & {
+        process {
+            $_.pstypenames.Insert(0, 'MyProfile.ScoopSfsuPackagesSearch')
+            $_
         }
+    }
 '@
         Summary = 'Fast search with sfsu.exe'
     }
@@ -54,6 +56,7 @@ if ($null -eq $args[0]) {
     $args += '.*'
 }
 ( sfsu.exe search --installed --json @args | ConvertFrom-Json ).psobject.Properties.Value |
+    Where-Object { $null -ne $_ } |
     Select-Object @{Name = 'Name'; Expression = {$_.name}},
         @{Name = 'Version'; Expression={$_.version}},
         @{Name = 'Source'; Expression = {$_.bucket}}
