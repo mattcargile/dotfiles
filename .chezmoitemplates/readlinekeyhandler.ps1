@@ -1,5 +1,5 @@
 #region For part way completion of History PredictionSource
-Set-PSReadLineKeyHandler -Chord 'Ctrl+RightArrow' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ScriptBlock {
+Set-PSReadLineKeyHandler -Chord 'Ctrl+Y' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ScriptBlock {
     param($key, $arg)
 
     $line = $null
@@ -434,6 +434,21 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+a' -Function SelectAll -ViMode Insert
 Set-PSReadLineKeyHandler -Chord 'Ctrl+a' -Function SelectAll -ViMode Command
 Set-PSReadLineKeyHandler -Chord 'Ctrl+c' -Function CopyOrCancelLine -ViMode Insert
 Set-PSReadLineKeyHandler -Chord 'Ctrl+c' -Function CopyOrCancelLine -ViMode Command
+Set-PSReadLineKeyHandler -Chord 'Ctrl+p' -Function PreviousHistory -ViMode Insert
+Set-PSReadLineKeyHandler -Chord 'Ctrl+n' -Function NextHistory -ViMode Insert
+
+Remove-PSReadLineKeyHandler -Key 'UpArrow' -ViMode Insert
+Remove-PSReadLineKeyHandler -Key 'UpArrow' -ViMode Command
+Remove-PSReadLineKeyHandler -Key 'DownArrow' -ViMode Insert
+Remove-PSReadLineKeyHandler -Key 'DownArrow' -ViMode Command
+Remove-PSReadLineKeyHandler -Key 'LeftArrow' -ViMode Insert
+Remove-PSReadLineKeyHandler -Key 'LeftArrow' -ViMode Command
+Remove-PSReadLineKeyHandler -Key 'RightArrow' -ViMode Insert
+Remove-PSReadLineKeyHandler -Key 'RightArrow' -ViMode Command
+Remove-PSReadLineKeyHandler -Key 'Ctrl+RightArrow' -ViMode Insert
+Remove-PSReadLineKeyHandler -Key 'Ctrl+RightArrow' -ViMode Command
+Remove-PSReadLineKeyHandler -Key 'Ctrl+LeftArrow' -ViMode Insert
+Remove-PSReadLineKeyHandler -Key 'Ctrl+LeftArrow' -ViMode Command
 # code and wezterm terminals don't handle typical `Ctrl+Spacebar` usage for some reason
 Set-PSReadLineKeyHandler -Chord 'Ctrl+@' -Function MenuComplete -ViMode Insert
 #endregion
