@@ -1,5 +1,5 @@
 #region For part way completion of History PredictionSource
-Set-PSReadLineKeyHandler -Chord 'Ctrl+Y' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ScriptBlock {
+Set-PSReadLineKeyHandler -Chord 'Ctrl+Y' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ViMode Insert -ScriptBlock {
     param($key, $arg)
 
     $line = $null
@@ -436,6 +436,7 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+c' -Function CopyOrCancelLine -ViMode Inse
 Set-PSReadLineKeyHandler -Chord 'Ctrl+c' -Function CopyOrCancelLine -ViMode Command
 Set-PSReadLineKeyHandler -Chord 'Ctrl+p' -Function PreviousHistory -ViMode Insert
 Set-PSReadLineKeyHandler -Chord 'Ctrl+n' -Function NextHistory -ViMode Insert
+Set-PSReadLineKeyHandler -Chord 'Ctrl+y' -Function AcceptSuggestion -ViMode Insert
 
 Remove-PSReadLineKeyHandler -Key 'UpArrow' -ViMode Insert
 Remove-PSReadLineKeyHandler -Key 'UpArrow' -ViMode Command
