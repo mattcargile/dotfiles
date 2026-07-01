@@ -133,7 +133,7 @@ end {
         Width = @(15,25,10,10,10)
         Property = 'ComputerName', 'Name', 'Type', 'FreeSpace', 'TotalSpace'
         VirtualProperty = @{
-            FreeSpace= { $_.TotalFreeBytes | ConvertTo-HnmByteSize '0.00' }
+            FreeSpace= { $_.TotalFreeBytes | ConvertTo-HmnByteSize '0.00' }
             TotalSpace={ $_.TotalBytes | ConvertTo-HmnByteSize '0.00' } 
         }
     }
