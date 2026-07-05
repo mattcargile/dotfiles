@@ -440,25 +440,42 @@ do
   require('mini.surround').setup()
 
   vim.pack.add { gh 'Kurren123/mssql.nvim' }
-  local msSql = require( 'mssql' )
-  msSql.setup { keymap_prefix = '<leader>m' }
+  local msSql = require 'mssql'
+  msSql.setup {
+    keymap_prefix = '<leader>m',
+    max_rows = 5000,
+    max_column_width = 500,
+  }
+  vim.keymap.set('n', '<leader>my', function()
+    local originalVCount1 = vim.v.count1
+    local normalArgs = '^ll"%syEj'
+    local register = 'a'
+    vim.cmd.normal {
+      args = { normalArgs:format(register) },
+      bang = true,
+    }
+    register = 'A'
+    for _ = 2, originalVCount1, 1 do
+      vim.fn.setreg('a', vim.keycode '<LF>', 'ac') -- Options a is append. c for charwise mode ( otherwise we get multiple newlines )
+      vim.cmd.normal {
+        args = { normalArgs:format(register) },
+        bang = true,
+      }
+    end
+  end, {
+    desc = 'Custom markdown select for SQL column layout. Requires custom four spaced prefixed column names with commas at end.',
+  })
+
   local msSqlStatusLineComponent = msSql.lualine_component
 
-  -- Simple and easy statusline.
-  --  You could remove this setup call if you don't like it,
-  --  and try some other statusline plugin
-  -- Set `use_icons` to true if you have a Nerd Font
   require('mini.statusline').setup { use_icons = vim.g.have_nerd_font }
 
-  -- You can configure sections in the statusline by overriding their
-  -- default behavior. For example, here we set the section for
-  -- cursor location to LINE:COLUMN
   ---@diagnostic disable-next-line: duplicate-set-field
   MiniStatusline.section_location = function()
     local out = ''
-    local lineColumn = '%2l:%-2v'
+    local lineColumn = '%2l:%-2v' -- LINE:COLUMN
     if msSqlStatusLineComponent.cond() then
-      out = lineColumn .. msSqlStatusLineComponent[1]()
+       out = lineColumn .. ' ' .. msSqlStatusLineComponent[1]()
     else
       out = lineColumn
     end
