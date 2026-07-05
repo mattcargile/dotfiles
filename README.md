@@ -30,6 +30,12 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. maybe disable arrow keys to force keyboard changing. need better special characters
 1. set up lsp for `pwsh` and `.cs`
 1. handle carapace excludes better between unix and windows. `strings` is an example which breaks on windows.
+1. add _powertoys_ keymap settings for cmd pal. local app data microsoft powertoys. there is a backup file in onedrive documents powertoys that is a zip archive too.
+1. set up `.chezmoitemplates` for _*nix_ and _windows_
+1. set up `.gitattributes` for the nvim lock json. probably need a template of the file and then in the actual file had a `chezmoi` directive for the line endings.
+1. sync up my nvim configs across locals and remotes. some features are only on certain machines.
+1. handle syncing up the chromium _vimium_ json config. is there a way to auto import it or sync it on the file system or does the import have to happen manually in the browser?
+1. redo the `mini.statusline` to better present the _mssql.nvim_ data.
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
