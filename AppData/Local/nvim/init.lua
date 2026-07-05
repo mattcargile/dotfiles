@@ -249,15 +249,14 @@ do
   vim.api.nvim_create_autocmd('TextYankPost', {
     desc = 'Highlight when yanking (copying) text',
     group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
-    callback = function() vim.hl.on_yank() end,
+    callback = function() vim.hl.on_yank() end
   })
 
-  -- mssql.nvim disable wrap on the query results
   vim.api.nvim_create_autocmd( { 'BufEnter', 'BufWinEnter' }, {
+    desc = 'Disable wrap for mssql.nvim results',
     pattern = 'results *',
-    callback = function()
-      vim.wo.wrap = false
-    end
+    group = vim.api.nvim_create_augroup('mynvim-mssql-bufenter', { clear = true }),
+    callback = function() vim.wo.wrap = false end
   })
 end
 
@@ -999,6 +998,8 @@ do
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   -- require 'custom.plugins'
+  vim.pack.add { gh 'swaits/tiny-jump.nvim' }
+  vim.keymap.set( { 'n', 'x', 'o' }, 'sj', require('tiny-jump').start)
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
