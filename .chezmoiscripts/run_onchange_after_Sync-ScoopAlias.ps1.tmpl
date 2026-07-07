@@ -70,7 +70,7 @@ if ($null -eq $args[0]) {
     & {
         process {
             if ( $_.current -ne $_.available ) {
-                $_.pstypenames.Insert(0, 'Profile.ScoopSfsuPackagesStatus')
+                $_.pstypenames.Insert(0, 'MyProfile.ScoopSfsuPackagesStatus')
                 $_
             }
         }
