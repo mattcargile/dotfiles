@@ -738,9 +738,7 @@ do
     -- gopls = {},
     -- pyright = {},
     -- rust_analyzer = {},
-    powershell_es = {
-      filetypes = { 'ps1', 'psm1', 'psd1' } -- Defaults only have `ps1`. Check to remove in https://github.com/neovim/nvim-lspconfig/pull/4475
-    },
+    powershell_es = {}, -- ft plugin handles the file types. Only `psrc` is missing. https://github.com/PProvost/vim-ps1/issues/63
     --
     -- Some languages (like typescript) have entire language plugins that can be useful:
     --    https://github.com/pmizio/typescript-tools.nvim
