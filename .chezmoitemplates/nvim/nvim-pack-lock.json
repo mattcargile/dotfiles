@@ -112,6 +112,10 @@
       "rev": "9377230aa5305d9e9aca4ed8dadf1070fb4aa9fc",
       "src": "https://github.com/nvim-telescope/telescope.nvim"
     },
+    "tiny-jump.nvim": {
+      "rev": "16a0eeda94b6fda4337f0efd48dc99fca0e54288",
+      "src": "https://github.com/swaits/tiny-jump.nvim"
+    },
     "todo-comments.nvim": {
       "rev": "31e3c38ce9b29781e4422fc0322eb0a21f4e8668",
       "src": "https://github.com/folke/todo-comments.nvim"
