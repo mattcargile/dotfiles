@@ -12,6 +12,7 @@ vim.pack.add {
   'https://github.com/nvim-neotest/nvim-nio',
   'https://github.com/mason-org/mason.nvim',
   'https://github.com/jay-babu/mason-nvim-dap.nvim',
+  'https://github.com/TheLeoP/powershell.nvim'
   --'https://github.com/leoluz/nvim-dap-go',
 }
 

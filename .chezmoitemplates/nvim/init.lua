@@ -740,7 +740,6 @@ do
     -- gopls = {},
     -- pyright = {},
     -- rust_analyzer = {},
-    -- powershell_es = {}, -- ft plugin handles the file types. Only `psrc` is missing. https://github.com/PProvost/vim-ps1/issues/63
     --
     -- Some languages (like typescript) have entire language plugins that can be useful:
     --    https://github.com/pmizio/typescript-tools.nvim
@@ -794,7 +793,9 @@ do
 
   -- Automatically install LSPs and related tools to stdpath for Neovim
   require('mason').setup {}
-  require('mason-lspconfig').setup {}
+  require('mason-lspconfig').setup {
+    automatic_enable = false -- Don't want to auto enable because it breaks powershell.nvim 
+  }
 
   -- Ensure the servers and tools above are installed
   --
@@ -805,7 +806,7 @@ do
   -- You can press `g?` for help in this menu.
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
-    -- You can add other tools here that you want Mason to install
+    'powershell_es' -- ft plugin handles the file types. Only `psrc` is missing. https://github.com/PProvost/vim-ps1/issues/63
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -814,11 +815,6 @@ do
     vim.lsp.config(name, server)
     vim.lsp.enable(name)
   end
-
-  vim.pack.add { gh 'TheLeoP/powershell.nvim' }
-  require('powershell').setup {
-    bundle_path = vim.fn.expand "$MASON/packages/powershell-editor-services"
-  }
 end
 
 -- ============================================================
@@ -1002,25 +998,48 @@ do
     end,
   })
 
-  vim.treesitter.query.add_directive("inject-go-tmpl!", function(_, _, bufnr, _, metadata)
-    local fname = vim.api.nvim_buf_get_name(bufnr)
+  vim.api.nvim_create_autocmd('FileType', {
+    group = vim.api.nvim_create_augroup( 'mynvim-ft-ps1', {clear = true} ),
+    pattern = 'ps1',
+    callback = function()
+      local pwsh = require('powershell')
+      vim.keymap.set("n", "<leader>ld", function() pwsh.toggle_debug_term() end, {desc = 'PowerShe[l]l [D]ebug Term'})
+      vim.keymap.set("n", "<leader>lt", function() pwsh.toggle_term() end, {desc = 'PowerShe[l]l [T]erm'})
+      vim.keymap.set({ "n", "x" }, "<leader>le", function() pwsh.eval() end, {desc = 'PowerShe[l]l [E]valuate Line'})
+
+      local wk = require('which-key')
+      wk.add(
+        {'<leader>l', group = 'Powershell', buffer = 0}
+      )
+    end
+  })
+
+  vim.treesitter.query.add_directive('inject-go-tmpl!', function(_, _, bufnr, _, metadata)
+    if type(bufnr) ~= 'number' then return end
+    local target_buf = math.floor(bufnr)
+    if not target_buf then
+      return
+    end
+
+    local fname = vim.api.nvim_buf_get_name(target_buf)
     local fnameNoEndingExt = vim.fn.fnamemodify(fname, ':p:r' ) -- Full path, remove last extension
     local ft = vim.filetype.match({ filename = fnameNoEndingExt })
     if not ft then
       return
     end
-    metadata["injection.language"] = ft
-  end, {})
+
+    metadata['injection.language'] = ft
+  end, {force = true})
 
   vim.filetype.add({
     extension = {
-      tmpl = "gotmpl",
+      tmpl = 'gotmpl',
     },
   })
 
   vim.treesitter.query.set(
-    "gotmpl",
-    "injections",
+    'gotmpl',
+    'injections',
     [[
       ; extends
       ((text) @injection.content
@@ -1050,6 +1069,7 @@ do
   require 'kickstart.plugins.autopairs'
   require 'kickstart.plugins.neo-tree'
   require 'kickstart.plugins.gitsigns' -- adds gitsigns recommended keymaps
+
 
   -- NOTE: You can add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --
