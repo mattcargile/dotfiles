@@ -1001,6 +1001,33 @@ do
       end
     end,
   })
+
+  vim.treesitter.query.add_directive("inject-go-tmpl!", function(_, _, bufnr, _, metadata)
+    local fname = vim.api.nvim_buf_get_name(bufnr)
+    local fnameNoEndingExt = vim.fn.fnamemodify(fname, ':p:r' ) -- Full path, remove last extension
+    local ft = vim.filetype.match({ filename = fnameNoEndingExt })
+    if not ft then
+      return
+    end
+    metadata["injection.language"] = ft
+  end, {})
+
+  vim.filetype.add({
+    extension = {
+      tmpl = "gotmpl",
+    },
+  })
+
+  vim.treesitter.query.set(
+    "gotmpl",
+    "injections",
+    [[
+      ; extends
+      ((text) @injection.content
+        (#inject-go-tmpl!)
+        (#set! injection.combined))
+    ]]
+  )
 end
 
 -- ============================================================
