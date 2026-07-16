@@ -740,7 +740,7 @@ do
     -- gopls = {},
     -- pyright = {},
     -- rust_analyzer = {},
-    powershell_es = {}, -- ft plugin handles the file types. Only `psrc` is missing. https://github.com/PProvost/vim-ps1/issues/63
+    -- powershell_es = {}, -- ft plugin handles the file types. Only `psrc` is missing. https://github.com/PProvost/vim-ps1/issues/63
     --
     -- Some languages (like typescript) have entire language plugins that can be useful:
     --    https://github.com/pmizio/typescript-tools.nvim
@@ -814,6 +814,11 @@ do
     vim.lsp.config(name, server)
     vim.lsp.enable(name)
   end
+
+  vim.pack.add { gh 'TheLeoP/powershell.nvim' }
+  require('powershell').setup {
+    bundle_path = vim.fn.expand "$MASON/packages/powershell-editor-services"
+  }
 end
 
 -- ============================================================
