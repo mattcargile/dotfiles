@@ -385,6 +385,11 @@ do
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
       { 'gr', group = 'LSP Actions', mode = { 'n' } },
     },
+    -- Consider the below issue and code if visual mode and `vim.v.count` break
+    -- https://github.com/folke/which-key.nvim/issues/824
+    -- triggers = {
+    --   { '<auto>', mode = 'nsot' }
+    -- }
   }
 
   -- [[ Colorscheme ]]
