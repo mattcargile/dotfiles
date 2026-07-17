@@ -94,6 +94,8 @@ dap.listeners.before.event_exited['dapui_config'] = dapui.close
 --     detached = vim.fn.has 'win32' == 0,
 --   },
 -- }
+
+-- Need to have dap set up prior to this set up. This also handles lsp, etc
 require('powershell').setup {
   bundle_path = vim.fn.expand "$MASON/packages/powershell-editor-services"
 }
