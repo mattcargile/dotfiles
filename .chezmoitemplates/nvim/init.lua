@@ -388,7 +388,7 @@ do
     -- Consider the below issue and code if visual mode and `vim.v.count` break
     -- https://github.com/folke/which-key.nvim/issues/824
     -- triggers = {
-    --   { '<auto>', mode = 'nsot' }
+    --   { '<auto>', mode = 'nisotc' }
     -- }
   }
 
