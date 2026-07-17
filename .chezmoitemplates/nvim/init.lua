@@ -175,6 +175,7 @@ do
   -- Begin custom settings
   -- :h ft_sql
   vim.g.ftplugin_sql_statements = "create,alter,create or alter"
+  vim.o.winborder = 'rounded'
 end
 
 -- ============================================================
