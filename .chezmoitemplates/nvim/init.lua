@@ -793,9 +793,10 @@ do
 
   -- Automatically install LSPs and related tools to stdpath for Neovim
   require('mason').setup {}
-  require('mason-lspconfig').setup {
-    automatic_enable = false -- Don't want to auto enable because it breaks powershell.nvim 
-  }
+  -- `mason-lspconfig` has methods to map the keys in the above `servers` table for `nvim-lspconfig`.
+  -- There isn't a need to run `setup` unless there is a specific lsp that might have custom config.
+  -- For instance, `powershell_es` has the `bundle_path` specified in `mason-lspconfig` making it
+  -- easier to auto enable. It is more problematic because the below will enable the lsp too.
 
   -- Ensure the servers and tools above are installed
   --
