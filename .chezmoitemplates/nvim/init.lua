@@ -287,26 +287,6 @@ do
     },
   }
 
-  -- Useful plugin to show you pending keybinds.
-  vim.pack.add { gh 'folke/which-key.nvim' }
-  require('which-key').setup {
-    -- Delay between pressing a key and opening which-key (milliseconds)
-    delay = 0,
-    icons = { mappings = vim.g.have_nerd_font },
-    -- Document existing key chains
-    spec = {
-      { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
-      { '<leader>t', group = '[T]oggle' },
-      { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
-      { 'gr', group = 'LSP Actions', mode = { 'n' } },
-    },
-    -- Consider the below issue and code if visual mode and `vim.v.count` break
-    -- https://github.com/folke/which-key.nvim/issues/824
-    -- triggers = {
-    --   { '<auto>', mode = 'nisotc' }
-    -- }
-  }
-
   -- [[ Colorscheme ]]
   -- You can easily change to a different colorscheme.
   -- Change the name of the colorscheme plugin below, and then
@@ -938,11 +918,6 @@ do
       vim.keymap.set("n", "<leader>ld", function() pwsh.toggle_debug_term() end, {desc = 'PowerShe[l]l [D]ebug Term'})
       vim.keymap.set("n", "<leader>lt", function() pwsh.toggle_term() end, {desc = 'PowerShe[l]l [T]erm'})
       vim.keymap.set({ "n", "x" }, "<leader>le", function() pwsh.eval() end, {desc = 'PowerShe[l]l [E]valuate Line'})
-
-      local wk = require('which-key')
-      wk.add(
-        {'<leader>l', group = 'Powershell', buffer = 0}
-      )
     end
   })
 
@@ -1009,6 +984,44 @@ do
   -- require 'custom.plugins'
   vim.pack.add { gh 'swaits/tiny-jump.nvim' }
   vim.keymap.set( { 'n', 'x', 'o' }, 'sj', require('tiny-jump').start)
+
+  local miniclue = require('mini.clue')
+  miniclue.setup({
+    triggers = {
+      { mode = { 'n', 'x' }, keys = '<Leader>' },
+      { mode = { 'n', 'x' }, keys = '[' },
+      { mode = { 'n', 'x' }, keys = ']' },
+      { mode = 'i', keys = '<C-x>' },
+      { mode = { 'n', 'x' }, keys = 'g' },
+      { mode = { 'n', 'x' }, keys = "'" },
+      { mode = { 'n', 'x' }, keys = '`' },
+      { mode = { 'n', 'x' }, keys = '"' },
+      { mode = { 'i', 'c' }, keys = '<C-r>' },
+      { mode = 'n', keys = '<C-w>' },
+      { mode = { 'n', 'x' }, keys = 'z' },
+    },
+
+    clues = {
+      { mode = { 'n', 'x' }, keys = '<leader>s', desc = '[S]earch' },
+      { mode = { 'n', 'x' }, keys = '<leader>d', desc = '[D]ebug' },
+      { mode = { 'n', 'x' }, keys = '<leader>t', desc = '[T]oggle' },
+      { mode = { 'n', 'x' }, keys = '<leader>h', desc = 'Git [H]unk' },
+      { mode = { 'n' }, keys = 'gr', desc = 'LSP Actions' },
+      miniclue.gen_clues.square_brackets(),
+      miniclue.gen_clues.builtin_completion(),
+      miniclue.gen_clues.g(),
+      miniclue.gen_clues.marks(),
+      miniclue.gen_clues.registers(),
+      miniclue.gen_clues.windows(),
+      miniclue.gen_clues.z(),
+    },
+
+    window = {
+      config = {
+        width = 'auto'
+      }
+    }
+  })
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
