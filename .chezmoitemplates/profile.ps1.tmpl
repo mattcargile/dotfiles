@@ -25,7 +25,19 @@ $OutputEncoding = [System.Console]::InputEncoding = [System.Console]::OutputEnco
 #endregion
 
 #region Helper Visual Studio Code Command Palette operations ( i.e. EditorServicesCommandSuite )
-if($env:TERM_PROGRAM -eq 'vscode' -and $Host.Name -eq 'Visual Studio Code Host') {
+{{- /* When using _VS Code_, the `$Host.Name` could be `ConsoleHost` or `Visual Studio Code Host`
+     * depending on if the terminal was launched from _VS Code_ or via the _PowerShell_
+     * extension, respectively. For _neovim_, the `powershell.nvim` plugin
+     * passes `nvim` to the _PSES_ terminal. In summary, the below `code` relies on
+     * parameters passed into `Start-EditorServices.ps1`.
+     */}}
+if(
+    (
+        $env:TERM_PROGRAM -eq 'vscode' -and
+        $Host.Name -eq 'Visual Studio Code Host'
+    ) -or
+        $Host.Name -eq 'nvim'
+){
     Import-CommandSuite
 }
 #endegion
