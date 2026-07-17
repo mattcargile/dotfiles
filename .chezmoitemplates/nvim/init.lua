@@ -806,7 +806,9 @@ do
   -- You can press `g?` for help in this menu.
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
-    'powershell_es' -- ft plugin handles the file types. Only `psrc` is missing. https://github.com/PProvost/vim-ps1/issues/63
+    -- ft plugin handles the file types. Only `psrc` is missing. https://github.com/PProvost/vim-ps1/issues/63
+    -- lsp and dap config handled in `kickstart/debug.lua`
+    'powershell_es'
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
