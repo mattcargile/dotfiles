@@ -648,7 +648,28 @@ do
     -- But for many setups, the LSP (`ts_ls`) will work just fine
     -- ts_ls = {},
 
+    stylua = {
+      root_dir = function(bufnr, on_dir)
+        local name = vim.api.nvim_buf_get_name(bufnr)
+
+        -- Avoid crash on buffers like fugitive, etc
     stylua = {}, -- Used to format Lua code
+          return
+        end
+
+        local markers = vim.lsp.config['stylua'].root_markers
+        local root
+
+        for _, marker in ipairs(markers or {}) do
+          root = vim.fs.root(bufnr, marker)
+          if root then
+            break
+          end
+        end
+
+        on_dir(root)
+      end,
+    },
 
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
