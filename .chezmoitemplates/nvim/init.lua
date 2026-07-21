@@ -671,7 +671,6 @@ do
       end,
     },
 
-    -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
       on_init = function(client)
         client.server_capabilities.documentFormattingProvider = false -- Disable formatting (formatting is done by stylua)
@@ -681,7 +680,8 @@ do
           if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
         end
 
-        client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+        local current_settings = client.config.settings --[[@as lspconfig.settings.lua_ls]]
+        current_settings.Lua = vim.tbl_deep_extend('force', current_settings.Lua or {}, {
           runtime = {
             version = 'LuaJIT',
             path = { 'lua/?.lua', 'lua/?/init.lua' },
@@ -693,8 +693,9 @@ do
               -- For LSP Settings Type Annotations: https://github.com/neovim/nvim-lspconfig#lsp-settings-type-annotations
               vim.api.nvim_get_runtime_file('lua/lspconfig', false)[1],
             }
-            -- NOTE: this is a lot slower and will cause issues when working on your own configuration.
+            -- NOTE: This is a lot slower and will cause issues when working on your own configuration. Consider `lazydev` or some other loader based on `require()`
             --  See https://github.com/neovim/nvim-lspconfig/issues/3189
+            --
             -- library = vim.tbl_extend('force',
             --   vim.tbl_filter( function(d)
             --     return not d:match(vim.fn.stdpath('config') .. '/?a?f?t?e?r?')
@@ -706,6 +707,8 @@ do
           },
         })
       end,
+      -- Unsure if the below is needed. Came with kickstart. Might be needed to ensure the formatter is off 
+      -- and documentFormattingProvider being false above isn't enough insurance?
       ---@type lspconfig.settings.lua_ls
       settings = {
         Lua = {
