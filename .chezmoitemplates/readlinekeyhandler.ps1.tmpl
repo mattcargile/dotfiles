@@ -14,13 +14,15 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+Y' -BriefDescription 'NextWordAndAcceptNex
 }
 #endregion
 #region Save current line to history ( without execution ) and clear line.
-Set-PSReadLineKeyHandler -Key 'Alt+y' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {
+{{- $saveinHistorySb := `{
     param($key, $arg)
     $line = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line,[ref]$null)
     [Microsoft.PowerShell.PSConsoleReadLine]::AddToHistory($line)
     [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
-}
+}` }}
+Set-PSReadLineKeyHandler -Key 'Alt+y' -ViMode Command -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
+Set-PSReadLineKeyHandler -Key 'Alt+y' -ViMode Insert -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
 #endregion
 #region SmartInsertQuote
 Set-PSReadLineKeyHandler -Chord '"', "'" -BriefDescription 'SmartInsertQuote' -Description "Insert paired quotes if not already on a quote" -ScriptBlock {

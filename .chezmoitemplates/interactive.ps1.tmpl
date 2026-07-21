@@ -7,7 +7,7 @@
 if ('Microsoft.PowerShell.GetPSReadLineOption' -as [type]) {
 {{ includeTemplate "readlineoption.ps1.tmpl" . | indent 4 -}}
     #region ReadLine and KeyHandler
-{{ includeTemplate "readlinekeyhandler.ps1" . | indent 4 }}
+{{ includeTemplate "readlinekeyhandler.ps1.tmpl" . | indent 4 }}
 {{ includeTemplate "readlinekeyhandlerver.ps1.tmpl" . | indent 4 }}
 {{- if eq .isPSCore true }}
     #region PowershellRun KeyHandler
