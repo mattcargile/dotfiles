@@ -1025,6 +1025,7 @@ do
   })
 
   vim.pack.add { gh 'tpope/vim-fugitive' }
+  vim.cmd.packadd { 'nvim.undotree', bang = true }
 end
 
 -- vim: ts=2 sts=2 sw=2 et
