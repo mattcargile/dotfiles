@@ -90,6 +90,7 @@ do
   -- :h ft_sql
   vim.g.ftplugin_sql_statements = "create,alter,create or alter"
   vim.o.winborder = 'rounded'
+  vim.opt.diffopt:append('algorithm:histogram')
 end
 
 -- ============================================================
@@ -1022,6 +1023,8 @@ do
       }
     }
   })
+
+  vim.pack.add { gh 'tpope/vim-fugitive' }
 end
 
 -- vim: ts=2 sts=2 sw=2 et
