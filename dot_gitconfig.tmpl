@@ -1,0 +1,138 @@
+{{- if lookPath "git" -}}
+	{{- $hasGitConflictStyle := false -}}
+	{{- $hasGitDiffToolAlgo := false -}}
+	{{- $hasGitColorMoved := false -}}
+	{{- $gitConflictStyle := "" -}}
+	{{- $gitOutput := output "git" "version" | trim -}}
+	{{- $gitVersion := mustRegexFind `[0-9]+\.[0-9]+\.[0-9]+` $gitOutput -}}
+	{{- if not $gitVersion -}}
+		{{- warnf "Could not parse Git version from %q" $gitOutput -}}
+	{{- else -}}
+		{{- if semverCompare ">=1.6.1" $gitVersion -}}
+			{{- $hasGitConflictStyle = true -}}
+			{{- if semverCompare "<2.35.0" $gitVersion -}}
+				{{- $gitConflictStyle = "diff3" -}}
+			{{- else -}}
+				{{- $gitConflictStyle =  "zdiff3" -}}
+			{{- end -}}
+		{{- end -}}
+		{{-  $hasGitDiffToolAlgo = semverCompare ">=1.8.2" $gitVersion -}}
+		{{-  $hasGitColorMoved = semverCompare ">=2.17.0" $gitVersion -}}
+	{{- end -}}
+	{{- $hasNvim := ne ( lookPath "nvim" ) "" -}}
+	{{- $hasDelta := ne ( lookPath "delta" ) "" -}}
+[branch]
+	sort = -committerdate
+[commit]
+	verbose = true
+{{ if or $hasNvim $hasDelta -}}
+[core]
+{{ if $hasNvim }}	editor = nvim
+{{ end -}}
+{{- if $hasDelta }}	pager = delta
+{{ end -}}
+	{{- end -}}
+[column]
+	ui = auto
+{{ if $hasGitDiffToolAlgo -}}
+[diff]
+	algorithm = histogram
+	mnemonicPrefix = true
+{{ if $hasGitColorMoved }}	colorMoved = default
+{{ end -}}
+{{- if $hasNvim }}	tool = nvimdiff
+{{ end -}}
+		{{- end -}}
+{{- if $hasDelta -}}
+[delta]
+	navigate = true
+	features = "weeping-willow zebra-dark"
+[delta "zebra-dark"]
+	minus-style = syntax "#330f0f"
+	minus-emph-style = syntax "#4f1917"
+	plus-style = syntax "#0e2f19"
+	plus-emph-style = syntax "#174525"
+	map-styles = \
+		bold purple => syntax "#330f29", \
+		bold blue => syntax "#271344", \
+		bold cyan => syntax "#0d3531", \
+		bold yellow => syntax "#222f14"
+	zero-style = syntax
+	whitespace-error-style = "#aaaaaa"
+[delta "weeping-willow"]
+	dark = true
+	right-arrow = 
+	syntax-theme = Coldark-Dark
+	# -- git
+	blame-format = " ({commit:>7}) {author:<18} {timestamp:^13} "
+	blame-palette = "normal midnightblue indigo navy darkblue darkslateblue purple rebeccapurple darkviolet"
+	commit-decoration-style = none
+	commit-style = bold black orange
+	# -- grep
+	grep-file-style = olive
+	grep-line-number-style = olive
+	# -- diff
+	keep-plus-minus-markers = true
+	line-numbers = true
+	line-numbers-minus-style = red
+	line-numbers-plus-style = green
+	line-numbers-left-style = gray
+	line-numbers-left-format = "{nm:>1}┊"
+	line-numbers-right-style = gray
+	line-numbers-right-format = "{np:>1}┊"
+	line-numbers-zero-style = gray
+	minus-emph-style = ghostwhite crimson underline
+	minus-empty-line-marker-style = syntax maroon
+	minus-style = syntax darkred
+	plus-emph-style = ghostwhite olivedrab underline
+	plus-empty-line-marker-style = syntax seagreen
+	plus-style = syntax darkgreen
+	whitespace-error-style = black ghostwhite
+	zero-style = syntax
+	# -- decorations
+	file-decoration-style = olive overline
+	file-added-label = [󱇬]
+	file-copied-label = []
+	file-modified-label = [󰜥]
+	file-removed-label = []
+	file-renamed-label = []
+	file-style = orange bold
+	hunk-header-decoration-style = none
+	hunk-header-file-style = olive
+	hunk-header-line-number-style = orange
+	hunk-header-style = file line-number orchid
+[interactive]
+	diffFilter = delta --color-only
+{{ end -}}
+[fetch]
+	prune = true
+	pruneTags = true
+	all = true
+[help]
+	autocorrect = prompt
+[init]
+	defaultBranch = main
+[push]
+	autoSetupRemote = true
+	followTags = true
+{{ if or $hasGitConflictStyle $hasNvim -}}
+[merge]
+		{{- if $hasNvim }}
+	tool = nvimdiff
+		{{- end -}}
+		{{- if $hasGitConflictStyle }}
+	conflictStyle = {{ $gitConflictStyle -}}
+		{{- end -}}
+	{{- end }}
+[rerere]
+	enabled = true
+[tag]
+	sort = "version:refname"
+	{{- if eq .chezmoi.os "windows" }}
+[gpg]
+	program = {{ printf "%s/scoop/apps/gpg/current/bin/gpg.exe" (.chezmoi.destDir | trimSuffix "/") | quote }}
+[credential]
+	helper = manager
+	bitbucketValidateStoredCredentials = false
+	{{- end -}}
+{{- end }}
