@@ -101,7 +101,7 @@
       "src": "https://github.com/nvim-lua/plenary.nvim"
     },
     "powershell.nvim": {
-      "rev": "3ac437e45ff54bb4c0ce64ff044cd0c47e396a25",
+      "rev": "0c775f1c245f9e6b3e9adb20533bbc9bea00c599",
       "src": "https://github.com/TheLeoP/powershell.nvim"
     },
     "telescope-fzf-native.nvim": {
