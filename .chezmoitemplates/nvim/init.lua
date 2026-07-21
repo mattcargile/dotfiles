@@ -653,7 +653,7 @@ do
         local name = vim.api.nvim_buf_get_name(bufnr)
 
         -- Avoid crash on buffers like fugitive, etc
-    stylua = {}, -- Used to format Lua code
+        if name == '' or not vim.uri_from_bufnr(bufnr):match('^file:') then
           return
         end
 
