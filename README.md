@@ -37,6 +37,9 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. handle syncing up the chromium _vimium_ json config. is there a way to auto import it or sync it on the file system or does the import have to happen manually in the browser?
 1. redo the `mini.statusline` to better present the _mssql.nvim_ data.
 1. fix `nvim` `telescope` handling with scratch buffers and files that aren't save. we need to see the live active contents. 
+1. set up `:te` with keybind
+1. configure `:te` with `wezterm` plugins. there are two that were favorited
+1. set up the osc where `cd` will change the working `nvim` dir. see that that integrates with the above plugins
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
