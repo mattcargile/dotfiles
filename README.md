@@ -42,6 +42,11 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. set up the osc where `cd` will change the working `nvim` dir. see that that integrates with the above plugins
 1. get _c#_ going in _nvim_ with debugger and lsp and refactorings
 1. get debugging with a binary module going with `powershell` and update the dap configurations like _vscode_
+1. get formatting going with _powershell_ so maybe tabs to spaces, etc. kind of like _vscode_
+1. get formatting going with _c#_
+1. figure out snippets with _powershell_
+1. figure out snippets with _c#_
+1. figure out the expand aliases feature in _powershell_ . can `:Powershell` be used.
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
