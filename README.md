@@ -40,6 +40,8 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. set up `:te` with keybind
 1. configure `:te` with `wezterm` plugins. there are two that were favorited
 1. set up the osc where `cd` will change the working `nvim` dir. see that that integrates with the above plugins
+1. get _c#_ going in _nvim_ with debugger and lsp and refactorings
+1. get debugging with a binary module going with `powershell` and update the dap configurations like _vscode_
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
