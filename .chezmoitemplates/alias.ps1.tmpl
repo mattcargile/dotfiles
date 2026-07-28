@@ -45,35 +45,17 @@
 {{- if lookPath $ostressPath -}}
 {{- template "newAliasTmpl" (dict "name" "ostress" "value" $ostressPath ) }}
 {{ end -}}
-{{- $vsPrefix := joinPath $prgFiles "Microsoft Visual Studio" "2022" "Community" -}}
-{{- if lstat $vsPrefix -}}
-{{- $vsIDE := joinPath $vsPrefix "Common7" "IDE" -}}
-{{- $vsMsBldBin := joinPath $vsPrefix "MSBuild" "Current" "Bin" -}}
-{{- $devenvPath := joinPath $vsIDE "devenv.exe" -}}
-{{- if lookPath $devenvPath -}}
-{{- template "newAliasTmpl" (dict "name" "devenv" "value" $devenvPath ) }}
-{{ end -}}
-{{- $tfPath := joinPath $vsIDE "CommonExtensions" "Microsoft" "TeamFoundation" "Team Explorer" "tf.exe" -}}
-{{- if lookPath $tfPath -}}
-{{- template "newAliasTmpl" (dict "name" "tf" "value" $tfPath ) }}
-{{ end -}}
-{{- $sqlpackagePath := joinPath $vsIDE "Extensions" "Microsoft" "SQLDB" "DAC" "SqlPackage.exe" -}}
-{{- if lookPath $sqlpackagePath -}}
-{{- template "newAliasTmpl" (dict "name" "sqlpackage" "value" $sqlpackagePath ) }}
-{{ end -}}
-{{- $csiPath := joinPath $vsMsBldBin "Roslyn" "csi.exe" -}}
-{{- if lookPath $csiPath -}}
-{{- template "newAliasTmpl" (dict "name" "csi" "value" $csiPath ) }}
-{{ end -}}
-{{- $cscPath := joinPath $vsMsBldBin "Roslyn" "csc.exe" -}}
-{{- if lookPath $cscPath -}}
-{{- template "newAliasTmpl" (dict "name" "csc" "value" $cscPath ) }}
-{{ end -}}
-{{- $msbuildPath := joinPath $vsMsBldBin "MsBuild.exe" -}}
-{{- if lookPath $msbuildPath -}}
-{{- template "newAliasTmpl" (dict "name" "msbuild" "value" $msbuildPath ) }}
-{{ end -}}
+{{- $vswherePath := "" -}}
+{{- $vswherePathAlreadyOnEnvPath := lookPath "vswhere" -}}
+{{- $vswherePathDefaultInstallPath := lookPath ( joinPath $prg86 "Microsoft Visual Studio" "Installer" "vswhere.exe" ) -}}
+{{- if $vswherePathAlreadyOnEnvPath -}}
+{{- $vswherePath = $vswherePathAlreadyOnEnvPath -}}
+{{- else if $vswherePathDefaultInstallPath -}}
+{{- $vswherePath = $vswherePathDefaultInstallPath -}}
 {{- end -}}
+{{- if $vswherePath -}}
+{{- template "newAliasTmpl" (dict "name" "vswhere" "value" $vswherePath ) }}
+{{ end -}}
 
 {{ $vpncliAnyPath := joinPath $prg86 "Cisco" "Cisco AnyConnect Secure Mobility Client" "vpncli.exe" -}}
 {{ $vpncliSecPath := joinPath $prg86 "Cisco" "Cisco Secure Client" "vpncli.exe" -}}
