@@ -11,13 +11,13 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. Handle `nvim` folders on for _*nix_
 1. Handle missing `scoop` and avoid the publish script
 1. Handle dependencies on `vim.pack` like `cl.exe`. Need the below
-   ```powershell
+   ```ps1
     sudo choco install visualstudio2026buildtools -y
     sudo choco install visualstudio2026-workload-vctools -y
     ```
 1. Handle other binaries like `make`, `unzip`, `gzip`, `mingw`, `tree-sitter`, `luarocks` ( main lua package has old verison ). Can use `scoop` to install these.
 1. add `gsudo` change token to non-admin to install `scoop` in certain scenarios.
-   ```powershell
+   ```ps1
     gsudo --integrity Medium 'pwsh -c { irm get.scoop.sh | iex}'
    ```
 1. Explore `nvim` mini status line with `mssql.nvim`. add it to the left side instead maybe.
@@ -47,24 +47,26 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. figure out snippets with _powershell_
 1. figure out snippets with _c#_
 1. figure out the expand aliases feature in _powershell_ . can `:Powershell` be used.
+1. add `sqllocaldb` as a an alias. loop over the `Program Files\Microsoft SQL Server\160\Binn` to find the latest binary. That one can find the others.
+1. create the `itf` or `tfvc` aliased function for `Invoke-Tf`
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
-    ```powershell
+    ```ps1
     Set-ExecutionPolicy RemoteSigned CurrentUser -Force; Invoke-RestMethod get.scoop.sh | Invoke-Expression; scoop install git; scoop update; scoop install chezmoi pwsh oh-my-posh dotnet-sdk; pwsh -Command { Install-PSResource ctypes, ezout -TrustRepository -Quiet -Confirm:$false }; chezmoi init mattcargile --apply
     ```
 1. Consider setting up local admin user.
-   ```powershell
+   ```ps1
    New-LocalUser -AccountNeverExpires -Name matt -PasswordNeverExpires -Password (credential na).password
    Add-LocalGroupMember -Group Administrators -Member matt
    ```
 1. Dedupe onedrive folders and registry
-    ```powershell
+    ```ps1
     ls 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace' | ? { $_ | gp -Name '(default)' | ? '(default)' -eq 'OneDrive'} | rm -conf
     rm $env:USERPROFILE\OneDrive -conf -for
     ```
 1. Set up the secret management module
-    ```powershell
+    ```ps1
     register-secretVault -Name dp -ModuleName SecretManagement.DpapiNG
     register-keepassSecretVault -Path keys.kdbx -UseMasterPassword -ShowFullTitle
     register-KeepassSecretVault -Path $env:onedrive\Main\keepass.kdbx -UseMasterPassword -ShowFullTitle
@@ -77,13 +79,13 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
     ```
 1. `Set-ExecutionPolicy RemoteSigned CurrentUser -Confirm:$false -Force`
 1. Install scoop with the below.
-    ```powershell
+    ```ps1
     irm get.scoop.sh | iex
     ```
 1. `scoop` requires a `scoop install git` first for buckets and such
     * Should run `scoop update` after
 1. Hard requirements in bootstrapper. (NOTE: Should `pwsh` be `choco` or `scoop`?)
-    ```powershell
+    ```ps1
     scoop install pwsh chezmoi dotnet-sdk oh-my-posh
     ```
 1. Need to figure the flow to go from `powershell` to `pwsh`.
@@ -93,7 +95,7 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. Then run `scoop install lessmsi` prior to `scoop import`.
 1. Import the scoop json excluding above.
 1. Set the trust on the repos and maybe install `Microsoft.PowerShell.PSResourceGet` first in `powershell`.
-   ```powershell
+   ```ps1
    sudo install-module microsoft.powershell.psresourceget -Scope AllUsers
    Set-PSResourceRepository -Name PSGallery -Trusted
    sudo Set-PSResourceRepository -Name PSGallery -Trusted
@@ -101,34 +103,34 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. Change Downloads folder location with `SHSetKnownFolderPath`
     * https://ss64.com/ps/syntax-knownfolders.html
 1. Install `vmrc`. `choco` is busted because _BroadCom_ took down the update site. Silent install pulled from `choco`.
-    ```powershell
+    ```ps1
     isudo { .\VMware-VMRC-12.0.5-22744838.exe /s /v /qn EULAS_AGREED=1 AUTOSOFTWAREUPDATE=1 DATACOLLECTION=0 REBOOT=ReallySuppress }
     ```
 1. Uninstall Windows older _OpenSSH_. Required before the `openssh` install.
     * Use below command
-    ```powershell
+    ```ps1
     sudo {Get-WindowsCapability -n *ssh*clie* -on | Remove-WindowsCapability -On}
     ```
 1. Install chocolatey
-   ```powershell
+   ```ps1
    sudo { irm community.chocolatey.org/install.ps1 | iex }
    ```
 1. `choco` packages with special handling
     * `powershell-core` has extra parameters
-        ```powershell
+        ```ps1
         sudo { C:\ProgramData\chocolatey\bin\choco.exe install powershell-core -y --ia='REGISTER_MANIFEST=1 ENABLE_PSREMOTING=1 DISABLE_TELEMETRY=1' }
         ```
     * `sql-server-management-studio` has `--all` parameters
     * `ssis-vs2022` needs _Visual Studio_ installed first
     * `openssh` has a bad latest version and special parameters
-        ```powershell
+        ```ps1
         sudo { choco install openssh --pre --version=9.5.0-beta1 -y --params='"/SSHServerFeature /SSHAgentFeature /PathSpecsToProbeForShellEXEString:$env:programfiles\PowerShell\*\pwsh.exe"' }
         ```
     * `sysinternals` may need `--ignore-checksums` because the package installs from the same link
     * `vmrc` appears to be a deprecated package
     * `discord` and `discord.install` should be removed as they cause a butchered install
     * `logparser` has special parameters.
-        ```powershell
+        ```ps1
         sudo {choco install logparser -y --ia='LPTARGETDIR=C:\ProgramData\chocolatey\lib\logparser\tools\'}
         ```
     * Install below manually
@@ -143,33 +145,33 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
         <package id="PDFXchangeEditor" />
         ```
     * `PDFXChangeEditor` has annoying auto updater and a flag must be used to disable it. Use below to install. May need to pass this flag during updates too.
-        ```powershell
+        ```ps1
         sudo choco install PDFXchangeEditor -y --params '"/NOUPDATER"'
         ```
 1. Import the choco `xml` config.
-   ```powershell
+   ```ps1
    sudo { choco install $env:OneDrive\Backup\choco_packages_auto.config -y }
    ```
 1. Pin some `choco` apps with issues on new versions or upgrades failing because the resource is in use like fonts.
-    ```powershell
+    ```ps1
     sudo choco pin add -n openssh --version='9.5.0-beta1'
     choco list -r nerd-font | % { $_ | split '\|' | top 1 } | % { sudo choco pin add --name="$_" }
     ```
 1. Fix the duplicate OneDrive folder.
 1. Enable more _*nix_-ey `sudo`-ing.
-    ```powershell
+    ```ps1
     gsudo config CacheMode Auto
     ```
 1. Install the modules
-    ```powershell
+    ```ps1
     Import-PowerShellDataFile .\requirements\module.psd1 | % gete* | ? { $_.Value['PSEdition'] -eq 'Desktop' } | ? { $_.Value['Scope'] -eq 'AllUsers' }
     ```
 1. Install the capabilities
-    ```powershell
+    ```ps1
     Add-ForcedWindowsCapability (import-PowerShellDataFile .\requirements\capability.psd1 |% gete*).name
     ```
 1. optional _hyper-v_ and _sandbox_. requires reboot. did one after the other with reboots inbetween. `gcim win32_optionalfeature` to see `Caption`. `get-windowsoptionalfeature` gets the actual feature name but the `Caption` displayed in the `OptionalFeatures.exe` UI is not shown.
-    ```powershell
+    ```ps1
     sudo {Enable-WindowsOptionalFeature -FeatureName 'Microsoft-Hyper-V-All' -Online -NoRestart}
     sudo {Enable-WindowsOptionalFeature -FeatureName 'Containers-DisposableClientVM' -Online -NoRestart} # Sandbox
     ```
