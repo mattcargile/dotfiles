@@ -121,7 +121,6 @@ usres = "Uninstall-PSResource"
 wcdxes = "Watch-DbaXESession"
 wrap = "string\\Add-String"
 [pwshAlias.windows]
-at = "Select-ObjectIndex"
 "choco.exe" = "choco"
 [pwshAlias.core]
 cfclix = "ConvertFrom-CliXml"
