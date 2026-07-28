@@ -33,11 +33,11 @@ filter Invoke-Neovim
 
         Set-Content -LiteralPath $temporaryFile.FullName -Value $InputObject -ErrorAction 'Stop'
 
-        & $EditorCommand $temporaryFile.FullName
-        if ($LASTEXITCODE -ne 0) {
+        $viProcess = Start-Process -FilePath $EditorCommand -ArgumentList "`"$($temporaryFile.FullName)`"" -Wait -NoNewWindow -PassThru -ErrorAction 'Stop'
+        if ($viProcess.ExitCode -ne 0) {
             $errorRecord = [System.Management.Automation.ErrorRecord]::new(
                 [InvalidOperationException]::new(
-                    "Neovim exited with code $exitCode."
+                    "Neovim exited with code $($viProcess.ExitCode)."
                 ),
                 'Profile.psm1.OutNeovim.EditorFailed',
                 [System.Management.Automation.ErrorCategory]::OperationStopped,
