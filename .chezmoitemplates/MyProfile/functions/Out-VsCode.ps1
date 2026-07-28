@@ -1,9 +1,9 @@
 function Out-VsCode {
     <#
     .SYNOPSIS
-        Pipe STDIN to vscode, quit to pipe the editor to STDOUT
+        Vscode Editor inline filter for code edits
     .DESCRIPTION
-        You do have to hit save. Edit and close 
+        Pipe STDIN to vscode, save, and quit to pipe the editor to STDOUT
     .EXAMPLE
         Get-Clipboard | Out-VsCode
         Default is stdout
