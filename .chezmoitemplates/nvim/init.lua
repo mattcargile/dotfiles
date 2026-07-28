@@ -776,7 +776,7 @@ do
       end
     end,
     default_format_opts = {
-      lsp_format = 'fallback', -- Use external formatters if configured below, otherwise use LSP formatting. Set to `false` to disable LSP formatting entirely.
+      lsp_format = 'fallback',
     },
     -- You can also specify external formatters in here.
     formatters_by_ft = {
@@ -1050,6 +1050,11 @@ do
 
   vim.pack.add { gh 'tpope/vim-fugitive' }
   vim.cmd.packadd { 'nvim.undotree', bang = true }
+
+  vim.pack.add { gh 'MeanderingProgrammer/render-markdown.nvim' }
+  require('render-markdown').setup({
+      completions = { lsp = { enabled = true } },
+  })
 end
 
 -- vim: ts=2 sts=2 sw=2 et
