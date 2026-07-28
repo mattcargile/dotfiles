@@ -370,25 +370,15 @@ do
   end, {
     desc = 'Custom markdown select for SQL column layout. Requires custom four spaced prefixed column names with commas at end.',
   })
-
   local msSqlStatusLineComponent = msSql.lualine_component
 
-  require('mini.statusline').setup { use_icons = vim.g.have_nerd_font }
-
-  ---@diagnostic disable-next-line: duplicate-set-field
-  MiniStatusline.section_location = function()
-    local out = ''
+  local mini_statusline = require('mini.statusline')
+  mini_statusline.setup { use_icons = vim.g.have_nerd_font }
+  mini_statusline.section_location = function()
     local lineColumn = '%2l:%-2v' -- LINE:COLUMN
-    if msSqlStatusLineComponent.cond() then
-       out = lineColumn .. ' ' .. msSqlStatusLineComponent[1]()
-    else
-      out = lineColumn
-    end
-    return out
+    local mssql_status =  msSqlStatusLineComponent.cond() and msSqlStatusLineComponent[1]()
+    return lineColumn .. ( mssql_status and ' ' .. mssql_status or '' )
   end
-
-  -- ... and there is more!
-  --  Check out: https://github.com/nvim-mini/mini.nvim
 
 end
 
