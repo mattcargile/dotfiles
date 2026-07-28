@@ -69,7 +69,7 @@ function Out-Neovim {
     }
 
     process {
-        if ($Raw) {
+        if ($Raw -and -not [string]::IsNullOrWhiteSpace($InputObject)) {
             $inputLines.Add($InputObject)
         }
         else {
@@ -78,7 +78,7 @@ function Out-Neovim {
     }
 
     end {
-        if ($Raw) {
+        if ($Raw -and $inputLines.Count -gt 0) {
             Invoke-Neovim -InputObject $inputLines -LanguageExtension $LanguageExtension -EditorCommand $viCommand
         }
     }
