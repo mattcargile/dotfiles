@@ -9,7 +9,7 @@
         }
         # else *nix/mac {{ else }}{{ nindent 4 ( squote "core.psm1" ) }}{{ end }}
     ) 
-    ModuleVersion = '0.0.9'
+    ModuleVersion = '0.1.0'
     CompatiblePSEditions = @(
         # chezmoi if windows {{ if eq .chezmoi.os "windows" }}
         'Desktop'
