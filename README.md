@@ -49,6 +49,9 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. figure out the expand aliases feature in _powershell_ . can `:Powershell` be used.
 1. add `sqllocaldb` as a an alias. loop over the `Program Files\Microsoft SQL Server\160\Binn` to find the latest binary. That one can find the others.
 1. create the `itf` or `tfvc` aliased function for `Invoke-Tf`
+1. attempt to merge `out-vscode` and `out-nvim` into a single command that does `nvim` -> `vim` -> `code` -> `vi`. or maybe `code` before `vim`. should look at `$env:VISUAL` too. and parse the args with 
+   module function. consider features used in that comment by mklemmot on [github](https://github.com/PowerShell/PowerShell/issues/21525#issuecomment-2078215370).
+1. inspect how edit vi visually works in psrl to see about better compat with flatten.nvim or the like.
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
