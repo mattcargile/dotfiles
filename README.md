@@ -53,6 +53,9 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
    module function. consider features used in that comment by mklemmot on [github](https://github.com/PowerShell/PowerShell/issues/21525#issuecomment-2078215370).
 1. inspect how edit vi visually works in psrl to see about better compat with flatten.nvim or the like.
 1. figure out how to properly handle copy in an ssh session while retainin the current behavior and not breaking paste. `wezterm` doesn't support paste which i tend to agree with for security. i can ust `c-s-v`. `:h clipboard-osc52` / `= require('vim.ui.clipboard.osc52').copy('+')({vim.fn.getreg('v')})`
+1. handle arrowing up in a long terminal prompt in neovim. It won't let me go up. i can only edit it with vi visual mode by typing v.
+1. figure how to to make ctrl space work in neovim terminal
+1. figure how to make ctrl shift y work in neovim terminal
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
