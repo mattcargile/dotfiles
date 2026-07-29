@@ -1,3 +1,89 @@
+#region Cancel and Undo completion
+& {
+    $psrlTabState = [PSCustomObject]@{
+        OriginalLine     = $null
+        OriginalCursor   = 0
+        CompletedLine    = $null
+        CompletedCursor  = 0
+    }
+
+    $tabHandlerSb = {
+        param($key, $arg)
+
+        $line = $null
+        $cursor = 0
+
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState(
+            [ref]$line,
+            [ref]$cursor
+        )
+
+        if (
+            $null -eq $psrlTabState.CompletedLine -or
+            $line -cne $psrlTabState.CompletedLine -or
+            $cursor -ne $psrlTabState.CompletedCursor
+        )
+        {
+            $psrlTabState.OriginalLine = $line
+            $psrlTabState.OriginalCursor = $cursor
+        }
+
+        # Recreating closing undo group to make completion render like `Complete`
+        # https://github.com/PowerShell/PSReadLine/blob/2984546f62da9f63c31aba965ec3008fcb107024/PSReadLine/Completion.cs#L206
+        if ([Microsoft.PowerShell.PSConsoleReadLine]::InViInsertMode())
+        {
+            [Microsoft.PowerShell.PSConsoleReadLine]::ViCommandMode()
+            [Microsoft.PowerShell.PSConsoleReadLine]::ViInsertMode()
+            [Microsoft.PowerShell.PSConsoleReadLine]::ForwardChar()
+        }
+        [Microsoft.PowerShell.PSConsoleReadLine]::TabCompleteNext($key, $arg)
+
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState(
+            [ref]$line,
+            [ref]$cursor
+        )
+
+        $psrlTabState.CompletedLine = $line
+        $psrlTabState.CompletedCursor = $cursor
+    }.GetNewClosure()
+
+    $cancelCompHandlerSb = {
+        $line = $null
+        $cursor = 0
+
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState(
+            [ref]$line,
+            [ref]$cursor
+        )
+
+        if (
+            $null -ne $psrlTabState.CompletedLine -and
+            $line -ceq $psrlTabState.CompletedLine -and
+            $cursor -eq $psrlTabState.CompletedCursor
+        )
+        {
+            [Microsoft.PowerShell.PSConsoleReadLine]::Replace(
+                0,
+                $line.Length,
+                $psrlTabState.OriginalLine
+            )
+
+            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition(
+                $psrlTabState.OriginalCursor
+            )
+        }
+
+        $psrlTabState.OriginalLine = $null
+        $psrlTabState.OriginalCursor = 0
+        $psrlTabState.CompletedLine = $null
+        $psrlTabState.CompletedCursor = 0
+    }.GetNewClosure()
+
+    Set-PSReadLineKeyHandler -Chord 'Tab' -EditMode 'Insert' -ScriptBlock $tabHandlerSb
+    Set-PSReadLineKeyHandler -Chord 'Ctrl+e' -EditMode 'Insert' -ScriptBlock $cancelCompHandlerSb
+}
+
+#endregion
 #region For part way completion of History PredictionSource
 Set-PSReadLineKeyHandler -Chord 'Ctrl+Y' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ViMode Insert -ScriptBlock {
     param($key, $arg)
