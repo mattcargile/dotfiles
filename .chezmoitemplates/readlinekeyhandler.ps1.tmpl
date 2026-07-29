@@ -1,14 +1,6 @@
 #region Cancel and Undo completion
-& {
-    $psrlTabState = [PSCustomObject]@{
-        OriginalLine     = $null
-        OriginalCursor   = 0
-        CompletedLine    = $null
-        CompletedCursor  = 0
-    }
-
-    $tabHandlerSb = {
-        param($key, $arg)
+{{ define "tabHandlerSb" -}}{{- printf
+`       param($key, $arg)
 
         $line = $null
         $cursor = 0
@@ -28,15 +20,7 @@
             $psrlTabState.OriginalCursor = $cursor
         }
 
-        # Recreating closing undo group to make completion render like `Complete`
-        # https://github.com/PowerShell/PSReadLine/blob/2984546f62da9f63c31aba965ec3008fcb107024/PSReadLine/Completion.cs#L206
-        if ([Microsoft.PowerShell.PSConsoleReadLine]::InViInsertMode())
-        {
-            [Microsoft.PowerShell.PSConsoleReadLine]::ViCommandMode()
-            [Microsoft.PowerShell.PSConsoleReadLine]::ViInsertMode()
-            [Microsoft.PowerShell.PSConsoleReadLine]::ForwardChar()
-        }
-        [Microsoft.PowerShell.PSConsoleReadLine]::TabCompleteNext($key, $arg)
+        [Microsoft.PowerShell.PSConsoleReadLine]::%s($key, $arg)
 
         [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState(
             [ref]$line,
@@ -44,7 +28,26 @@
         )
 
         $psrlTabState.CompletedLine = $line
-        $psrlTabState.CompletedCursor = $cursor
+        $psrlTabState.CompletedCursor = $cursor` ( .methodName ) -}}{{- end -}}
+& {
+    $psrlTabState = [PSCustomObject]@{
+        OriginalLine     = $null
+        OriginalCursor   = 0
+        CompletedLine    = $null
+        CompletedCursor  = 0
+    }
+
+    $tabHandlerSb = {
+{{ template "tabHandlerSb" (dict "methodName" "TabCompleteNext") }}
+    }.GetNewClosure()
+    $viTabHandlerSb = {
+{{ template "tabHandlerSb" (dict "methodName" "ViTabCompleteNext") }}
+    }.GetNewClosure()
+    $prevTabHandlerSb = {
+{{ template "tabHandlerSb" (dict "methodName" "TabCompletePrevious") }}
+    }.GetNewClosure()
+    $viPrevTabHandlerSb = {
+{{ template "tabHandlerSb" (dict "methodName" "ViTabCompletePrevious") }}
     }.GetNewClosure()
 
     $cancelCompHandlerSb = {
@@ -79,13 +82,16 @@
         $psrlTabState.CompletedCursor = 0
     }.GetNewClosure()
 
-    Set-PSReadLineKeyHandler -Chord 'Tab' -EditMode 'Insert' -ScriptBlock $tabHandlerSb
-    Set-PSReadLineKeyHandler -Chord 'Ctrl+e' -EditMode 'Insert' -ScriptBlock $cancelCompHandlerSb
+    Set-PSReadLineKeyHandler -Chord 'Tab' -ViMode 'Insert' -ScriptBlock $viTabHandlerSb -BriefDescription 'ViTabCompleteNextSaveState' -Description 'Match ViTabCompleteNext functionality and save state for CancelCompletion'
+    Set-PSReadLineKeyHandler -Chord 'Tab' -ViMode 'Command' -ScriptBlock $tabHandlerSb -BriefDescription 'TabCompleteNextSaveState' -Description 'Match TabCompleteNext functionality and save state for CancelCompletion'
+    Set-PSReadLineKeyHandler -Chord 'Shift+Tab' -ViMode 'Insert' -ScriptBlock $viPrevTabHandlerSb -BriefDescription 'ViTabCompletePreviousSaveState' -Description 'Match ViTabCompletePrevious functionality and save state for CancelCompletion'
+    Set-PSReadLineKeyHandler -Chord 'Shift+Tab' -ViMode 'Command' -ScriptBlock $prevTabHandlerSb -BriefDescription 'TabCompletePreviousSaveState' -Description 'Match TabCompletePrevious functionality and save state for CancelCompletion'
+    Set-PSReadLineKeyHandler -Chord 'Ctrl+e' -ViMode 'Insert' -ScriptBlock $cancelCompHandlerSb -BriefDescription 'CancelCompletion' -Description 'Revert and undo all of the previous completions. Relies on SaveState suffixed key handlers.'
 }
 
 #endregion
 #region For part way completion of History PredictionSource
-Set-PSReadLineKeyHandler -Chord 'Ctrl+Y' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ViMode Insert -ScriptBlock {
+Set-PSReadLineKeyHandler -Chord 'Ctrl+Y' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ViMode 'Insert' -ScriptBlock {
     param($key, $arg)
 
     $line = $null
@@ -107,8 +113,8 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+Y' -BriefDescription 'NextWordAndAcceptNex
     [Microsoft.PowerShell.PSConsoleReadLine]::AddToHistory($line)
     [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
 }` }}
-Set-PSReadLineKeyHandler -Key 'Alt+y' -ViMode Command -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
-Set-PSReadLineKeyHandler -Key 'Alt+y' -ViMode Insert -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
+Set-PSReadLineKeyHandler -Key 'Alt+y' -ViMode 'Command' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
+Set-PSReadLineKeyHandler -Key 'Alt+y' -ViMode 'Insert' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
 #endregion
 #region SmartInsertQuote
 Set-PSReadLineKeyHandler -Chord '"', "'" -BriefDescription 'SmartInsertQuote' -Description "Insert paired quotes if not already on a quote" -ScriptBlock {
