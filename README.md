@@ -56,6 +56,9 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. handle arrowing up in a long terminal prompt in neovim. It won't let me go up. i can only edit it with vi visual mode by typing v.
 1. figure how to to make ctrl space work in neovim terminal
 1. figure how to make ctrl shift y work in neovim terminal
+1. is there a way to launch `gvpn` async to get the time left on vpn easily and fast. maybe some api.
+1. still want that neovim anywhere.
+1. rework the `oh-my-posh` json config and use directives to change the `{{}}` characters to something else to prevent having to double escape things and use the `.Var.Var` feature. to embed data like the `onedrive` paths and such.
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
