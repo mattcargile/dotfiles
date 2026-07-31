@@ -3,6 +3,7 @@ local config = wezterm.config_builder()
 config.color_scheme = 'Dracula (Official)'
 config.font = wezterm.font 'MonoLisa Nerd Font'
 config.default_prog = { 'pwsh', '-Login', '-NoExit' }
+config.max_fps = 120
 config.keys = {
   { key = 'l', mods = 'ALT', action = wezterm.action.ShowLauncher },
   { key = '6', mods = 'SHIFT|CTRL', action = wezterm.action.DisableDefaultAssignment },
