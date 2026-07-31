@@ -91,7 +91,7 @@
 
 #endregion
 #region For part way completion of History PredictionSource
-Set-PSReadLineKeyHandler -Chord 'Alt+w' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ViMode 'Insert' -ScriptBlock {
+Set-PSReadLineKeyHandler -Chord 'Alt+y' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ViMode 'Insert' -ScriptBlock {
     param($key, $arg)
 
     $line = $null
@@ -113,8 +113,8 @@ Set-PSReadLineKeyHandler -Chord 'Alt+w' -BriefDescription 'NextWordAndAcceptNext
     [Microsoft.PowerShell.PSConsoleReadLine]::AddToHistory($line)
     [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
 }` }}
-Set-PSReadLineKeyHandler -Key 'Alt+y' -ViMode 'Command' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
-Set-PSReadLineKeyHandler -Key 'Alt+y' -ViMode 'Insert' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
+Set-PSReadLineKeyHandler -Key 'Alt+w' -ViMode 'Command' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
+Set-PSReadLineKeyHandler -Key 'Alt+w' -ViMode 'Insert' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
 #endregion
 #region SmartInsertQuote
 Set-PSReadLineKeyHandler -Chord '"', "'" -BriefDescription 'SmartInsertQuote' -Description "Insert paired quotes if not already on a quote" -ScriptBlock {
