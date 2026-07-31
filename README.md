@@ -183,3 +183,41 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
     sudo {Enable-WindowsOptionalFeature -FeatureName 'Containers-DisposableClientVM' -Online -NoRestart} # Sandbox
     ```
 1. install, build, etc the `MonoLisa` font. previously used `wsl` instance and special repo and pulled files from the website from a zip
+
+## Lua Experiments
+
+### `<S-CR>` Handling  in `:terminal`
+The below does work but it is kind of overengineerd and crashes of `nvim` could leave the terminal in a non ideal state.
+Using `Alt+j` for now to add a line. Attempting to forget `Shift+Enter` is a thing.
+```lua
+  if vim.fn.has('win32') == 1 and vim.env.TERM_PROGRAM == 'WezTerm' then
+    local esc = '\27'
+    -- Disable win32 input mode 
+    vim.api.nvim_chan_send(vim.v.stderr, esc .. '[?9001l')
+
+    -- Restore win32 input mode.
+    local win32_im_enable_group = vim.api.nvim_create_augroup('wezterm_win32_input', { clear = true })
+    vim.api.nvim_create_autocmd('UILeave', {
+      group = win32_im_enable_group,
+      callback = function()
+        vim.api.nvim_chan_send(vim.v.stderr, esc .. '[?9001h')
+      end,
+    })
+
+      -- Translate terminal Shift+Enter back into Win32 KEY_EVENT records.
+      -- CSI Vk;Sc;Uc;Kd;Cs;Rc _
+      -- https://github.com/microsoft/terminal/blob/main/doc/specs/%234999%20-%20Improved%20keyboard%20handling%20in%20Conpty.md#win32-input-mode-sequences
+      -- Vk = 13: Virtual Key Code VK_RETURN
+      -- Sc = 28: Enter virtual scan code
+      -- Uc = 13: Unicode Char carriage return
+      -- Kd = 1:  key-down
+      -- Cs = 16: Console Key State SHIFT_PRESSED
+      -- Rc = 1:  Repeat count
+      -- https://github.com/PowerShell/PSReadLine/issues/291#issuecomment-147728826
+      -- Key down event. `[Console]::ReadKey` ignores key up events
+    vim.keymap.set('t', '<S-CR>', function()
+      local shift_enter = esc .. '[13;28;13;1;16;1_'
+      vim.api.nvim_chan_send(vim.bo.channel, shift_enter)
+    end)
+  end
+```
