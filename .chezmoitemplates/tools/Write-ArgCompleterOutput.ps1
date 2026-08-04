@@ -45,7 +45,7 @@ end {
     #region carapace completers first.
     if (Get-Command carapace -CommandType Application -ErrorAction Ignore) {
         $env:CARAPACE_ENV = 0 # Don't add environment helper functions
-        $env:CARAPACE_EXCLUDES = 'ls,bat,rg,fd,gh,chezmoi,glow,bb,dotnet,winget,get-env,set-env,unset-env,ov,sudo,cp,ps,cat,rm,mv,mkdir,code,code-insiders,op' # Exclude completions that conflict or already exist from software creator.
+        $env:CARAPACE_EXCLUDES = 'ls,bat,rg,fd,gh,chezmoi,glow,bb,dotnet,winget,get-env,set-env,unset-env,ov,sudo,cp,ps,cat,rm,mv,mkdir,code,code-insiders,op,strings,zellij' # Exclude completions that conflict or already exist from software creator.
         # Need to add this to the path before running script because there is logic in the script to add this to the process. Need to make the script more consistent
         # carapace golang binary uses forward slashes to check for path
         $carapaceCfgDir = $IsWindows ? "$env:APPDATA/carapace/bin" -replace '\\', '/' : "$env:HOME/.config/carapace/bin"
@@ -92,6 +92,9 @@ end {
     }
     if (Get-Command ov -CommandType Application -ErrorAction Ignore) {
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (ov --completion powershell | Out-String) -Comment 'ov Pager Prompt Completions' ) ) 
+    }
+    if (Get-Command zellij -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (zellij setup --generate-completion powershell | Out-String) -Comment 'Zellij Terminal Multiplexor Prompt Completions' ) ) 
     }
     if (Get-Command dotnet -CommandType Application -ErrorAction Ignore) {
         $env:DOTNET_NOLOGO = 'true' # Avoid welcome message on first run. Confusing output from chezmoi
