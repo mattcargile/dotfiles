@@ -59,6 +59,7 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. is there a way to launch `gvpn` async to get the time left on vpn easily and fast. maybe some api.
 1. still want that neovim anywhere.
 1. rework the `oh-my-posh` json config and use directives to change the `{{}}` characters to something else to prevent having to double escape things and use the `.Var.Var` feature. to embed data like the `onedrive` paths and such.
+1. handle the `carapace` completers more nicely for _*nix_ vs _windows_. `strings` is a windows feature and more default on _*nix_.
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
