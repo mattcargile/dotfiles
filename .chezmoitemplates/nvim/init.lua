@@ -91,6 +91,14 @@ do
   vim.g.ftplugin_sql_statements = "create,alter,create or alter"
   vim.o.winborder = 'rounded'
   vim.opt.diffopt:append('algorithm:histogram')
+
+  vim.o.shell = 'pwsh'
+  -- Output Encoding set in the `$PROFILE`
+  vim.o.shellcmdflag = '-NoLogo -ExecutionPolicy RemoteSigned -Command $PSStyle.OutputRendering = \'PlainText\';'
+  vim.o.shellredir = '2>&1 | Set-Content -Encoding utf8 %s; exit $LASTEXITCODE'
+  vim.o.shellpipe = '2>&1 | Set-Content -Encoding utf8 %s; exit $LASTEXITCODE'
+  vim.o.shellquote = ''
+  vim.o.shellxquote = ''
 end
 
 -- ============================================================
