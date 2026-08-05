@@ -1036,6 +1036,22 @@ do
   require('render-markdown').setup({
       completions = { lsp = { enabled = true } },
   })
+
+  vim.pack.add { gh 'akinsho/toggleterm.nvim' }
+  require('toggleterm').setup{
+    open_mapping = [[<C-\><C-\>]]
+  }
+
+  vim.pack.add { gh 'willothy/flatten.nvim' }
+  require('flatten').setup {
+    integrations = {
+      wezterm = true
+    }
+  }
+
+  vim.pack.add { gh 'willothy/wezterm.nvim' }
+  require('wezterm').setup{}
+
 end
 
 -- vim: ts=2 sts=2 sw=2 et
