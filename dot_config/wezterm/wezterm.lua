@@ -4,6 +4,7 @@ config.color_scheme = 'Dracula (Official)'
 config.font = wezterm.font 'MonoLisa Nerd Font'
 config.default_prog = { 'pwsh', '-Login', '-NoExit' }
 config.max_fps = 120
+config.alternate_buffer_wheel_scroll_speed = 0 -- Disable the arrow keys in neovim and others
 config.keys = {
   { key = 'l', mods = 'ALT', action = wezterm.action.ShowLauncher },
   { key = '6', mods = 'SHIFT|CTRL', action = wezterm.action.DisableDefaultAssignment },
