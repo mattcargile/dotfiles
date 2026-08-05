@@ -90,6 +90,64 @@
 }
 
 #endregion
+#region Edit Vi Visually with flatten.nvim compat
+Set-PSReadlineKeyHandler -Chord 'v' -ViMode 'Command' -BriefDescription 'ViEditVisuallyCustom' -Description 'Edit current command line in nvim with flatten.nvim support' -ScriptBlock {
+    param($key, $arg)
+
+    $bufferText = $null; $cursorPos = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref] $bufferText, [ref] $cursorPos)
+
+    # Translate the current cursor position on the command line into a line-column pair, to pass
+    # to those editors that support positioning the cursor via their CLI.
+    $lineNo = 1
+    $precedingNewLinePos = -1
+    foreach ($m in [regex]::Matches($bufferText, '\n')) {
+        if ($m.Index -lt $cursorPos) {
+            ++$lineNo
+            $precedingNewLinePos = $m.Index
+        }
+        else { break }
+    }
+    # neovim's lua api is 0-based for column number
+    $colNo = $cursorPos - $precedingNewLinePos - 1
+    Write-Verbose "lineNo: $lineNo | colNo: $colNo"
+
+    $tmpFile = New-TemporaryFile
+    Set-Content -LiteralPath $tmpFile -Value $bufferText -Encoding utf8 -NoNewLine
+
+    # Naive Process start implementation for 5.1. Consider `oh-my-posh` prompt implementation.
+    $nvimArgLuaFlatten = 'lua vim.g.flatten_wait = 1'
+    if ($env:NVIM) {
+        # flatten.nvim actually works in this context within the neovim terminal
+        $nvimArgList = @(
+            '--cmd', $nvimArgLuaFlatten 
+            $tmpFile
+        )
+        nvim @nvimArgList
+    }
+    else {
+        $nvimArgList = @(
+            '--cmd', "`"$nvimArgLuaFlatten`""
+            '-c', "`"lua vim.api.nvim_win_set_cursor(0, {$lineNo, $colNo})`"",
+            '-c', '"lua vim.bo.filetype = ''ps1''"'
+            '-c', '"lua vim.bo.fileformat = ''unix''"'
+            "`"$tmpFile`""
+        )
+        Start-Process -FilePath 'nvim' -ArgumentList $nvimArgList -NoNewWindow -Wait
+    }
+    # Called in the ViEditVisually C# module. Render is also called though it isn't `public`
+    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+
+    $newBufferText = (Get-Content -LiteralPath $tmpFile -Raw).TrimEnd("`r", "`n")
+    $tmpFile | Remove-Item
+
+    if ($bufferText -ne $newBufferText -and -not [string]::IsNullOrWhitespace($newBufferText)) {
+        [Microsoft.PowerShell.PSConsoleReadLine]::Replace(0, $bufferText.Length, $newBufferText)
+    }
+    # Otherwise the text looks off. Simulates the `Render` that is called in the `ViEditVisually` C# source
+    [Microsoft.PowerShell.PSConsoleReadLine]::ClearScreen()
+}
+#endregion
 #region For part way completion of History PredictionSource
 Set-PSReadLineKeyHandler -Chord 'Alt+y' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ViMode 'Insert' -ScriptBlock {
     param($key, $arg)
