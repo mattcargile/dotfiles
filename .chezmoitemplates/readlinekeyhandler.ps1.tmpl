@@ -590,6 +590,6 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+y' -Function AcceptSuggestion -ViMode Inse
 Set-PSReadLineKeyHandler -Chord 'Ctrl+x,Ctrl+o' -ViMode Insert -Function MenuComplete
 Set-PSReadLineKeyHandler -Chord 'Ctrl+x,Ctrl+z' -ViMode Insert -Function Abort
 Set-PSReadLineKeyHandler -Chord 'Ctrl+x,Ctrl+z' -ViMode Command -Function Abort
-Set-PSReadLineKeyHandler -Chord 'Alt+j' -ViMode Command -Function AddLine
-Set-PSReadLineKeyHandler -Chord 'Alt+j' -ViMode Insert -Function AddLine
+Set-PSReadLineKeyHandler -Chord 'Ctrl+o,o' -ViMode Insert -Function AddLine
+Set-PSReadLineKeyHandler -Chord 'Ctrl+x,h' -ViMode Insert -Function ShowParameterHelp
 #endregion
