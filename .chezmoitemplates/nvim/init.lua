@@ -1037,11 +1037,6 @@ do
       completions = { lsp = { enabled = true } },
   })
 
-  vim.pack.add { gh 'akinsho/toggleterm.nvim' }
-  require('toggleterm').setup{
-    open_mapping = [[<C-\><C-\>]]
-  }
-
   vim.pack.add { gh 'willothy/flatten.nvim' }
   require('flatten').setup {
     integrations = {
@@ -1049,8 +1044,84 @@ do
     }
   }
 
-  vim.pack.add { gh 'willothy/wezterm.nvim' }
-  require('wezterm').setup{}
+  local function get_personal_terminal_buffer()
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if
+        vim.api.nvim_buf_is_loaded(buf)
+        and vim.bo[buf].buftype == "terminal"
+        and vim.b[buf].personal_toggle_terminal == true
+      then
+        return buf
+      end
+    end
+    return nil
+  end
+
+  local terminal_buf = get_personal_terminal_buffer()
+
+  local function is_terminal_alive(buf)
+    if not buf or not vim.api.nvim_buf_is_loaded(buf) then
+      return false
+    end
+
+    local job_id = vim.bo[buf].channel
+    return job_id > 0 and vim.fn.jobwait({ job_id }, 0)[1] == -1
+  end
+
+  local function get_terminal_window(buf)
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+      if vim.api.nvim_win_get_buf(win) == buf then
+        return win
+      end
+    end
+  end
+
+  local function open_terminal(buf)
+    return vim.api.nvim_open_win(buf, true, {
+      split = 'below',
+      win = -1,
+      height = 12,
+    })
+  end
+
+  local function toggle_terminal()
+    if is_terminal_alive(terminal_buf) then
+      local win = get_terminal_window(terminal_buf)
+
+      if win then
+        vim.api.nvim_win_hide(win)
+        return
+      end
+
+      open_terminal(terminal_buf)
+    else
+      local stale_buf = terminal_buf
+      terminal_buf = nil
+      if stale_buf and vim.api.nvim_buf_is_valid(stale_buf) then
+        vim.api.nvim_buf_delete(stale_buf, { force = true })
+      end
+
+      local win = open_terminal(0)
+      local ok, err = pcall(vim.cmd.terminal)
+      if not ok then
+        if vim.api.nvim_win_is_valid(win) then
+          vim.api.nvim_win_close(win, true)
+        end
+
+        error(err, 0)
+      end
+
+      terminal_buf = vim.api.nvim_get_current_buf()
+      vim.bo[terminal_buf].buflisted = false
+      vim.b[terminal_buf].personal_toggle_terminal = true
+    end
+
+    vim.cmd.startinsert()
+  end
+
+  vim.keymap.set({ "n", "t" }, [[<C-\><C-\>]], toggle_terminal, {
+    desc = "Toggle terminal",
+  })
 
 end
 
