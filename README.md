@@ -60,6 +60,7 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. still want that neovim anywhere.
 1. rework the `oh-my-posh` json config and use directives to change the `{{}}` characters to something else to prevent having to double escape things and use the `.Var.Var` feature. to embed data like the `onedrive` paths and such.
 1. handle the `carapace` completers more nicely for _*nix_ vs _windows_. `strings` is a windows feature and more default on _*nix_.
+1. work in `nuget` [package](https://www.nuget.org/packages/Microsoft.Windows.Console.ConPTY) for `alacritty` on windows to use modern _conpty_. simple fix is `cp ~\scoop\apps\wezterm-nightly\current\conpty.dll, ~\scoop\apps\wezterm-nightly\current\OpenConsole.exe ~\scoop\apps\alacritty\current\`
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
