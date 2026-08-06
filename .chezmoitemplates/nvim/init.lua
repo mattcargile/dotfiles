@@ -95,8 +95,7 @@ do
   vim.o.shell = 'pwsh'
   -- Output Encoding set in the `$PROFILE`
   vim.o.shellcmdflag = '-NoLogo -ExecutionPolicy RemoteSigned -Command $PSStyle.OutputRendering = \'PlainText\';'
-  vim.o.shellredir = '2>&1 | Set-Content -Encoding utf8 %s; exit $LASTEXITCODE'
-  vim.o.shellpipe = '2>&1 | Set-Content -Encoding utf8 %s; exit $LASTEXITCODE'
+  -- Required otherwise default is \"
   vim.o.shellquote = ''
   vim.o.shellxquote = ''
 end
