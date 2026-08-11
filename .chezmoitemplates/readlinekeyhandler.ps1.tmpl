@@ -362,7 +362,7 @@ Set-PSReadLineKeyHandler -Chord 'Backspace' -BriefDescription 'SmartBackspace' -
 }
 #endregion
 #region ParenthesizeSelection
-Set-PSReadLineKeyHandler -Chord 'Alt+(' -BriefDescription 'ParenthesizeSelection' -Description "Put parenthesis around the selection or entire line and move the cursor to after the closing parenthesis" -ScriptBlock {
+Set-PSReadLineKeyHandler -Chord 'Ctrl+x,(' -BriefDescription 'ParenthesizeSelection' -Description "Put parenthesis around the selection or entire line and move the cursor to after the closing parenthesis" -ScriptBlock {
     param($key, $arg)
 
     $selectionStart = $null
@@ -446,7 +446,7 @@ Set-PSReadLineKeyHandler -Chord "Alt+'" -BriefDescription 'ToggleQuoteArgument' 
 #region ExpandAliases
 # Expands command aliases + parameter aliases / unique prefixes.
 # Ambiguous params are left unexpanded and marked with a trailing '?' to force PSReadLine error-coloring.
-Set-PSReadLineKeyHandler -Chord 'Alt+%' -BriefDescription 'ExpandAliases' -Description "Replace all aliases with the full command (and expand parameters where unambiguous)" -ScriptBlock {
+Set-PSReadLineKeyHandler -Chord 'Ctrl+x,%' -BriefDescription 'ExpandAliases' -Description "Replace all aliases with the full command (and expand parameters where unambiguous)" -ScriptBlock {
     param($key, $arg)
 
     [System.Management.Automation.Language.Ast]$ast = $null
