@@ -6,6 +6,10 @@ shell = { program = "pwsh", args = [ "-Login", "-NoExit" ] }
 [window]
 startup_mode = "Maximized"
 
+[colors.cursor]
+cursor = "#F8F8F2"
+text = "#282A36"
+
 # Colors (Dracula)
 
 # Default colors
