@@ -1,3 +1,10 @@
+{{- define "ompInit" -}}{{- printf
+`   oh-my-posh @(
+        'init'
+        'pwsh'
+        '--config'
+        %s
+    ) | Invoke-Expression` ( joinPath .homeDir ".config" "oh-my-posh" .ompJsonFilePath | squote ) -}}{{- end -}}
 function Set-MyOmpContext {
     param([bool]$originalStatus)
 {{- /* Helper for relative pathing on dotnet methods. They use the process level path. */}}
@@ -15,9 +22,9 @@ function Set-MyOmpContext {
    * https://github.com/ScoopInstaller/Scoop/blob/b588a06e41d920d2123ec70aee682bae14935939/bin/scoop.ps1#L11-L15
    */}}
 Set-Alias -Name 'Set-PoshContext' -Value 'Set-MyOmpContext' -Option ReadOnly -Force
-oh-my-posh @(
-    'init'
-    'pwsh'
-    '--config'
-    {{ joinPath .homeDir ".config" "oh-my-posh" "night-owl_mac.omp.json" | squote }}
-) | Invoke-Expression
+if ($Host.Name -in @( 'Visual Studio Code Host', 'nvim' ) ) {
+{{ template "ompInit" ( dict "ompJsonFilePath" "night-owl-mac.omp.json" "homeDir" .homeDir ) }}
+}
+else {
+{{ template "ompInit" ( dict "ompJsonFilePath" "night-owl-mac-stream.omp.json" "homeDir" .homeDir ) }}
+}
