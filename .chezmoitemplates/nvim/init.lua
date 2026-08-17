@@ -922,7 +922,8 @@ do
       local pwsh = require('powershell')
       vim.keymap.set("n", "<leader>ld", function() pwsh.toggle_debug_term() end, {desc = 'PowerShe[l]l [D]ebug Term'})
       vim.keymap.set("n", "<leader>lt", function() pwsh.toggle_term() end, {desc = 'PowerShe[l]l [T]erm'})
-      vim.keymap.set({ "n", "x" }, "<leader>le", function() pwsh.eval() end, {desc = 'PowerShe[l]l [E]valuate Line'})
+      vim.keymap.set({ 'n', 'x' }, 'g=', function() return pwsh.eval_operator() end, { desc = 'Powershell Evaluate Operator', expr = true })
+      vim.keymap.set('n', 'g==', function() return pwsh.eval_operator() .. '_' end, { desc = 'Powershell Evaluate Line Operator', expr = true })
     end
   })
 
