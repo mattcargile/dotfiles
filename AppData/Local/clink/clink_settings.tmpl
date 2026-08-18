@@ -1,0 +1,14 @@
+{{- $clinkPath := joinPath ( env "LOCALAPPDATA" ) "clink" -}}
+{{- $clinkPlugPath := joinPath $clinkPath "plugins" -}}
+# name: A .clinkprompt file to use for the prompt
+# type: string
+clink.customprompt = {{ joinPath .chezmoi.homeDir "scoop" "apps" "clink" "current" "themes" "oh-my-posh.clinkprompt" }}
+
+# name: Paths to load Lua scripts from
+# type: string
+clink.path = {{ $clinkPath -}};{{ joinPath $clinkPlugPath "clink-gizmos" }};{{ joinPath $clinkPlugPath "z.lua" }}
+
+# name: The oh-my-posh theme to use.
+# type: string
+ohmyposh.theme = {{ joinPath .chezmoi.homeDir ".config" "oh-my-posh" "night-owl-mac-stream.omp.json" }}
+

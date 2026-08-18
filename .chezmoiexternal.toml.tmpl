@@ -1,0 +1,12 @@
+{{- if eq .chezmoi.os "windows" -}}
+["AppData/Local/clink/plugins/z.lua"]
+type = "archive"
+url = {{ ( gitHubRelease "skywind3000/z.lua" "1.8.26" ).ZipballURL | quote }}
+stripComponents = 1
+include = [ "*/z.lua", "*/z.cmd" ]
+["AppData/Local/clink/plugins/clink-gizmos"]
+type = "archive"
+url = "https://github.com/chrisant996/clink-gizmos/archive/3d79bc5d6c063f0ead9fb40a9239a2fd6a6641c1.zip"
+stripComponents = 1
+{{ end -}}
+
