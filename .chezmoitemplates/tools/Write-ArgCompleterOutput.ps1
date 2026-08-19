@@ -96,6 +96,9 @@ end {
     if (Get-Command zellij -CommandType Application -ErrorAction Ignore) {
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (zellij setup --generate-completion powershell | Out-String) -Comment 'Zellij Terminal Multiplexor Prompt Completions' ) ) 
     }
+    if (Get-Command codex -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (codex completion powershell | Out-String) -Comment 'codex Prompt Completions' ) ) 
+    }
     if (Get-Command dotnet -CommandType Application -ErrorAction Ignore) {
         $env:DOTNET_NOLOGO = 'true' # Avoid welcome message on first run. Confusing output from chezmoi
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (dotnet completions script pwsh | Out-String) -Comment 'dotnet Prompt Completions' ) )
