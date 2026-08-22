@@ -89,7 +89,9 @@ do
   -- Begin custom settings
   -- :h ft_sql
   vim.g.ftplugin_sql_statements = "create,alter,create or alter"
+
   vim.o.winborder = 'rounded'
+
   vim.opt.diffopt:append('algorithm:histogram')
 
   vim.o.shell = 'pwsh'
@@ -98,6 +100,7 @@ do
   -- Required otherwise default is \"
   vim.o.shellquote = ''
   vim.o.shellxquote = ''
+
 end
 
 -- ============================================================
