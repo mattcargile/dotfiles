@@ -991,44 +991,6 @@ do
   vim.pack.add { gh 'swaits/tiny-jump.nvim' }
   vim.keymap.set( { 'n', 'x', 'o' }, 'sj', require('tiny-jump').start)
 
-  local miniclue = require('mini.clue')
-  miniclue.setup({
-    triggers = {
-      { mode = { 'n', 'x' }, keys = '<Leader>' },
-      { mode = { 'n', 'x' }, keys = '[' },
-      { mode = { 'n', 'x' }, keys = ']' },
-      { mode = 'i', keys = '<C-x>' },
-      { mode = { 'n', 'x' }, keys = 'g' },
-      { mode = { 'n', 'x' }, keys = "'" },
-      { mode = { 'n', 'x' }, keys = '`' },
-      { mode = { 'n', 'x' }, keys = '"' },
-      { mode = { 'i', 'c' }, keys = '<C-r>' },
-      { mode = 'n', keys = '<C-w>' },
-      { mode = { 'n', 'x' }, keys = 'z' },
-    },
-
-    clues = {
-      { mode = { 'n', 'x' }, keys = '<leader>s', desc = '[S]earch' },
-      { mode = { 'n', 'x' }, keys = '<leader>d', desc = '[D]ebug' },
-      { mode = { 'n', 'x' }, keys = '<leader>t', desc = '[T]oggle' },
-      { mode = { 'n', 'x' }, keys = '<leader>h', desc = 'Git [H]unk' },
-      { mode = { 'n' }, keys = 'gr', desc = 'LSP Actions' },
-      miniclue.gen_clues.square_brackets(),
-      miniclue.gen_clues.builtin_completion(),
-      miniclue.gen_clues.g(),
-      miniclue.gen_clues.marks(),
-      miniclue.gen_clues.registers(),
-      miniclue.gen_clues.windows(),
-      miniclue.gen_clues.z(),
-    },
-
-    window = {
-      config = {
-        width = 'auto'
-      }
-    }
-  })
-
   vim.pack.add { gh 'tpope/vim-fugitive' }
   vim.cmd.packadd { 'nvim.undotree', bang = true }
 
