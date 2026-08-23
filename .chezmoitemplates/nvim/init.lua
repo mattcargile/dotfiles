@@ -1004,8 +1004,8 @@ do
 
   vim.pack.add { gh 'willothy/flatten.nvim' }
   require('flatten').setup {
-    integrations = {
-      wezterm = true
+    window = {
+      open = 'alternate'
     }
   }
 
@@ -1079,6 +1079,16 @@ do
       terminal_buf = vim.api.nvim_get_current_buf()
       vim.bo[terminal_buf].buflisted = false
       vim.b[terminal_buf].personal_toggle_terminal = true
+      vim.keymap.set('n', '<C-^>', function()
+        vim.cmd.normal {
+          vim.keycode('<C-^>'),
+          bang = true,
+          mods = { keepalt = true },
+        }
+      end, {
+        buf = terminal_buf,
+        desc = "Invoke alternate file without changing alternate file otherwise the personal terminal marked as buflisted.",
+      })
     end
 
     vim.cmd.startinsert()
