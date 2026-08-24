@@ -1049,12 +1049,34 @@ do
     })
   end
 
+  local function edit_alt_keepalt()
+    vim.cmd.normal {
+      vim.keycode('<C-^>'),
+      bang = true,
+      mods = { keepalt = true },
+    }
+  end
+
   local function toggle_terminal()
     if is_terminal_alive(terminal_buf) then
       local win = get_terminal_window(terminal_buf)
-
       if win then
-        vim.api.nvim_win_hide(win)
+        if #vim.api.nvim_tabpage_list_wins(0) == 1 then
+          if vim.api.nvim_get_mode().mode == 't' then
+            vim.cmd.stopinsert()
+          end
+          local _, sch_err = vim.schedule( function()
+            local ok, err = pcall(edit_alt_keepalt)
+            if not ok then
+              vim.notify( 'Terminal is only window remaining. Could not switch to alternate buffer. ' .. tostring(err), vim.log.levels.WARN)
+            end
+          end)
+          if sch_err then
+            vim.notify(tostring(sch_err), vim.log.levels.ERROR)
+          end
+        else
+          vim.api.nvim_win_hide(win)
+        end
         return
       end
 
@@ -1079,13 +1101,7 @@ do
       terminal_buf = vim.api.nvim_get_current_buf()
       vim.bo[terminal_buf].buflisted = false
       vim.b[terminal_buf].personal_toggle_terminal = true
-      vim.keymap.set('n', '<C-^>', function()
-        vim.cmd.normal {
-          vim.keycode('<C-^>'),
-          bang = true,
-          mods = { keepalt = true },
-        }
-      end, {
+      vim.keymap.set('n', '<C-^>', edit_alt_keepalt, {
         buf = terminal_buf,
         desc = "Invoke alternate file without changing alternate file otherwise the personal terminal marked as buflisted.",
       })
