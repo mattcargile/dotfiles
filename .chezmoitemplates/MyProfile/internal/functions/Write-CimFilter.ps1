@@ -38,7 +38,6 @@ function Write-CimFilter {
         [switch]
         $Not
     )
-    
     process {
         $baseFilterPartial = "$PropertyName LIKE '"
         $baseFilterPredicateSeparator = 'OR'
