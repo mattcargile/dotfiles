@@ -36,11 +36,11 @@ function ConvertTo-CompactPath {
         [switch]
         $ProviderPathFromPSPath
     )
-    
+
     begin {
         $shl = New-CtypesLib Shlwapi.dll
     }
-    
+
     process {
         foreach ($currentPath in $Path) {
             try {
@@ -63,7 +63,7 @@ function ConvertTo-CompactPath {
             else {
                 $Length += 1
             }
-            
+
             $outCharArray = [char[]]::new($Length)
             # Not setting last error as it returns a bool
             $res = $shl.CharSet('Unicode').Returns([bool]).PathCompactPathExW( $outCharArray, $currentPath, $Length, 0)
@@ -85,6 +85,6 @@ function ConvertTo-CompactPath {
             # Null 0 character at end managles Out-Pager output
             [string]::new($outCharArray, 0, $outCharArray.Length - 1)
         }
-        
+
     }
 }
