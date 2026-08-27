@@ -11,7 +11,7 @@ function Out-Paging {
     begin {
         # chezmoi if isPSCore {{- if .isPSCore }}
         # chezmoi if paging available {{- if .isPagingAvailable }}
-        $pipeOriginal = { TextMate\Out-Page }
+        $pipeOriginal = { Out-AnsiFormatting -Stream | TextMate\Out-Page }
         if (-not (Get-Module -Name TextMate)) {
             $pipeFallback = { Out-AnsiFormatting -Stream | less $env:LESS @ArgumentList }
             try {
