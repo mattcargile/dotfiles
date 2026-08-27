@@ -39,6 +39,8 @@ if(
         $Host.Name -eq 'nvim'
 ){
     Import-CommandSuite
+{{- /* streaming feature causes race condition errors due to dueling OnIdle events in PSES */}}
+    $env:POSH_DISABLE_STREAMING = '1'
 }
 #endegion
 
