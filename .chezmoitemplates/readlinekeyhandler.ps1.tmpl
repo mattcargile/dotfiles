@@ -587,6 +587,7 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+c' -Function CopyOrCancelLine -ViMode Comm
 Set-PSReadLineKeyHandler -Chord 'Ctrl+p' -Function PreviousHistory -ViMode Insert
 Set-PSReadLineKeyHandler -Chord 'Ctrl+n' -Function NextHistory -ViMode Insert
 Set-PSReadLineKeyHandler -Chord 'Ctrl+y' -Function AcceptSuggestion -ViMode Insert
+Set-PSReadLineKeyHandler -Chord 'Ctrl+r' -Function Redo -ViMode Command
 Set-PSReadLineKeyHandler -Chord 'Ctrl+x,Ctrl+o' -ViMode Insert -Function MenuComplete
 Set-PSReadLineKeyHandler -Chord 'Ctrl+x,Ctrl+z' -ViMode Insert -Function Abort
 Set-PSReadLineKeyHandler -Chord 'Ctrl+x,Ctrl+z' -ViMode Command -Function Abort
