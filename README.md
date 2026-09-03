@@ -42,7 +42,6 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. set up the osc where `cd` will change the working `nvim` dir. see that that integrates with the above plugins
 1. get _c#_ going in _nvim_ with debugger and lsp and refactorings
 1. get debugging with a binary module going with `powershell` and update the dap configurations like _vscode_
-1. get formatting going with _powershell_ so maybe tabs to spaces, etc. kind of like _vscode_
 1. get formatting going with _c#_
 1. figure out snippets with _powershell_
 1. figure out snippets with _c#_
@@ -54,13 +53,13 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. inspect how edit vi visually works in psrl to see about better compat with flatten.nvim or the like.
 1. figure out how to properly handle copy in an ssh session while retainin the current behavior and not breaking paste. `wezterm` doesn't support paste which i tend to agree with for security. i can ust `c-s-v`. `:h clipboard-osc52` / `= require('vim.ui.clipboard.osc52').copy('+')({vim.fn.getreg('v')})`
 1. handle arrowing up in a long terminal prompt in neovim. It won't let me go up. i can only edit it with vi visual mode by typing v.
-1. figure how to to make ctrl space work in neovim terminal
-1. figure how to make ctrl shift y work in neovim terminal
 1. is there a way to launch `gvpn` async to get the time left on vpn easily and fast. maybe some api.
 1. still want that neovim anywhere.
-1. rework the `oh-my-posh` json config and use directives to change the `{{}}` characters to something else to prevent having to double escape things and use the `.Var.Var` feature. to embed data like the `onedrive` paths and such.
+1. use the `.Var.Var` feature. to embed data like the `onedrive` paths and such.
 1. handle the `carapace` completers more nicely for _*nix_ vs _windows_. `strings` is a windows feature and more default on _*nix_.
 1. work in `nuget` [package](https://www.nuget.org/packages/Microsoft.Windows.Console.ConPTY) for `alacritty` on windows to use modern _conpty_. simple fix is `cp ~\scoop\apps\wezterm-nightly\current\conpty.dll, ~\scoop\apps\wezterm-nightly\current\OpenConsole.exe ~\scoop\apps\alacritty\current\`
+1. `ctcn` add `-expand` and add `-propertyname` for like `name` instead of `computername` or maybe just add it outright?
+1. get `rio` going with _sixel_ and _conpty_ for `nuget`.
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
