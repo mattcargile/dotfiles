@@ -90,6 +90,8 @@ function Get-ComedyShow {
                 Select-HtmlNode -Tag a -Single |
                 Select-HtmlAttributeValue -AttributeName 'href' -DefaultValue '<EMPTY>' |
                 ForEach-Object -Process {
+                    # atgtickets threw a 400 level too many requests error
+                    Start-Sleep -Seconds 1
                     $currentJson = ConvertFrom-HtmlJsonLd -Url "https://us.atgtickets.com$_" |
                         Where-Object Type -eq 'TheaterEvent' |
                         ForEach-Object -MemberName RawJson |
