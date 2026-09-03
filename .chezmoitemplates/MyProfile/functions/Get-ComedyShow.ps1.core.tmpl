@@ -172,10 +172,25 @@ function Get-ComedyShow {
                 @{
                     Name = 'StartDate'
                     Expression = {
+                        # Format is _hopefully_ `dddd MMMM dd` or 'Friday February 19'
                         $currentEvtDateInnerText = $_.EventHtmlObject |
                             Select-HtmlNode -Tag span -AttributeName 'class' -AttributeValue 'tw-event-date' |
                             Select-HtmlInnerText -DeEntitize
-                        $currentEvtDate = [datetime]::Parse($currentEvtDateInnerText)
+                        [int]$currentYear = Get-Date -Format 'yyyy'
+                        $currentDateZeroTime = Get-Date -Hour 0 -Minute 0 -Second 0
+                        $nextYear = $currentYear + 1
+                        $currentEvtDateCurrentYear = "$currentEvtDateInnerText $currentYear"
+                        $currentEvtDateNextYear = "$currentEvtDateInnerText $nextYear"
+                        $outCurrentEvtDateCurrentYear = Get-Date
+                        $isParsedCurrentEvtDateCurrentYear = [datetime]::TryParse($currentEvtDateCurrentYear, [ref]$outCurrentEvtDateCurrentYear)
+                        $outCurrentEvtDateNextYear = Get-Date
+                        $isParsedCurrentEvtDateNextYear = [datetime]::TryParse($currentEvtDateNextYear, [ref]$outCurrentEvtDateNextYear)
+                        if ($isParsedCurrentEvtDateCurrentYear -and $outCurrentEvtDateCurrentYear -ge $currentDateZeroTime) {
+                            $currentEvtDate = $outCurrentEvtDateCurrentYear
+                        }
+                        if ($isParsedCurrentEvtDateNextYear -and $outCurrentEvtDateNextYear -ge $currentDateZeroTime) {
+                            $currentEvtDate = $outCurrentEvtDateNextYear
+                        }
                         $currentEvtTimeString = $_.EventHtmlObject |
                             Select-HtmlNode -Tag span -AttributeName 'class' -AttributeValue 'tw-event-time' |
                             Select-HtmlInnerText -DeEntitize
