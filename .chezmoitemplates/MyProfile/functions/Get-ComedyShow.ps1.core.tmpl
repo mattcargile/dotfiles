@@ -270,7 +270,7 @@ function Get-ComedyShow {
                 @{
                     Name = 'Name'
                     Expression = {
-                        ($_ | Select-HtmlNode -Tag h3 -AttributeName 'class' -AttributeValue 'wpem-heading-text' | Select-HtmlInnerText) -replace $nameReplace
+                        ($_ | Select-HtmlNode -Tag h3 -AttributeName 'class' -AttributeValue 'wpem-heading-text' | Select-HtmlInnerText -DeEntitize) -replace $nameReplace
                     }
                 }
                 @{
