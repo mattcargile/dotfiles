@@ -212,6 +212,7 @@ function Get-ComedyShow {
             PSParseHTML\ConvertFrom-HTML |
             Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'seven columns' |
             Select-Object @joyInterSelSplat |
+            Where-Object Name -notmatch 'bingo loco' |
             Where-Object {
                 $_.EventHtmlObject |
                     Select-HtmlNode -Tag p -AttributeName 'class' -AttributeValue 'tw-description-info' |
