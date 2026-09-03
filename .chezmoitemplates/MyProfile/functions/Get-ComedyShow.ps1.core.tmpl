@@ -73,7 +73,7 @@ function Get-ComedyShow {
                 Property = @(
                     @{
                         Name = 'Name'
-                        Expression = { $_.name -replace $NameReplaceRegex }
+                        Expression = { ( $_.name | ConvertFrom-HtmlEntity ) -replace $NameReplaceRegex }
                     }
                     @{
                         Name = 'StartDate'
