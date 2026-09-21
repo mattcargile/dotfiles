@@ -386,7 +386,7 @@ mouse_mode false
 // Enable automatic copying (and clearing) of selection when releasing mouse
 // Default: true
 // 
-// copy_on_select true
+copy_on_select false
  
 // Path to the default editor to use to edit pane scrollbuffer
 // Default: $EDITOR or $VISUAL
@@ -519,11 +519,11 @@ session_serialization false
  
 // Whether to enable mouse hover effects and pane grouping functionality
 // default is true
-// advanced_mouse_actions false
+advanced_mouse_actions false
  
 // Whether to enable mouse hover visual effects (frame highlight and help text)
 // default is true
-// mouse_hover_effects false
+mouse_hover_effects false
  
 // Whether to show visual bell indicators (pane/tab frame flash and [!] suffix)
 // default is true
