@@ -108,7 +108,8 @@ function Get-ComedyShow {
     }
 
     process {
-        $nameReplace = '(\s?\(.*\)\s?.*)|(\s[aA]t\s.*$)|(\sLive\s[iI]n\s.*$)|(:.*$)|(\s?-\s?.*)|(\sLive[!\s]?.*$)'
+        # \u2014 is em-dash —
+        $nameReplace = '(\s?\(.*\)\s?.*)|(\s[aA]t\s.*$)|(\sLive\s[iI]n\s.*$)|(:.*$)|(\s[-\u2014]\s.*)|(\sLive[!\s]?.*$)'
 
         ConvertFrom-HtmlJsonLd -Url https://laughlife.standuptix.com |
             Where-Object Type -eq ComedyEvent |
