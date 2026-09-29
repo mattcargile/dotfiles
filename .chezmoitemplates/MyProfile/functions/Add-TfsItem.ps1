@@ -16,12 +16,14 @@ function Add-TfsItem {
         }
         $sts = tf status . /recursive
         $addLn = $sts | Select-String 'Detected Changes:' | Select-Object -ExpandProperty LineNumber
-        tf add /noprompt (
-            $sts[$addLn..($sts.Length - 1)] |
-                Select-String 'add([ ]+)(.*)' | 
-                Select-Object -ExpandProperty Matches | 
-                Select-Object -ExpandProperty Groups | 
-                Where-Object Name -eq '2' | 
-                Select-Object -ExpandProperty Value)
+        $sts[$addLn..($sts.Length - 1)] |
+            Select-String 'add([ ]+)(.*)' | 
+            Select-Object -ExpandProperty Matches | 
+            Select-Object -ExpandProperty Groups | 
+            Where-Object Name -eq '2' | 
+            Select-Object -ExpandProperty Value |
+            ForEach-Object -Process {
+                tf add /noprompt $_
+            }
     }
 }
