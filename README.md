@@ -60,6 +60,7 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. work in `nuget` [package](https://www.nuget.org/packages/Microsoft.Windows.Console.ConPTY) for `alacritty` on windows to use modern _conpty_. simple fix is `cp ~\scoop\apps\wezterm-nightly\current\conpty.dll, ~\scoop\apps\wezterm-nightly\current\OpenConsole.exe ~\scoop\apps\alacritty\current\`
 1. `ctcn` add `-expand` and add `-propertyname` for like `name` instead of `computername` or maybe just add it outright?
 1. get `rio` going with _sixel_ and _conpty_ for `nuget`.
+1. `gcimp` and `gcims` don't handle empty "path" and end up excluding the wrong ones. need an `OR` block somewhere.
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
