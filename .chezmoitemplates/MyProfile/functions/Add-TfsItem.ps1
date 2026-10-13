@@ -23,7 +23,7 @@ function Add-TfsItem {
             Where-Object Name -eq '2' | 
             Select-Object -ExpandProperty Value |
             ForEach-Object -Process {
-                tf add /noprompt $_
+                tf add /encoding:utf-8 /noprompt $_
             }
     }
 }
