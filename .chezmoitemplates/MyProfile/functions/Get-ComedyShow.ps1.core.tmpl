@@ -5,59 +5,6 @@ function Get-ComedyShow {
     param (
     )
     begin {
-        filter Select-OpenDate {
-            [CmdletBinding()]
-            param(
-                [Parameter(Mandatory, ValueFromPipeline)]
-                [object]
-                $HtmlNode
-            )
-            $selectSplat = @{
-                Property = @(
-                    @{
-                        Name = 'NameInnerText'
-                        Expression = { $_ | Select-HtmlInnerText -DeEntitize }
-                    }
-                    @{
-                        Name = 'StartDate'
-                        Expression = {
-                            $selectedDate = [datetime]::Parse($_.ParentNode.NextSibling.NextSibling.InnerText.Trim())
-                            $selectedShowTimeText = ($_.ParentNode.NextSibling.NextSibling.NextSibling.NextSibling.InnerText.Trim() -split '- Show: ')[1] 
-                            $selectedTimeOfDay = [datetime]::Parse($selectedShowTimeText).TimeOfDay
-                            $selectedDate.Add($selectedTimeOfDay)
-                        }
-                    }
-                )
-            }
-            $HtmlNode | Select-HtmlNode -Tag a -AttributeName target -AttributeValue _parent | Select-Object @selectSplat
-        }
-        filter Select-SportsDrink {
-            [CmdletBinding()]
-            param(
-                [Parameter(Mandatory, ValueFromPipeline)]
-                [object]
-                $OpenDateObject,
-                [Parameter(Mandatory)]
-                [string]
-                $NameReplaceRegex
-            )
-            $regexNotMatch = 'open gym|film_pod|moral panic|community night|spoonful of sugar|tropical trivia|new orleans spelling bee|Ted & Kev|Karaoke Night|no br lft|thank you for your purchase|bing-oh|track limits|Show To Be Announced|burn this records|black girl giggles|Trust Me I''m A Professional|christmas comedy show|joke beats'
-            $selectSplat  = @{
-                Property = @(
-                    @{
-                        Name = 'Name'
-                        Expression = { $_.NameInnerText -replace $NameReplaceRegex }
-
-                    }
-                    'StartDate'
-                    @{
-                        Name = 'Location'
-                        Expression = {'Sports Drink'}
-                    }
-                )
-            }
-            $OpenDateObject | Where-Object NameInnerText -notmatch $regexNotMatch | Select-Object @selectSplat 
-        }
         filter Select-AtgTicket {
             [CmdletBinding()]
             param (
@@ -131,18 +78,45 @@ function Get-ComedyShow {
                 @{n='StartDate'; e={$_.startdate}},
                 @{n='Location'; e={$_.location.name}}
 
-        $sportsDrinkBaseUri = 'https://app.opendate.io/v/sports-drink-1939'
-        $sportsDrinkPageQueryParamFormat = 'page={0}'
-        $sportsDrinkFirstPage = PSParseHTML\ConvertFrom-HTML -Url $sportsDrinkBaseUri
-        $sportsDrinkLastPageNumber = $sportsDrinkFirstPage | Select-HtmlNode -Tag a -AttributeName 'class' -AttributeValue 'page-link' |
-            Select-HtmlInnerText -DeEntitize |
-            Select-Object -Last 2 |
-            Select-Object -First 1
-        $sportsDrinkFirstPage | Select-OpenDate | Select-SportsDrink -NameReplaceRegex $nameReplace
-        foreach ($currentSportsDrinkPage in 2..$sportsDrinkLastPageNumber) {
-            $currentSportsDrinkUri = "${sportsDrinkBaseUri}?$($sportsDrinkPageQueryParamFormat -f $currentSportsDrinkPage)"
-            PSParseHTML\ConvertFrom-HTML -Url $currentSportsDrinkUri | Select-OpenDate | Select-SportsDrink -NameReplaceRegex $nameReplace
-        }
+        # Sports Drink
+        Invoke-RestMethod -Uri https://punchup.live/api/v2/public/venues/grouped-shows?venuePageId=b6683048-6c02-4346-84d2-478604444588 |
+            ForEach-Object -MemberName data |
+            ForEach-Object -Process {
+                if ($_.type -eq 'group') {
+                    $_.group.shows
+                }
+                elseif ($_.type -eq 'single') {
+                    $_.show
+                }
+                else {
+                    Write-Warning "Did not find expected type group or single. Returned $($_.type)."
+                }
+            } |
+            # Not every non-community or non-showcase show has a `show_comedians` so we have to parse and filter on the title
+            Where-Object -FilterScript { $_.title -notmatch 'open gym|film_pod|moral panic|community night|spoonful of sugar|tropical trivia|new orleans spelling bee|Ted & Kev|Karaoke Night|no br lft|thank you for your purchase|bing-oh|track limits|Show To Be Announced|burn this records|black girl giggles|Trust Me I''m A Professional|christmas comedy show|joke beats' } |
+            Select-Object -Property @{
+                Name = 'Name'
+                Expression = {
+                    if ($_.show_comedians) {
+                        $_.show_comedians.display_name -join ' & '
+                    }
+                    else {
+                        $_.title -replace $nameReplace
+                    }
+                }
+            },
+            @{
+                Name = 'StartDate'
+                Expression = {
+                    $_.datetime
+                }
+            },
+            @{
+                Name = 'Location'
+                Expression = {
+                    'Sports Drink'
+                }
+            }
 
         PSParseHTML\ConvertFrom-HTML -Url https://us.atgtickets.com/venues/saenger-theatre/whats-on/us/comedy?sort=newest-onsale |
             Select-AtgTicket -NameReplaceRegex $nameReplace
