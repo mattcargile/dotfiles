@@ -199,18 +199,38 @@ function Get-ComedyShow {
         # civicnola.com has some of fingerprinting related to TLS state. Upping to HTTP/2 "fixes" the initial error.
         # curl doesn't appear to have this issue on http versions. User agent doesn't immediately fix the issue either. 
         # Using `$env:DOTNET_SYSTEM_NET_SECURITY_DISABLETLSRESUME` creates a scenario where connection never succeeds
-        $civicComedyArchiveNameList = ( 
+        $civicComedyArchiveNameList = @( 
             Invoke-RestMethod 'https://civicnola.com/tm_genre/comedy' -HttpVersion 2.0 |
                 PSParseHTML\ConvertFrom-HTML |
                 Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'tw-name event-title' |
                 Select-HtmlInnerText -DeEntitize
         ) -replace $nameReplace
+        $civicIntermediateSelSplat = @{
+            Property = @(
+                @{
+                    Name = 'Name'
+                    Expression = {
+                        ( $_ | Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'tw-name' | Select-HtmlNode -Tag a -Single | Select-HtmlInnerText -DeEntitize ) -replace $nameReplace
+                    }
+                }
+                @{
+                    Name = 'HtmlRowObjectList'
+                    Expression = {
+                        $_ |
+                            Select-HtmlNode -Tag 'div' -AttributeName 'class' -AttributeValue 'row' |
+                            Where-Object -FilterScript {
+                                $_ | Select-HtmlNode -Tag 'div' -AttributeName 'class' -AttributeValue 'tw-date-time' -StartsWith
+                            }
+                    }
+                }
+            )
+        }
         $civicSelSplat = @{
             Property = @(
                 @{
                     Name = 'Name'
                     Expression = {
-                        ($_ | Select-HtmlNode -Tag a -Single | Select-HtmlInnerText -DeEntitize) -replace $nameReplace
+                        $civicBase.Name
                     }
                 }
                 @{
@@ -231,9 +251,11 @@ function Get-ComedyShow {
         }
         Invoke-RestMethod 'https://civicnola.com/tm-venue/' -HttpVersion 2.0 |
             PSParseHTML\ConvertFrom-HTML |
-            Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'seven columns' |
-            Select-Object @civicSelSplat |
-            Where-Object Name -in $civicComedyArchiveNameList
+            Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'tw-section' |
+            Select-Object @civicIntermediateSelSplat |
+            Where-Object Name -in $civicComedyArchiveNameList -PipelineVariable civicBase |
+            ForEach-Object -MemberName HtmlRowObjectList |
+            Select-Object @civicSelSplat
 
         $orpheumBody = @{
             'search_categories[]' = 'live-comedy'
