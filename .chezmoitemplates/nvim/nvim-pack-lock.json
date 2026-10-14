@@ -96,7 +96,7 @@
       "src": "https://github.com/nvim-lua/plenary.nvim"
     },
     "powershell.nvim": {
-      "rev": "faafb829db0979b4a5962fe0d10a58830413bcd2",
+      "rev": "f6b7fbef6041c41bbaef10d66c092396519ef488",
       "src": "https://github.com/TheLeoP/powershell.nvim"
     },
     "render-markdown.nvim": {
