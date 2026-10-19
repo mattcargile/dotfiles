@@ -1,12 +1,15 @@
-{{- $credAdmSbk := "{ Get-Secret -Name da -Vault dp }" -}}
-{{- $credSspAdmSbk := "{ if ($args.BoundParameters -contains 'Authentication') { Get-Secret -Name da -Vault dp } }" -}}
+{{- /* chezmoi:template:line-endings=native */ -}}
+{{- /* define with template pattern defaults to LF line endings which pollutes the final output with mismatched line endings */ -}}
+{{- define "credAdmSbk" }}{ Get-Secret -Name da -Vault dp }{{ end -}}
+{{- define "credSspAdmSbk" }}{ if ($args.BoundParameters -contains 'Authentication') { Get-Secret -Name da -Vault dp } }{{ end -}}
+{{- /* Office below is physicalDeliveryOfficeName*/ -}}
 $PSDefaultParameterValues = @{
   'Get-ADUserProxy:Properties' = [string[]]@(
     'Description'
     'DisplayName'
     'LockedOut'
     'PasswordExpired'
-    'Office' # physicalDeliveryOfficeName
+    'Office'
     'Surname'
     'Title'
     'msDS-AllowedToDelegateTo'
@@ -28,10 +31,10 @@ $PSDefaultParameterValues = @{
   'Search-Giphy:ApiKey' = { Get-Secret -Name giphy -Vault dp }
 {{- /* Not perfect. This does line up the output better. Using 0 removes the default first column for time spent. */}}
   'Invoke-DbaWhoIsActive:FormatOutput' = 2
-  'Invoke-Mstsc:Credential' = {{ $credAdmSbk }}
-  'Invoke-Command:Credential' = {{ $credSspAdmSbk }}
-  'Enter-PSSession:Credential' = {{ $credSspAdmSbk }}
-  'New-PSSession:Credential' = {{ $credSspAdmSbk }}
+  'Invoke-Mstsc:Credential' = {{ template "credAdmSbk" }}
+  'Invoke-Command:Credential' = {{ template "credSspAdmSbk" }}
+  'Enter-PSSession:Credential' = {{ template "credSspAdmSbk" }}
+  'New-PSSession:Credential' = {{ template "credSspAdmSbk" }}
 {{- /* "All" output is written to $__ to make it easier to work interactively like if a user forgets to assign the output. */}}
   'Out-Default:OutVariable' = '__'
   'Format-Table:AutoSize' = $true
