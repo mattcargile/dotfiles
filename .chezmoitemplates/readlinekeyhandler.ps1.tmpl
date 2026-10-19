@@ -1,3 +1,13 @@
+{{- /* chezmoi:template:line-endings=native */ -}}
+{{- /* define with template pattern defaults to LF line endings which pollutes the final output with mismatched line endings */ -}}
+{{- define "saveinHistorySb" }}{
+    param($key, $arg)
+    $line = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line,[ref]$null)
+    [Microsoft.PowerShell.PSConsoleReadLine]::AddToHistory($line)
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+}
+{{- end -}}
 #region Cancel and Undo completion
 {{ define "tabHandlerSb" -}}{{- printf
 `       param($key, $arg)
@@ -171,8 +181,8 @@ Set-PSReadLineKeyHandler -Chord 'Alt+y' -BriefDescription 'NextWordAndAcceptNext
     [Microsoft.PowerShell.PSConsoleReadLine]::AddToHistory($line)
     [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
 }` }}
-Set-PSReadLineKeyHandler -Key 'Alt+w' -ViMode 'Command' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
-Set-PSReadLineKeyHandler -Key 'Alt+w' -ViMode 'Insert' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ $saveinHistorySb }}
+Set-PSReadLineKeyHandler -Key 'Alt+w' -ViMode 'Command' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ template "saveinHistorySb" }}
+Set-PSReadLineKeyHandler -Key 'Alt+w' -ViMode 'Insert' -BriefDescription 'SaveInHistory' -Description 'Save current line to history ( without execution) and clear line.' -ScriptBlock {{ template "saveinHistorySb" }}
 #endregion
 #region SmartInsertQuote
 Set-PSReadLineKeyHandler -Chord '"', "'" -BriefDescription 'SmartInsertQuote' -Description "Insert paired quotes if not already on a quote" -ScriptBlock {
