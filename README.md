@@ -61,6 +61,8 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. `ctcn` add `-expand` and add `-propertyname` for like `name` instead of `computername` or maybe just add it outright?
 1. get `rio` going with _sixel_ and _conpty_ for `nuget`.
 1. `gcimp` and `gcims` don't handle empty "path" and end up excluding the wrong ones. need an `OR` block somewhere.
+1. need less dependencies for machine without admin to get to lowest common denomenator setup. `dotnet` could exist but it fails with a negative error code. font may not be available either and need to dump nerd fonts if not available with sub-dued prompt.
+1. the whole build tools situation with admin required is a pain for _neovim_ on windows. how to handle without admin for `cl.exe`
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
