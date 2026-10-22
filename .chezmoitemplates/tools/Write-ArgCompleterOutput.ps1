@@ -101,7 +101,11 @@ end {
     }
     if (Get-Command dotnet -CommandType Application -ErrorAction Ignore) {
         $env:DOTNET_NOLOGO = 'true' # Avoid welcome message on first run. Confusing output from chezmoi
-        $argCompFiles.Add( ( New-ArgCompleterObject -Script (dotnet completions script pwsh | Out-String) -Comment 'dotnet Prompt Completions' ) )
+        # `dotnet` command can exist from a install of the runtime without the sdk and `completions` sub command doesn't exist
+        $dotnetCompletionScript = dotnet completions script pwsh 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            $argCompFiles.Add( ( New-ArgCompleterObject -Script ( $dotnetCompletionScript | Out-String ) -Comment 'dotnet Prompt Completions' ) )
+        }
         Remove-Item -Path Env:\DOTNET_NOLOGO
     }
 
