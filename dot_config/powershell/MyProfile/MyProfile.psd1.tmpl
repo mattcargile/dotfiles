@@ -57,7 +57,7 @@
         # chezmoi if aliases {{- if $cmdletAndAliasOutJson.AliasNames }}{{ range $currentAlias := $cmdletAndAliasOutJson.AliasNames }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" $.isWindows "width" 8 "string" ( $currentAlias | squote ) ) }}{{ end }}
         # chezmoi end if aliases {{- end }}
         # chezmoi outputList args {{- $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-MyProfileAliasesToExport.ps1" ) }}
-        # chezmoi outputList {{- println }}{{ outputList "pwsh" $argCompleterArgList }}
+        # chezmoi outputList {{- if .isWindows }}{{ "\r\n" }}{{ else }}{{ "\n" }}{{ end }}{{ outputList "pwsh" $argCompleterArgList }}
     ) 
     PrivateData = @{
         PSData = @{
