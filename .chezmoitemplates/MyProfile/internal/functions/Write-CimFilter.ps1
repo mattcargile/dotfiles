@@ -41,13 +41,14 @@ function Write-CimFilter {
     process {
         $baseFilterPartial = "$PropertyName LIKE '"
         $baseFilterPredicateSeparator = 'OR'
+        $baseFilterFormatSuffix = ''' )'
         if ($Not) {
             $baseFilterPartial = "NOT $baseFilterPartial"
             $baseFilterPredicateSeparator = 'AND'
+            $baseFilterFormatSuffix = "' OR $PropertyName IS NULL )"
         }
         $baseFilterFormatJoin = "' $baseFilterPredicateSeparator $baseFilterPartial"
-        $baseFilterFormatPrefix = "($baseFilterPartial"
-        $baseFilterFormatSuffix = ''')'
+        $baseFilterFormatPrefix = "( $baseFilterPartial"
         $hasPropertyValue = $null -ne $PropertyValue -and $PropertyValue -ne ''
         $currentFilter = $null
         if ($hasPropertyValue) {
@@ -57,19 +58,16 @@ function Write-CimFilter {
             $currentFilter = "$baseFilterFormatPrefix$($PropertyValue -join $baseFilterFormatJoin)$baseFilterFormatSuffix"
         }
         if (-not $Filter) {
-            Write-Verbose 'Filter is null or empty.'
-            Write-Verbose "PropertyValue for the PropertyName ($PropertyName) is '$PropertValue'"
+            Write-Debug "Filter is null/empty. Returning current filter. PropertyName:'$PropertyName' | PropertyValue:'$PropertyValue'"
             # May return Null to allow property pipeling and downstream process blocks to run
             $currentFilter
         }
         else {
-            Write-Verbose 'Filter has a value.'
             if (-not $hasPropertyValue) {
-                Write-Verbose "PropertyValue for the PropertyName ($PropertyName) is empty or null. Returning the Filter ($Filter)"
+                Write-Debug "PropertyValue is null/empty. Returning Filter. PropertyName:'$PropertyName'"
                 $Filter
             }
             else {
-                Write-Verbose 'Filter and PropertyValue has a value so return the combination.'
                 "$Filter AND $currentFilter"
             }
         }

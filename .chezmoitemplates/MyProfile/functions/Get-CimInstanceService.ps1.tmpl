@@ -230,11 +230,11 @@ function Get-CimInstanceService {
                         '%\\Symantec\\Symantec Endpoint Protection\\%'
                     )
                     $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
-                        Write-CimFilter PathName $notPathName -Not -Verbose:$false
+                        Write-CimFilter PathName $notPathName -Not
                 }
                 $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
-                    Write-CimFilter Name $Name -Escape:$EscapeCimProxyFilterParameter -Verbose:$false |
-                    Write-CimFilter PathName $Path -Escape:$EscapeCimProxyFilterParameter -Verbose:$false
+                    Write-CimFilter Name $Name -Escape:$EscapeCimProxyFilterParameter |
+                    Write-CimFilter PathName $Path -Escape:$EscapeCimProxyFilterParameter
 
                 # Remove parameters not on proxied command
                 $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found

@@ -290,13 +290,13 @@ function Get-CimInstanceProcess {
                         'OpenWith.exe'
                     )
                     $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
-                        Write-CimFilter ExecutablePath $notExecutablePath -Not -Verbose:$false |
+                        Write-CimFilter ExecutablePath $notExecutablePath -Not |
                         Write-CimFilter Name $notName -Not -Verbose:$false
                 }
                 $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
-                    Write-CimFilter Name $Name -Escape:$EscapeCimProxyFilterParameter -Verbose:$false |
-                    Write-CimFilter ExecutablePath $Path -Escape:$EscapeCimProxyFilterParameter -Verbose:$false |
-                    Write-CimFilter ProcessId $ProcessId -Escape:$EscapeCimProxyFilterParameter -Verbose:$false
+                    Write-CimFilter Name $Name -Escape:$EscapeCimProxyFilterParameter |
+                    Write-CimFilter ExecutablePath $Path -Escape:$EscapeCimProxyFilterParameter |
+                    Write-CimFilter ProcessId $ProcessId -Escape:$EscapeCimProxyFilterParameter
 
                 # Remove parameters not on proxied command
                 $PSBoundParameters.Remove('SkipFilter') | Out-Null # Returns true or false if found and not found
