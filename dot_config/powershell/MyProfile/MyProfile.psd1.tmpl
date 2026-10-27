@@ -39,7 +39,7 @@
         else {
             '.\lib\desktop\MyProfileLib.dll'
         }
-        # else *nix/mac {{ else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 4 "string" ( joinPath "." "lib" "core" "MyProfileLib.dll" ) ) }}{{ end }}
+        # else *nix/mac {{ else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 4 "string" ( joinPath "." "lib" "core" "MyProfileLib.dll" | squote ) ) }}{{ end }}
     )
     FunctionsToExport = @(
         # chezmoi includeTemplate {{ includeTemplate "tools/WriteMyProfileFunctionsToExport.tmpl" . }}
