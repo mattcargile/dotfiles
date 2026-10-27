@@ -1,4 +1,4 @@
-# chezmoi windows path if block {{ if eq .chezmoi.os "windows" }}
+# chezmoi windows path if block {{ if .isWindows }}
 #Requires -Modules ctypes
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 param (
@@ -8,13 +8,13 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $winPaths = @(
-    # chezmoi range paths {{- range $currentWinPath := .envPath.windows }}{{ nindent 4 ($currentWinPath.path | squote) }}{{ end }}
-    # chezmoi lookPath py {{ if lookPath "py" }}
+    # chezmoi range paths {{- range $currentWinPath := .envPath.windows }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" $.isWindows "width" 4 "string" ( $currentWinPath.path | squote ) ) }}{{ end }}
+    # chezmoi lookPath py {{- if lookPath "py" }}
     # Something broke in Windows with py.exe Launcher and oh-my-posh.exe
     # This keeps the python segment from breaking on the Downloads folder and others
     # Additionally python.exe and python3.exe exist in the path as stubs that further complicate things.
     [System.IO.Directory]::GetParent( (py -3 -c "import sys; print (sys.executable)")).FullName
-    # end lookPath py {{ end }}
+    # end lookPath py {{- end }}
 )
 $pathSep = [System.IO.Path]::PathSeparator
 try {

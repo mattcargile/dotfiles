@@ -1,13 +1,18 @@
 {{- $isPSCore := ne "WindowsPowerShell" ( base ( dir .chezmoi.sourceFile ) ) -}}
-{{- $tmplDict := dict "isPSCore" $isPSCore
-    "isWindows" ( eq .chezmoi.os "windows" )
-    "sourceDir" .chezmoi.sourceDir
-    "destDir" .chezmoi.destDir
-    "homeDir" .chezmoi.homeDir
-    "pathListSeparator" .chezmoi.pathListSeparator
-    "pwshAlias" .pwshAlias
+{{- $tmplDict := mustMerge . ( dict 
+        "isPSCore" $isPSCore
+    )
 -}}
-{{- if eq $isPSCore true -}}
+{{- $currentShell := "powershell" -}}
+{{- if $isPSCore -}}
+{{- $currentShell = "pwsh" -}}
+{{- end -}}
+{{- $hasCommandSuiteAvailable := false -}}
+{{- $editorSuiteCommandCheck := "Get-Module -Name EditorServicesCommandSuite -ListAvailable | Where-Object -Property Version -GE -Value ([version]'1.0.0')" -}}
+{{- if ( output $currentShell "-NoProfile" "-NoLogo" "-Command" $editorSuiteCommandCheck ) -}}
+{{- $hasCommandSuiteAvailable = true -}}
+{{- end -}}
+{{- if $isPSCore -}}
 #Requires -Version 7.5
 {{ else -}}
 #Requires -Version 5.1
@@ -21,10 +26,10 @@
 $OutputEncoding = [System.Console]::InputEncoding = [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
 #region Environment Variables
-{{ includeTemplate "env.ps1.tmpl" $tmplDict -}}
+{{ includeTemplate "env.ps1.tmpl" . -}}
 #endregion
 
-#region Helper Visual Studio Code Command Palette operations ( i.e. EditorServicesCommandSuite )
+#region Helper PowerShell Editor Services (PSES) Terminal operations
 {{- /* When using _VS Code_, the `$Host.Name` could be `ConsoleHost` or `Visual Studio Code Host`
      * depending on if the terminal was launched from _VS Code_ or via the _PowerShell_
      * extension, respectively. For _neovim_, the `powershell.nvim` plugin
@@ -38,7 +43,9 @@ if(
     ) -or
         $Host.Name -eq 'nvim'
 ){
+{{- if $hasCommandSuiteAvailable }}
     Import-CommandSuite
+{{- end -}}
 {{- /* streaming feature causes race condition errors due to dueling OnIdle events in PSES */}}
     $env:POSH_DISABLE_STREAMING = '1'
 }

@@ -16,7 +16,7 @@ if ('Microsoft.PowerShell.GetPSReadLineOption' -as [type]) {
 {{- end }}
     #endregion
     #region ArgumentCompleter Generated
-{{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .sourceDir ".chezmoitemplates" "tools" "Write-ArgCompleterOutput.ps1" ) -}}
+{{ $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-ArgCompleterOutput.ps1" ) -}}
 {{ outputList "pwsh" $argCompleterArgList | indent 4 -}}
     #endregion
     #region argcompleter.ps1

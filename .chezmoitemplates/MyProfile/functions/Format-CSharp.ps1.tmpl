@@ -32,7 +32,7 @@ function Format-CSharp {
                 $sb = { Out-Bat @ArgumentList }
             }
         }
-        # chezmoi else {{- else }}{{ nindent 8 "$ArgumentList += $batArgs" }}{{ nindent 8 "$sb = { Out-Bat @ArgumentList }" }}
+        # chezmoi else {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 8 "string" "$ArgumentList += $batArgs" ) }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 8 "string" "$sb = { Out-Bat @ArgumentList }" ) }}
         # chezmoi if isPSCore end {{- end }}
         $pipe = $sb.GetSteppablePipeline($MyInvocation.CommandOrigin)
         $pipe.Begin($PSCmdlet)

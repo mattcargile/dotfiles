@@ -16,23 +16,23 @@
 {{- continue -}}
 {{- end -}}
 {{- /* Output the functions related to both core and desktop */}}
-    {{ base $file | trimSuffix ".tmpl" | trimSuffix ".ps1" | squote -}}
+        {{ base $file | trimSuffix ".tmpl" | trimSuffix ".ps1" | squote -}}
 {{ end -}}
 {{- /* Handle Core only functions */ -}}
 {{- if $functionsCorePaths }}
-    if ($PSEdition -eq 'Core') {
+        if ($PSEdition -eq 'Core') {
 {{- range $coreFile := $functionsCorePaths -}}
 {{- /* Output the functions related to core */}}
-        {{ base $coreFile | trimSuffix $functionsCoreSuffix | squote }}
+            {{ base $coreFile | trimSuffix $functionsCoreSuffix | squote }}
 {{- end }}
-    }
+        }
 {{- end -}}
 {{- /* Handle Desktop only functions */ -}}
 {{- if $functionsDesktopPaths }}
-    else {
+        else {
 {{- range $desktopFile := $functionsDesktopPaths -}}
 {{- /* Output the functions related to desktop */}}
-        {{ base $desktopFile | trimSuffix $functionsDesktopSuffix | squote }}
+            {{ base $desktopFile | trimSuffix $functionsDesktopSuffix | squote }}
 {{- end }}
-    }
+        }
 {{- end }}

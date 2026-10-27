@@ -55,17 +55,17 @@ end {
         }
     }
     $publicFunctionAliasesAll | Sort-Object | ForEach-Object -Process {
-        "    '$_'"
+        "        '$_'"
     }
-        '    if ($PSEdition -eq ''Core'') {'
+        '        if ($PSEdition -eq ''Core'') {'
     $publicFunctionAliasesCore | Sort-Object | ForEach-Object -Process {
-        "        '$_'"
+        "            '$_'"
     }
-        '    }'
-        '    else {'
+        '        }'
+        '        else {'
     $publicFunctionAliasesDesktop | Sort-Object | ForEach-Object -Process {
-        "        '$_'"
+        "            '$_'"
     }
-        '    }'
+        '        }'
 
 }

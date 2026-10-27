@@ -19,5 +19,5 @@ oh-my-posh @(
     'init'
     'pwsh'
     '--config'
-    {{ joinPath .homeDir ".config" "oh-my-posh" "night-owl-mac.omp.json" | squote }}
+    {{ joinPath .chezmoi.homeDir ".config" "oh-my-posh" "night-owl-mac.omp.json" | squote }}
 ) | Invoke-Expression

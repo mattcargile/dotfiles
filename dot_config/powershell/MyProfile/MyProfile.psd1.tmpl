@@ -1,20 +1,20 @@
 @{
     RootModule = $(
-        # chezmoi if windows {{ if eq .chezmoi.os "windows" }}
+        # chezmoi if windows {{ if .isWindows }}
         if ($PSEdition -eq 'Core') {
             'core.psm1'
         }
         else {
             'desktop.psm1'
         }
-        # else *nix/mac {{ else }}{{ nindent 4 ( squote "core.psm1" ) }}{{ end }}
+        # else *nix/mac {{ else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 4 "string" ( squote "core.psm1" ) ) }}{{ end }}
     ) 
     ModuleVersion = '0.1.0'
     CompatiblePSEditions = @(
-        # chezmoi if windows {{ if eq .chezmoi.os "windows" }}
+        # chezmoi if windows {{ if .isWindows }}
         'Desktop'
         'Core'
-        # else *nix/mac {{ else }}{{ nindent 4 ( squote "Core" ) }}{{ end }}
+        # else *nix/mac {{ else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 4 "string" ( squote "Core" ) ) }}{{ end }}
     )
     GUID = '403248e3-3cb7-4192-b32b-77d104ee14e2'
     Author = 'Matthew Cargile'
@@ -22,9 +22,9 @@
     Copyright = '(c) Matthew Cargile. All rights reserved.'
     Description = 'Personal Module For Profile'
     PowerShellVersion =
-        # chezmoi if windows {{ if eq .chezmoi.os "windows" }}
+        # chezmoi if windows {{ if .isWindows }}
         '5.1'
-        # else *nix/mac {{ else }}{{ nindent 4 ( squote "7.5.4" ) }}{{ end }}
+        # else *nix/mac {{ else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 4 "string" ( squote "7.5.4" ) ) }}{{ end }}
     TypesToProcess = @(
         '.\MyProfile.types.ps1xml'
     )
@@ -32,32 +32,32 @@
         '.\MyProfile.format.ps1xml'
     )
     NestedModules = @(
-        # chezmoi if windows {{ if eq .chezmoi.os "windows" }}
+        # chezmoi if windows {{ if .isWindows }}
         if ($PSEdition -eq 'Core') {
             '.\lib\core\MyProfileLib.dll'
         }
         else {
             '.\lib\desktop\MyProfileLib.dll'
         }
-        # else *nix/mac {{ else }}{{ nindent 4 ( squote ( joinPath "." "lib" "core" "MyProfileLib.dll" ) ) }}{{ end }}
+        # else *nix/mac {{ else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 4 "string" ( joinPath "." "lib" "core" "MyProfileLib.dll" ) ) }}{{ end }}
     )
     FunctionsToExport = @(
-        # chezmoi includeTemplate {{ includeTemplate "tools/WriteMyProfileFunctionsToExport.tmpl" . -}}
+        # chezmoi includeTemplate {{ includeTemplate "tools/WriteMyProfileFunctionsToExport.tmpl" . }}
     )
-    # chezmoi if dotnet {{ if not ( lookPath "dotnet" ) }}{{ fail "Cannot find dotnet in Path" }}{{ end }}
-    # chezmoi get MyProfileLib arg list {{ $cmdletAndAliasArgList := list ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "WriteMyProfileLibPublicCmdletAndAliasJson.cs" ) "--configuration" "Release" }}
-    # chezmoi get json {{ $cmdletAndAliasOutJson := outputList "dotnet" $cmdletAndAliasArgList | fromJson }}
+    # chezmoi if dotnet {{- if not ( lookPath "dotnet" ) }}{{ fail "Cannot find dotnet in Path" }}{{ end }}
+    # chezmoi get MyProfileLib arg list {{- $cmdletAndAliasArgList := list ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "WriteMyProfileLibPublicCmdletAndAliasJson.cs" ) "--configuration" "Release" }}
+    # chezmoi get json {{- $cmdletAndAliasOutJson := outputList "dotnet" $cmdletAndAliasArgList | fromJson }}
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport = @(
-        # chezmoi if cmdlets {{ if $cmdletAndAliasOutJson.CmdletNames }}{{ range $currentCmdlet := $cmdletAndAliasOutJson.CmdletNames }}{{ $currentCmdlet | squote | nindent 4 }}{{ end }}
-        # chezmoi end if cmdlets {{ end }}
+        # chezmoi if cmdlets {{- if $cmdletAndAliasOutJson.CmdletNames }}{{ range $currentCmdlet := $cmdletAndAliasOutJson.CmdletNames }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" $.isWindows "width" 8 "string" ( $currentCmdlet | squote ) ) }}{{ end }}
+        # chezmoi end if cmdlets {{- end }}
     )
     VariablesToExport = @()
     AliasesToExport = @(
-        # chezmoi if aliases {{ if $cmdletAndAliasOutJson.AliasNames }}{{ range $currentAlias := $cmdletAndAliasOutJson.AliasNames }}{{ $currentAlias | squote | nindent 4 }}{{ end }}
-        # chezmoi end if aliases {{ end }}
+        # chezmoi if aliases {{- if $cmdletAndAliasOutJson.AliasNames }}{{ range $currentAlias := $cmdletAndAliasOutJson.AliasNames }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" $.isWindows "width" 8 "string" ( $currentAlias | squote ) ) }}{{ end }}
+        # chezmoi end if aliases {{- end }}
         # chezmoi outputList args {{- $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-MyProfileAliasesToExport.ps1" ) }}
-        # chezmoi outputList {{- println }}{{ outputList "pwsh" $argCompleterArgList -}}
+        # chezmoi outputList {{- println }}{{ outputList "pwsh" $argCompleterArgList }}
     ) 
     PrivateData = @{
         PSData = @{

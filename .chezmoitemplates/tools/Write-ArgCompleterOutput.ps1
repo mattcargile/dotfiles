@@ -1,9 +1,11 @@
+#Requires -Version 7.5
 [CmdletBinding()]
 param()
 
 begin {
     $ErrorActionPreference = 'Stop'
     Set-StrictMode -Version Latest
+
     function New-ArgCompleterObject {
         [CmdletBinding()]
         param (
@@ -101,7 +103,7 @@ end {
     }
     if (Get-Command dotnet -CommandType Application -ErrorAction Ignore) {
         $env:DOTNET_NOLOGO = 'true' # Avoid welcome message on first run. Confusing output from chezmoi
-        # `dotnet` command can exist from a install of the runtime without the sdk and `completions` sub command doesn't exist
+        # `dotnet` command can exist from an install of the runtime without the sdk and `completions` sub command doesn't exist
         $dotnetCompletionScript = dotnet completions script pwsh 2>&1
         if ($LASTEXITCODE -eq 0) {
             $argCompFiles.Add( ( New-ArgCompleterObject -Script ( $dotnetCompletionScript | Out-String ) -Comment 'dotnet Prompt Completions' ) )
@@ -128,7 +130,7 @@ end {
             continue
         }
         Write-Information -MessageData $ast -Tags Ast
-        
+ 
         "$($ac.Comment)$newLine$($ast.EndBlock.Extent.Text)$newLine#endregion$newLine"
     }
     #endregion

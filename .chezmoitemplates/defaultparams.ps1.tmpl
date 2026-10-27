@@ -1,5 +1,3 @@
-{{- /* chezmoi:template:line-endings=native */ -}}
-{{- /* define with template pattern defaults to LF line endings which pollutes the final output with mismatched line endings */ -}}
 {{- define "credAdmSbk" }}{ Get-Secret -Name da -Vault dp }{{ end -}}
 {{- define "credSspAdmSbk" }}{ if ($args.BoundParameters -contains 'Authentication') { Get-Secret -Name da -Vault dp } }{{ end -}}
 {{- /* Office below is physicalDeliveryOfficeName*/ -}}
@@ -18,7 +16,7 @@ $PSDefaultParameterValues = @{
 {{- if ne .workOneDriveBusinessName "" -}}
 {{- $companyProp := list "extensionAttribute2" "extensionAttribute4" "extensionAttribute11" "extensionAttribute12" "EmployeeID" -}}
 {{- range $currentCompProp := $companyProp -}}
-{{- $currentCompProp | squote | nindent 4 }}
+{{- includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" $.isWindows "width" 4 "string" ( $currentCompProp | squote ) ) }}
 {{- end -}}
 {{- end }}
   )

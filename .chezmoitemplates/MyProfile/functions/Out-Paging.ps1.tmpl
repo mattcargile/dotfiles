@@ -27,9 +27,9 @@ function Out-Paging {
             }
         }
         $pipe = $pipeOriginal.GetSteppablePipeline($MyInvocation.CommandOrigin)
-        # chezmoi else paging not supported {{- else }}{{ nindent 8 "$pipe = { Out-AnsiFormatting -Stream | less $env:LESS @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)" }}
+        # chezmoi else paging not supported {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 8 "string" "$pipe = { Out-AnsiFormatting -Stream | less $env:LESS @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)" ) }}
         # chezmoi if paging supported end {{- end }}
-        # chezmoi else for desktop edition {{- else }}{{ nindent 8 "$pipe = { less $env:LESS @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)" }}
+        # chezmoi else for desktop edition {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 8 "string" "$pipe = { less $env:LESS @ArgumentList }.GetSteppablePipeline($MyInvocation.CommandOrigin)" ) }}
         # chezmoi if isPSCore end {{- end }}
         $pipe.Begin($PSCmdlet)
     }
