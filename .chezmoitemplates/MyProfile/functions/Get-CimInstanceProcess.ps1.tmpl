@@ -303,6 +303,11 @@ function Get-CimInstanceProcess {
                         'SentinelHelperService.exe'
                         'SentinelMemoryScanner.exe'
                         'SentinelUI.exe'
+                        'SentinelStaticEngine.exe'
+                        'SentinelAgentWorker.exe'
+                        'MsMpEng.exe'
+                        'MpDefenderCoreService.exe'
+                        'NisSrv.exe'
                         'Sysmon64.exe'
                         'dcagentservice.exe'
                         'UEMSAgentHealthChecker.exe'
@@ -327,6 +332,10 @@ function Get-CimInstanceProcess {
                         'LocationNotificationWindows.exe'
                         'InventoryService.exe'
                         'Microsoft.Management.Services.IntuneWindowsAgent.exe'
+                        'lsm.exe'
+                        'snmp.exe'
+                        'sppsvc.exe'
+                        'PrintIsolationHost.exe'
                     )
                     $PSBoundParameters['Filter'] = $PSBoundParameters['Filter'] |
                         Write-CimFilter ExecutablePath $notExecutablePath -Not |
