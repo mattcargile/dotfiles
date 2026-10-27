@@ -4,15 +4,15 @@ MyProfileLib
 chezmoi.slnx
 outchezmoiscripts
 glyphnames.json
-{{- if ne .chezmoi.os "windows" }}
-AppData
-.config/powershell/MyProfile/desktop.psm1
-.config/powershell/MyProfile/lib/desktop
-Documents
-{{- else }}
+{{- if .isWindows }}
 .config/alacritty
 .config/nushell
 .config/nvim
 .config/powershell/profile.ps1
 .config/zellij
+{{- else }}
+AppData
+.config/powershell/MyProfile/desktop.psm1
+.config/powershell/MyProfile/lib/desktop
+Documents
 {{- end }}

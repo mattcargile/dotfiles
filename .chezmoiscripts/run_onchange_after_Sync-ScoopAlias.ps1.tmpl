@@ -1,4 +1,4 @@
-#chezmoi if windows {{- if eq .chezmoi.os "windows" }}
+#chezmoi if windows {{- if .isWindows }}
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 param()
 

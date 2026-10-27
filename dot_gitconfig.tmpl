@@ -128,7 +128,7 @@
 	enabled = true
 [tag]
 	sort = "version:refname"
-	{{- if eq .chezmoi.os "windows" }}
+	{{- if .isWindows }}
 [gpg]
 	program = {{ printf "%s/scoop/apps/gpg/current/bin/gpg.exe" (.chezmoi.destDir | trimSuffix "/") | quote }}
 [credential]

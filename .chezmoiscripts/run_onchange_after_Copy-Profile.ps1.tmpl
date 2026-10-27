@@ -1,4 +1,4 @@
-# No Op for *nix because files are in correct location already {{- if eq .chezmoi.os "windows" }}
+# No Op for *nix because files are in correct location already {{- if .isWindows }}
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 param()
 # PowerShell\profile.ps1 SHA256: {{ include ( joinPath .chezmoi.destDir "Documents" "PowerShell" "profile.ps1" ) | sha256sum }}
