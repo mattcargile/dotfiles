@@ -17,6 +17,7 @@
 [scriptEnv]
   DOTNET_NOLOGO = "1"
 [data]
+  isWindows = {{ eq .chezmoi.os "windows" }}
   msSqlMgmtInstance = {{ promptString "What is the SQL Server Instance hosting the Central Management Server" "" | quote }}
   vCenterComputerName = {{ promptString "What is the primary vCenter Computer Name" "" | quote }}
   workKeepassName = {{ promptString "What is the name of the employer KeePass" "" | quote }}
