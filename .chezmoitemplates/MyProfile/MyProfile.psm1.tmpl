@@ -1,14 +1,16 @@
 {{- $isPSCore := hasPrefix "core" ( base .chezmoi.sourceFile ) -}}
-{{- $isWindows := eq .chezmoi.os "windows" -}}
-{{- $isPagingAvailableFilePath := joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Test-TextMatePagingSupport.ps1" }}
-{{- $isPagingAvailableArgList := list "-NoProfile" "-NoLogo" "-File" $isPagingAvailableFilePath }}
-{{- $isPagingAvailable := outputList "pwsh" $isPagingAvailableArgList | trim }}
-{{- $tmplDict := dict "isPSCore" $isPSCore
-    "isWindows" $isWindows
-    "workOneDriveBusinessName" .workOneDriveBusinessName
-    "sourceDir" .chezmoi.sourceDir
-    "isPagingAvailable" (eq $isPagingAvailable "True")
+{{- $isPagingAvailable := false -}}
+{{- if $isPSCore -}}
+{{- $textMagePagingSupportCommandCheck := "$PSVersionTable.PSVersion -ge ([version]'7.4.0') ? ( Get-Module -Name TextMate -ListAvailable | Where-Object -FilterScript { $_.Version -ge ([version]'0.2.1') } ) : $null" -}}
+{{- if ( output "pwsh" "-NoProfile" "-NoLogo" "-Command" $textMagePagingSupportCommandCheck ) -}}
+{{- $isPagingAvailable = true -}}
+{{- end -}}
+{{- end -}}
+{{- $tmplDict := mustMerge . ( dict 
+        "isPSCore" $isPSCore
+        "isPagingAvailable" $isPagingAvailable
+    )
 -}}
-{{- range $file := glob ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "MyProfile" "**" "*ps1*" )  -}}
+{{- range $file := glob ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "MyProfile" "**" "*ps1*" ) -}}
 {{ includeTemplate $file $tmplDict }}
 {{ end -}}
