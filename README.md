@@ -32,12 +32,10 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. handle carapace excludes better between unix and windows. `strings` is an example which breaks on windows.
 1. add _powertoys_ keymap settings for cmd pal. local app data microsoft powertoys. there is a backup file in onedrive documents powertoys that is a zip archive too.
 1. set up `.chezmoitemplates` for _*nix_ and _windows_
-1. set up `.gitattributes` for the nvim lock json. probably need a template of the file and then in the actual file had a `chezmoi` directive for the line endings.
 1. sync up my nvim configs across locals and remotes. some features are only on certain machines.
 1. handle syncing up the chromium _vimium_ json config. is there a way to auto import it or sync it on the file system or does the import have to happen manually in the browser?
 1. redo the `mini.statusline` to better present the _mssql.nvim_ data.
 1. fix `nvim` `telescope` handling with scratch buffers and files that aren't save. we need to see the live active contents. 
-1. set up `:te` with keybind
 1. configure `:te` with `wezterm` plugins. there are two that were favorited
 1. set up the osc where `cd` will change the working `nvim` dir. see that that integrates with the above plugins
 1. get _c#_ going in _nvim_ with debugger and lsp and refactorings
@@ -55,14 +53,18 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. handle arrowing up in a long terminal prompt in neovim. It won't let me go up. i can only edit it with vi visual mode by typing v.
 1. is there a way to launch `gvpn` async to get the time left on vpn easily and fast. maybe some api.
 1. still want that neovim anywhere.
-1. use the `.Var.Var` feature. to embed data like the `onedrive` paths and such.
+1. use the `.Var.Var` feature in `oh-my-posh`. to embed data like the `onedrive` paths and such.
 1. handle the `carapace` completers more nicely for _*nix_ vs _windows_. `strings` is a windows feature and more default on _*nix_.
 1. work in `nuget` [package](https://www.nuget.org/packages/Microsoft.Windows.Console.ConPTY) for `alacritty` on windows to use modern _conpty_. simple fix is `cp ~\scoop\apps\wezterm-nightly\current\conpty.dll, ~\scoop\apps\wezterm-nightly\current\OpenConsole.exe ~\scoop\apps\alacritty\current\`
 1. `ctcn` add `-expand` and add `-propertyname` for like `name` instead of `computername` or maybe just add it outright?
 1. get `rio` going with _sixel_ and _conpty_ for `nuget`.
+1. get `contour` going to with _sixel_ and _conpty_ ( it may already contain the `exe` and `dll` )
 1. `gcimp` and `gcims` don't handle empty "path" and end up excluding the wrong ones. need an `OR` block somewhere.
+1. `vswhere` alias along with `tf.exe`
 1. need less dependencies for machine without admin to get to lowest common denomenator setup. `dotnet` could exist but it fails with a negative error code. font may not be available either and need to dump nerd fonts if not available with sub-dued prompt.
-1. the whole build tools situation with admin required is a pain for _neovim_ on windows. how to handle without admin for `cl.exe`
+1. the whole build tools situation with admin required is a pain for _neovim_ on windows. how to handle without admin for `cl.exe`. maybe work with the `CC` environment variable and maybe `mingw` and `msys2`.
+1. create `if` template blocks for the bulk of the whole profile to keep a super minimal profile at the limits of what is possible. try to get around not being able to install certain terminal tools, etc. how minimal can it be?
+1. can `powershell` be used only if `pwsh` can't be put on the machine? minimal config.
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
