@@ -1,5 +1,3 @@
-{{- /* chezmoi:template:line-endings=native */ -}}
-{{- /* define with template pattern defaults to LF line endings which pollutes the final output with mismatched line endings */ -}}
 {{- define "saveinHistorySb" }}{
     param($key, $arg)
     $line = $null
@@ -9,8 +7,8 @@
 }
 {{- end -}}
 #region Cancel and Undo completion
-{{ define "tabHandlerSb" -}}{{- printf
-`       param($key, $arg)
+{{ define "tabHandlerSb" }}
+        param($key, $arg)
 
         $line = $null
         $cursor = 0
@@ -30,7 +28,7 @@
             $psrlTabState.OriginalCursor = $cursor
         }
 
-        [Microsoft.PowerShell.PSConsoleReadLine]::%s($key, $arg)
+        [Microsoft.PowerShell.PSConsoleReadLine]::{{- .methodName -}}($key, $arg)
 
         [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState(
             [ref]$line,
@@ -38,7 +36,7 @@
         )
 
         $psrlTabState.CompletedLine = $line
-        $psrlTabState.CompletedCursor = $cursor` ( .methodName ) -}}{{- end -}}
+        $psrlTabState.CompletedCursor = $cursor{{- end -}}
 & {
     $psrlTabState = [PSCustomObject]@{
         OriginalLine     = $null
@@ -48,16 +46,16 @@
     }
 
     $tabHandlerSb = {
-{{ template "tabHandlerSb" (dict "methodName" "TabCompleteNext") }}
+{{- template "tabHandlerSb" (dict "methodName" "TabCompleteNext") }}
     }.GetNewClosure()
     $viTabHandlerSb = {
-{{ template "tabHandlerSb" (dict "methodName" "ViTabCompleteNext") }}
+{{- template "tabHandlerSb" (dict "methodName" "ViTabCompleteNext") }}
     }.GetNewClosure()
     $prevTabHandlerSb = {
-{{ template "tabHandlerSb" (dict "methodName" "TabCompletePrevious") }}
+{{- template "tabHandlerSb" (dict "methodName" "TabCompletePrevious") }}
     }.GetNewClosure()
     $viPrevTabHandlerSb = {
-{{ template "tabHandlerSb" (dict "methodName" "ViTabCompletePrevious") }}
+{{- template "tabHandlerSb" (dict "methodName" "ViTabCompletePrevious") }}
     }.GetNewClosure()
 
     $cancelCompHandlerSb = {
