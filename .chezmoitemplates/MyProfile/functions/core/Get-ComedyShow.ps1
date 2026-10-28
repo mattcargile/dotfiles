@@ -1,4 +1,3 @@
-# Get-ComedyShow chezmoi if block {{- if eq .isPSCore true }}
 function Get-ComedyShow {
     [CmdletBinding()]
     [Alias('gcmdy')]
@@ -294,4 +293,4 @@ function Get-ComedyShow {
             Select-Object @orpheumSelSplat
     }
 }
-# end {{- end }}
+

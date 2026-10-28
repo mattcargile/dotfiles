@@ -1,4 +1,3 @@
-# Get-PowerShellDesktopHelp chezmoi if block {{ if eq .isPSCore false }}
 function Get-PowerShellDesktopHelp {
     [Alias('help')]
     [CmdletBinding(DefaultParameterSetName='AllUsersView', HelpUri='https://go.microsoft.com/fwlink/?LinkID=113316')]
@@ -131,4 +130,4 @@ function Get-PowerShellDesktopHelp {
 .FORWARDHELPCATEGORY Cmdlet
 #>
 }
-# end {{ end }}
+

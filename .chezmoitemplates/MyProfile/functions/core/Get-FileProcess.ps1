@@ -1,4 +1,3 @@
-# Get-FileProcess chezmoi if block {{ if eq .isPSCore true }}
 function Get-FileProcess {
     <#
     .SYNOPSIS
@@ -187,4 +186,4 @@ function Get-FileProcess {
         }
     }
 }
-# end {{ end }}
+
