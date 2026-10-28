@@ -1,5 +1,5 @@
-function Skip-LastObject {
-    [Alias('skiplast')]
+function Select-LastObject {
+    [Alias('last')]
     [CmdletBinding(PositionalBinding = $false)]
     param(
         [Parameter(ValueFromPipeline)]
@@ -10,13 +10,43 @@ function Skip-LastObject {
         [int] $Count = 1
     )
     begin {
-        $pipe = { Skip-Object -Last @PSBoundParameters }.GetSteppablePipeline($MyInvocation.CommandOrigin)
-        $pipe.Begin($MyInvocation.ExpectingInput)
+        if ($Count -eq 1) {
+            $objStore = $null
+            return
+        }
+
+        $objStore = [psobject[]]::new($Count)
+        $currentIndex = 0
     }
     process {
-        $pipe.Process($PSItem)
+        if ($null -eq $InputObject) {
+            return
+        }
+
+        if ($Count -eq 1) {
+            $objStore = $InputObject
+            return
+        }
+
+        $objStore[$currentIndex] = $InputObject
+        $currentIndex++
+        if ($currentIndex -eq $objStore.Length) {
+            $currentIndex = 0
+        }
     }
     end {
-        $pipe.End()
+        if ($Count -eq 1) {
+            return $objStore
+        }
+
+        for ($i = $currentIndex; $i -lt $objStore.Length; $i++) {
+            # yield
+            $objStore[$i]
+        }
+
+        for ($i = 0; $i -lt $currentIndex; $i++) {
+            # yield
+            $objStore[$i]
+        }
     }
 }
