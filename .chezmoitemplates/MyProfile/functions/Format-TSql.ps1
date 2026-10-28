@@ -1,6 +1,6 @@
 <#  
 .SYNOPSIS  
-    Format-TSQL will format tsql script supplied per options set
+    Format-TSql will format tsql script supplied per options set
 .DESCRIPTION  
     This script will strip supplied code of comments format per options
 .NOTES  
@@ -18,7 +18,7 @@ Strips code of comments
 .HISTORY
 2021.08.08First version for sqlservercentral.com
 #>
-function Format-TSQL
+function Format-TSql
 {
    
     #Defining parameter for scriptname
