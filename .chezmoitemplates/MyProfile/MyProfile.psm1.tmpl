@@ -1,10 +1,10 @@
 {{- $isPSCore := hasPrefix "core" ( base .chezmoi.sourceFile ) -}}
 {{- $isPagingAvailable := false -}}
 {{- if $isPSCore -}}
-{{- $textMagePagingSupportCommandCheck := "$PSVersionTable.PSVersion -ge ([version]'7.4.0') ? ( Get-Module -Name TextMate -ListAvailable | Where-Object -FilterScript { $_.Version -ge ([version]'0.2.1') } ) : $null" -}}
-{{- if ( output "pwsh" "-NoProfile" "-NoLogo" "-Command" $textMagePagingSupportCommandCheck ) -}}
-{{- $isPagingAvailable = true -}}
-{{- end -}}
+    {{- $textMagePagingSupportCommandCheck := "$PSVersionTable.PSVersion -ge ([version]'7.4.0') ? ( Get-Module -Name TextMate -ListAvailable | Where-Object -FilterScript { $_.Version -ge ([version]'0.2.1') } ) : $null" -}}
+    {{- if ( output "pwsh" "-NoProfile" "-NoLogo" "-Command" $textMagePagingSupportCommandCheck ) -}}
+        {{- $isPagingAvailable = true -}}
+    {{- end -}}
 {{- end -}}
 {{- $tmplDict := mustMerge . ( dict 
         "isPSCore" $isPSCore
