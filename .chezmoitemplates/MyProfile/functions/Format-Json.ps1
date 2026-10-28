@@ -1,4 +1,5 @@
-function Format-Json {
+function Format-MyJson {
+    # EzOut Module has a Format-JSON command
     [Alias('fjson')]
     [CmdletBinding(PositionalBinding = $false)]
     [OutputType([string])]
