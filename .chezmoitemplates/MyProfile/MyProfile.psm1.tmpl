@@ -11,6 +11,32 @@
         "isPagingAvailable" $isPagingAvailable
     )
 -}}
-{{- range $file := glob ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "MyProfile" "**" "*ps1*" ) -}}
-{{ includeTemplate $file $tmplDict }}
-{{ end -}}
+{{- range $file := glob ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "MyProfile" "**" "{*.ps1,*.ps1.tmpl}" ) -}}
+    {{- $currentIsTmpl := hasSuffix ".tmpl" $file -}}
+    {{- $currentParentDir := osBase ( osDir $file ) -}}
+    {{- $currentIsParentDirCore := eq $currentParentDir "core" -}}
+    {{- $currentIsParentDirDesktop := eq $currentParentDir "desktop" -}}
+    {{- $currentIsBoth := and ( not $currentIsParentDirCore ) ( not $currentIsParentDirDesktop ) -}}
+    {{- $currentIsCoreOnly := and ( eq $currentParentDir "core" ) $isPSCore -}}
+    {{- $currentIsDesktopOnly := and ( eq $currentParentDir "desktop" ) ( not $isPSCore ) -}}
+    {{- if $currentIsBoth -}}
+        {{- if $currentIsTmpl -}}
+            {{- includeTemplate $file $tmplDict -}}
+            {{- print $.lineEnding -}}
+        {{- else -}}
+            {{- include $file -}}
+            {{- print $.lineEnding -}}
+        {{- end -}}
+    {{- else -}}
+        {{- if or $currentIsDesktopOnly $currentIsCoreOnly -}}
+            {{- if $currentIsTmpl -}}
+                {{- includeTemplate $file $tmplDict -}}
+                {{- print $.lineEnding -}}
+            {{- else -}}
+                {{- include $file -}}
+                {{- print $.lineEnding -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
