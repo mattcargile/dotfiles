@@ -41,23 +41,28 @@
         }
         # else *nix/mac {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 4 "string" ( joinPath "." "lib" "core" "MyProfileLib.dll" | squote ) ) }}{{ end }}
     )
+    # chezmoi get functions and aliases {{- $funcCmdletAliasOutJson := output "pwsh" "-NoLogo" "-NoProfile" "-File" ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-MyProfileFuncCmdletAliasExportJson.ps1" ) | fromJson }}
     FunctionsToExport = @(
-        # chezmoi includeTemplate {{ includeTemplate "tools/WriteMyProfileFunctionsToExport.tmpl" . }}
+        # chezmoi if all functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.All.Function }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 8 "string" ( $currentAllFunc | squote ) ) }}{{ end }}
+        if ($PSEdition -eq 'Core') {
+            # chezmoi if core functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Core.Function }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 12 "string" ( $currentAllFunc | squote ) ) }}{{ end }}
+        }
+        else {
+            # chezmoi if desk functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Desktop.Function }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 12 "string" ( $currentAllFunc | squote ) ) }}{{ end }}
+        }
     )
-    # chezmoi if dotnet {{- if not ( lookPath "dotnet" ) }}{{ fail "Cannot find dotnet in Path" }}{{ end }}
-    # chezmoi get MyProfileLib arg list {{- $cmdletAndAliasArgList := list ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "WriteMyProfileLibPublicCmdletAndAliasJson.cs" ) "--configuration" "Release" }}
-    # chezmoi get json {{- $cmdletAndAliasOutJson := outputList "dotnet" $cmdletAndAliasArgList | fromJson }}
-    # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport = @(
-        # chezmoi if cmdlets {{- if $cmdletAndAliasOutJson.CmdletNames }}{{ range $currentCmdlet := $cmdletAndAliasOutJson.CmdletNames }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" $.isWindows "width" 8 "string" ( $currentCmdlet | squote ) ) }}{{ end }}
-        # chezmoi end if cmdlets {{- end }}
+        # chezmoi if all cmdlets {{- range $currentAllCmdlet := $funcCmdletAliasOutJson.All.Cmdlet }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 8 "string" ( $currentAllCmdlet | squote ) ) }}{{ end }}
     )
     VariablesToExport = @()
     AliasesToExport = @(
-        # chezmoi if aliases {{- if $cmdletAndAliasOutJson.AliasNames }}{{ range $currentAlias := $cmdletAndAliasOutJson.AliasNames }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" $.isWindows "width" 8 "string" ( $currentAlias | squote ) ) }}{{ end }}
-        # chezmoi end if aliases {{- end }}
-        # chezmoi outputList args {{- $argCompleterArgList := list "-NoProfile" "-NoLogo" "-File" ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-MyProfileAliasesToExport.ps1" ) }}
-        # chezmoi outputList {{- if .isWindows }}{{ "\r\n" }}{{ else }}{{ "\n" }}{{ end }}{{ outputList "pwsh" $argCompleterArgList }}
+        # chezmoi all aliases {{- range $currentAllAlias := $funcCmdletAliasOutJson.All.Alias }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 8 "string" ( $currentAllAlias | squote ) ) }}{{ end }}
+        if ($PSEdition -eq 'Core') {
+            # chezmoi if core functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Core.Alias }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 12 "string" ( $currentAllFunc | squote ) ) }}{{ end }}
+        }
+        else {
+            # chezmoi if desk functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Desktop.Alias }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 12 "string" ( $currentAllFunc | squote ) ) }}{{ end }}
+        }
     ) 
     PrivateData = @{
         PSData = @{
