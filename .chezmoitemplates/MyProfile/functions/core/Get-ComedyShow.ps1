@@ -291,6 +291,32 @@ function Get-ComedyShow {
             PSParseHTML\ConvertFrom-HTML |
             Select-HtmlNode -Tag div -AttributeName 'class' -AttributeValue 'wpem-event-details' |
             Select-Object @orpheumSelSplat
+
+        $filmoreSelSplat = @{
+            Property = @(
+                @{
+                    Name = 'Name'
+                    Expression = { $_.name -replace $nameReplace }
+                }
+                @{
+                    Name = 'StartDate'
+                    Expression = { $_.datetime_local }
+                }
+                @{
+                    Name = 'Location'
+                    Expression = { 'The Fillmore'}
+                }
+            )
+        }
+        # Embedding `Write-Output` to force inner array to enumerate
+        ConvertFrom-HtmlRscPayload -Url 'https://www.thefillmorenola.com/shows' |
+            Where-Object -FilterScript { $_.Kind -eq 'Model' -and $_.Json -match 'Comedy' } |
+            ForEach-Object -MemberName Json |
+            ConvertFrom-Json |
+            Write-Output |
+            ForEach-Object -MemberName data |
+            Where-Object genre -EQ 'Comedy' |
+            Select-Object @filmoreSelSplat
     }
 }
 
