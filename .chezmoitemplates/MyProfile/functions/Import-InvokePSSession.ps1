@@ -1,4 +1,4 @@
-function global:Import-InvokePSSession {
+function Import-InvokePSSession {
     [Alias('ipisn')]
     [CmdletBinding()]
     param (
@@ -41,3 +41,4 @@ function global:Import-InvokePSSession {
     # Handling scope. Need to Import-Module or else the PSSession Import is lost
     Import-Module -ModuleInfo $sn -Scope 'Global'
 }
+
