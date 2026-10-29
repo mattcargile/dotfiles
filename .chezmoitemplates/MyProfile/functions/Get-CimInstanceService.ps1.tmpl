@@ -113,7 +113,7 @@ function Get-CimInstanceService {
         [Alias('OT')]
         # chezmoi int if block {{- if eq .isPSCore true }}
         [uint]
-        # else and end {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 8 "string" "[uint32]" ) }}{{ end }}
+        # else and end {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 8 "string" "[uint32]" ) }}{{ end }}
         ${OperationTimeoutSec},
 
         [Parameter(ParameterSetName = 'CimInstanceComputerSet', Mandatory = $true, ValueFromPipeline = $true)]
@@ -149,7 +149,7 @@ function Get-CimInstanceService {
         [Parameter(ParameterSetName = 'ResourceUriComputerSet', ValueFromPipelineByPropertyName = $true)]
         # chezmoi if validate block {{- if eq .isPSCore true }}
         [ValidateNotNullOrWhiteSpace()]
-        # else and end {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 8 "string" "[ValidateNotNullOrEmpty()]" ) }}{{ end }}
+        # else and end {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 8 "string" "[ValidateNotNullOrEmpty()]" ) }}{{ end }}
         [string]
         ${Filter},
 

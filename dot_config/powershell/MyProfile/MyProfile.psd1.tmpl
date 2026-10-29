@@ -1,20 +1,20 @@
 @{
     RootModule = $(
-        # chezmoi if windows {{ if .isWindows }}
+        # chezmoi if windows {{- if .isWindows }}
         if ($PSEdition -eq 'Core') {
             'core.psm1'
         }
         else {
             'desktop.psm1'
         }
-        # else *nix/mac {{ else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 4 "string" ( squote "core.psm1" ) ) }}{{ end }}
+        # else *nix/mac {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 4 "string" ( squote "core.psm1" ) ) }}{{ end }}
     ) 
     ModuleVersion = '0.1.0'
     CompatiblePSEditions = @(
-        # chezmoi if windows {{ if .isWindows }}
+        # chezmoi if windows {{- if .isWindows }}
         'Desktop'
         'Core'
-        # else *nix/mac {{ else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 4 "string" ( squote "Core" ) ) }}{{ end }}
+        # else *nix/mac {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 4 "string" ( squote "Core" ) ) }}{{ end }}
     )
     GUID = '403248e3-3cb7-4192-b32b-77d104ee14e2'
     Author = 'Matthew Cargile'
@@ -22,9 +22,9 @@
     Copyright = '(c) Matthew Cargile. All rights reserved.'
     Description = 'Personal Module For Profile'
     PowerShellVersion =
-        # chezmoi if windows {{ if .isWindows }}
+        # chezmoi if windows {{- if .isWindows }}
         '5.1'
-        # else *nix/mac {{ else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 4 "string" ( squote "7.5.4" ) ) }}{{ end }}
+        # else *nix/mac {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 4 "string" ( squote "7.5.4" ) ) }}{{ end }}
     TypesToProcess = @(
         '.\MyProfile.types.ps1xml'
     )
@@ -32,14 +32,14 @@
         '.\MyProfile.format.ps1xml'
     )
     NestedModules = @(
-        # chezmoi if windows {{ if .isWindows }}
+        # chezmoi if windows {{- if .isWindows }}
         if ($PSEdition -eq 'Core') {
             '.\lib\core\MyProfileLib.dll'
         }
         else {
             '.\lib\desktop\MyProfileLib.dll'
         }
-        # else *nix/mac {{ else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 4 "string" ( joinPath "." "lib" "core" "MyProfileLib.dll" | squote ) ) }}{{ end }}
+        # else *nix/mac {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 4 "string" ( joinPath "." "lib" "core" "MyProfileLib.dll" | squote ) ) }}{{ end }}
     )
     FunctionsToExport = @(
         # chezmoi includeTemplate {{ includeTemplate "tools/WriteMyProfileFunctionsToExport.tmpl" . }}
@@ -65,3 +65,4 @@
         }
     }
 }
+

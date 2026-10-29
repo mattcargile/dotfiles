@@ -16,7 +16,7 @@ $PSDefaultParameterValues = @{
 {{- if ne .workOneDriveBusinessName "" -}}
 {{- $companyProp := list "extensionAttribute2" "extensionAttribute4" "extensionAttribute11" "extensionAttribute12" "EmployeeID" -}}
 {{- range $currentCompProp := $companyProp -}}
-{{- includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" $.isWindows "width" 4 "string" ( $currentCompProp | squote ) ) }}
+{{- includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 4 "string" ( $currentCompProp | squote ) ) }}
 {{- end -}}
 {{- end }}
   )

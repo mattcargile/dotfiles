@@ -99,7 +99,7 @@ function Get-CimInstanceOS {
         [Alias('OT')]
         # chezmoi int if block {{- if eq .isPSCore true }}
         [uint]
-        # else and end {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "isWindows" .isWindows "width" 8 "string" "[uint32]" ) }}{{ end }}
+        # else and end {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 8 "string" "[uint32]" ) }}{{ end }}
         ${OperationTimeoutSec},
 
         [Parameter(ParameterSetName = 'CimInstanceComputerSet', Mandatory = $true, ValueFromPipeline = $true)]

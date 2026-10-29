@@ -1,9 +1,3 @@
-{{- $lineEnding := "" -}}
-{{- if eq .isWindows true -}}
-{{- $lineEnding = "\r\n" -}}
-{{- else -}}
-{{- $lineEnding = "\n" -}}
-{{- end -}}
-{{- print $lineEnding -}}
+{{- print .lineEnding -}}
 {{- indent .width .string -}}
 
