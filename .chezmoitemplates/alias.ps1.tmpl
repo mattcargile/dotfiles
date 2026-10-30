@@ -55,7 +55,27 @@
 {{- end -}}
 {{- if $vswherePath -}}
 {{- template "newAliasTmpl" (dict "name" "vswhere" "value" $vswherePath ) }}
+{{ $tfPath := "" -}}
+{{- $tfPathList := output $vswherePath "-products" "*" "-find" "**\\TF.exe" | trim | splitList "\r\n" -}}
+{{- $tfVersionPathDict := dict -}}
+{{- $tfVersionPathWorkspaceDict := dict -}}
+{{- range $currentTfPath :=  $tfPathList -}}
+{{- $currentTfVersion := output $currentTfPath | splitList "\r\n" | first | regexFind "[0-9.]+$" -}}
+{{- if ( output $currentTfPath "vc" "workspaces" | trim | ne "No workspace matching * found on this computer." ) -}}
+{{- $_ := set $tfVersionPathWorkspaceDict $currentTfVersion $currentTfPath -}}
+{{- else -}}
+{{- $_ := set $tfVersionPathDict $currentTfVersion $currentTfPath -}}
+{{- end -}}
+{{- end -}}
+{{- if $tfVersionPathWorkspaceDict -}}
+{{- $tfPath = get $tfVersionPathWorkspaceDict ( keys $tfVersionPathWorkspaceDict | sortAlpha | last ) -}}
+{{- else -}}
+{{- $tfPath = get $tfVersionPathDict ( keys $tfVersionPathDict | sortAlpha | last ) -}}
+{{- end -}}
+{{- if $tfPath -}}
+{{- template "newAliasTmpl" (dict "name" "tf" "value" $tfPath ) }}
 {{ end -}}
+{{- end -}}
 
 {{ $vpncliAnyPath := joinPath $prg86 "Cisco" "Cisco AnyConnect Secure Mobility Client" "vpncli.exe" -}}
 {{ $vpncliSecPath := joinPath $prg86 "Cisco" "Cisco Secure Client" "vpncli.exe" -}}
