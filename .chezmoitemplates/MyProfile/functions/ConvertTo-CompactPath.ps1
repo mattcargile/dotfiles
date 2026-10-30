@@ -14,7 +14,7 @@ Can use to convert full command lines
 #>
 function ConvertTo-CompactPath {
     [CmdletBinding()]
-    [Alias('ctcpt')]
+    [Alias('ctcpa')]
     param (
         # Path or command line to compact
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
