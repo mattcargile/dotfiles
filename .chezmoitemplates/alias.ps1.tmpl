@@ -127,8 +127,9 @@
         {{- $spcSnifPath := "SpaceSniffer.exe" -}}
         {{- /* `invoke-gsudo` usage causes console to hang while `spacesniffer.exe` is open. `help` needs special handling to bypass shim. */ -}}
         {{- if lookPath $spcSnifPath }}
+            {{- $spcSnifRelativePath := output "scoop" "which" $spcSnifPath | trim | squote -}}
             {{- .lineEnding -}}
-            {{- printf "function spacesniffer { if ($args -contains 'help') { & (scoop which spacesniffer.exe) help } else { gsudo { & %s @args } -args $args } }" ( output "pwsh" "-NoLogo" "-NoProfile" "-Command" "scoop" "which" $spcSnifPath | trim | squote ) -}}
+            {{- printf "function spacesniffer { if ($args -contains 'help') { & %s help } else { gsudo { & %s @args } -args $args } }" $spcSnifRelativePath $spcSnifRelativePath -}}
         {{- end -}}
     {{- end -}}
     {{- .lineEnding -}}
