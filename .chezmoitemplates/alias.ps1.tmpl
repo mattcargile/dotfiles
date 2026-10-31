@@ -1,107 +1,136 @@
 {{- define "newAliasTmpl" -}}{{- printf "${Alias:%s} = %s" ( .name ) ( .value | squote ) -}}{{- end -}}
 #region All Aliases
-{{ range $aliasKey, $aliasValue := .pwshAlias.all -}}
-{{- template "newAliasTmpl" (dict "name" $aliasKey "value" $aliasValue ) }}
-{{ end -}}
+{{- range $aliasKey, $aliasValue := .pwshAlias.all -}}
+    {{- $.lineEnding -}}
+    {{- template "newAliasTmpl" (dict "name" $aliasKey "value" $aliasValue ) -}}
+{{- end }}
 #endregion
 {{ if eq .isPSCore true -}}
-#region PSEdition Core Aliases
-{{ range $aliasCoreKey, $aliasCoreValue := .pwshAlias.core -}}
-{{- template "newAliasTmpl" (dict "name" $aliasCoreKey "value" $aliasCoreValue ) }}
-{{ end -}}
-#endregion
+    #region PSEdition Core Aliases
+    {{- range $aliasCoreKey, $aliasCoreValue := .pwshAlias.core -}}
+        {{- $.lineEnding -}}
+        {{- template "newAliasTmpl" (dict "name" $aliasCoreKey "value" $aliasCoreValue ) -}}
+    {{- end -}}
+    {{- .lineEnding -}}
+    #endregion
 {{- end }}
 {{ if eq .isPSCore false -}}
-#region PSEdition Desktop Aliases
-{{ range $aliasDeskKey, $aliasDeskValue := .pwshAlias.desktop -}}
-{{- template "newAliasTmpl" (dict "name" $aliasDeskKey "value" $aliasDeskValue ) }}
-{{ end -}}
-#endregion
-{{- end }}
-{{ if eq .isWindows true -}}
-#region Windows "aliases"
-{{ $prg86 := env "ProgramFiles(x86)" -}}
-{{- $prgFiles := env "ProgramFiles" -}}
-{{- range $aliasWinKey, $aliasWinValue := .pwshAlias.windows -}}
-{{- template "newAliasTmpl" (dict "name" $aliasWinKey "value" $aliasWinValue ) }}
-{{ end -}}
-{{- $ssmsBasePath := joinPath "Common7" "IDE" "Ssms.exe" -}}
-{{- $ssmsPrg86Path := joinPath ( glob ( joinPath $prg86 "Microsoft SQL Server Management Studio *" ) | sortAlpha | last ) $ssmsBasePath -}}
-{{- $ssmsPrgPath := joinPath ( glob ( joinPath $prgFiles "Microsoft SQL Server Management Studio *" ) | sortAlpha | last ) "Release" $ssmsBasePath -}}
-{{- $ssmsPath := "" -}}
-{{- if lookPath $ssmsPrgPath -}}
-{{- $ssmsPath = $ssmsPrgPath -}}
-{{- else if lookPath $ssmsPrg86Path -}}
-{{- $ssmsPath = $ssmsPrg86Path -}}
+    #region PSEdition Desktop Aliases
+    {{- range $aliasDeskKey, $aliasDeskValue := .pwshAlias.desktop -}}
+        {{- $.lineEnding -}}
+        {{- template "newAliasTmpl" (dict "name" $aliasDeskKey "value" $aliasDeskValue ) -}}
+    {{- end -}}
+    {{- .lineEnding -}}
+    #endregion
 {{- end -}}
-{{- if ne $ssmsPath "" -}}
-{{- template "newAliasTmpl" (dict "name" "ssms" "value" $ssmsPath ) }}
-{{ end -}}
-{{- $nppPath := joinPath $prgFiles "Notepad++" "notepad++.exe" -}}
-{{- if lookPath $nppPath -}}
-{{- template "newAliasTmpl" (dict "name" "npp" "value" $nppPath ) }}
-{{ end }}
-{{- $ostressPath := joinPath $prgFiles "Microsoft Corporation" "RMLUtils" "ostress.exe" -}}
-{{- if lookPath $ostressPath -}}
-{{- template "newAliasTmpl" (dict "name" "ostress" "value" $ostressPath ) }}
-{{ end -}}
-{{- $vswherePath := "" -}}
-{{- $vswherePathAlreadyOnEnvPath := lookPath "vswhere" -}}
-{{- $vswherePathDefaultInstallPath := lookPath ( joinPath $prg86 "Microsoft Visual Studio" "Installer" "vswhere.exe" ) -}}
-{{- if $vswherePathAlreadyOnEnvPath -}}
-{{- $vswherePath = $vswherePathAlreadyOnEnvPath -}}
-{{- else if $vswherePathDefaultInstallPath -}}
-{{- $vswherePath = $vswherePathDefaultInstallPath -}}
-{{- end -}}
-{{- if $vswherePath -}}
-{{- template "newAliasTmpl" (dict "name" "vswhere" "value" $vswherePath ) }}
-{{ $tfPath := "" -}}
-{{- $tfPathList := output $vswherePath "-products" "*" "-find" "**\\TF.exe" | trim | splitList "\r\n" -}}
-{{- $tfVersionPathDict := dict -}}
-{{- $tfVersionPathWorkspaceDict := dict -}}
-{{- range $currentTfPath :=  $tfPathList -}}
-{{- $currentTfVersion := output $currentTfPath | splitList "\r\n" | first | regexFind "[0-9.]+$" -}}
-{{- if ( output $currentTfPath "vc" "workspaces" | trim | ne "No workspace matching * found on this computer." ) -}}
-{{- $_ := set $tfVersionPathWorkspaceDict $currentTfVersion $currentTfPath -}}
-{{- else -}}
-{{- $_ := set $tfVersionPathDict $currentTfVersion $currentTfPath -}}
-{{- end -}}
-{{- end -}}
-{{- if $tfVersionPathWorkspaceDict -}}
-{{- $tfPath = get $tfVersionPathWorkspaceDict ( keys $tfVersionPathWorkspaceDict | sortAlpha | last ) -}}
-{{- else -}}
-{{- $tfPath = get $tfVersionPathDict ( keys $tfVersionPathDict | sortAlpha | last ) -}}
-{{- end -}}
-{{- if $tfPath -}}
-{{- template "newAliasTmpl" (dict "name" "tf" "value" $tfPath ) }}
-{{ end -}}
-{{- end -}}
+{{- if eq .isWindows true }}
+    {{- $.lineEnding -}}
+    #region Windows "aliases"
+    {{- $prg86 := env "ProgramFiles(x86)" -}}
+    {{- $prgFiles := env "ProgramFiles" -}}
+    {{- range $aliasWinKey, $aliasWinValue := .pwshAlias.windows -}}
+        {{- $.lineEnding -}}
+        {{- template "newAliasTmpl" (dict "name" $aliasWinKey "value" $aliasWinValue ) -}}
+    {{- end -}}
+    {{- $ssmsBasePath := joinPath "Common7" "IDE" "Ssms.exe" -}}
+    {{- $ssmsPrg86Path := joinPath ( glob ( joinPath $prg86 "Microsoft SQL Server Management Studio *" ) | sortAlpha | last ) $ssmsBasePath -}}
+    {{- $ssmsPrgPath := joinPath ( glob ( joinPath $prgFiles "Microsoft SQL Server Management Studio *" ) | sortAlpha | last ) "Release" $ssmsBasePath -}}
+    {{- $ssmsPath := "" -}}
+    {{- if lookPath $ssmsPrgPath -}}
+        {{- $ssmsPath = $ssmsPrgPath -}}
+    {{- else if lookPath $ssmsPrg86Path -}}
+        {{- $ssmsPath = $ssmsPrg86Path -}}
+    {{- end -}}
+    {{- if ne $ssmsPath "" -}}
+        {{- .lineEnding -}}
+        {{- template "newAliasTmpl" (dict "name" "ssms" "value" $ssmsPath ) -}}
+    {{- end -}}
 
-{{ $vpncliAnyPath := joinPath $prg86 "Cisco" "Cisco AnyConnect Secure Mobility Client" "vpncli.exe" -}}
-{{ $vpncliSecPath := joinPath $prg86 "Cisco" "Cisco Secure Client" "vpncli.exe" -}}
-{{- $vpncliPath := "" -}}
-{{- if lookPath $vpncliSecPath -}}
-{{- $vpncliPath = $vpncliSecPath -}}
-{{- else if lookPath $vpncliAnyPath -}}
-{{- $vpncliPath = $vpncliAnyPath -}}
-{{- end -}}
-{{- if ne $vpncliPath "" -}}
-{{- template "newAliasTmpl" (dict "name" "vpncli" "value" $vpncliPath ) }}
-{{ end -}}
-{{- $kerbConfigPath := joinPath $prgFiles "Microsoft" "Kerberos Configuration Manager for SQL Server" "KerberosConfigMgr.exe" -}}
-{{- if lookPath $kerbConfigPath -}}
-{{- template "newAliasTmpl" (dict "name" "kerberosconfigmgr" "value" $kerbConfigPath ) }}
-{{ end -}}
-{{- if lookPath ( joinPath ( env "USERPROFILE" ) "scoop" "apps" "gsudo" "current" "gsudo.exe" ) -}}
-{{- $senOnePath := joinPath ( glob ( joinPath $prgFiles "SentinelOne" "Sentinel Agent *" ) | sortAlpha | last ) "SentinelCtl.exe" -}}
-{{- if lookPath $senOnePath -}}
-{{- printf "function sentinelctl { invoke-gsudo -ScriptBlock { & %s @args } -ArgumentList $args }" ( $senOnePath | squote ) }}
-{{ end -}}
-{{- $spcSnifPath := "SpaceSniffer.exe" -}}
-{{- /* `invoke-gsudo` usage causes console to hang while `spacesniffer.exe` is open. `help` needs special handling to bypass shim. */ -}}
-{{- if lookPath $spcSnifPath }}
-{{- printf "function spacesniffer { if ($args -contains 'help') { & (scoop which spacesniffer.exe) help } else { gsudo { & %s @args } -args $args } }" ( output "pwsh" "-NoLogo" "-NoProfile" "-Command" "scoop" "which" $spcSnifPath | trim | squote ) }}
-{{ end -}}
-{{- end -}}
-#endregion windows
+    {{- $nppPath := joinPath $prgFiles "Notepad++" "notepad++.exe" -}}
+    {{- if lookPath $nppPath -}}
+        {{- .lineEnding -}}
+        {{- template "newAliasTmpl" (dict "name" "npp" "value" $nppPath ) -}}
+    {{- end }}
+
+    {{- $ostressPath := joinPath $prgFiles "Microsoft Corporation" "RMLUtils" "ostress.exe" -}}
+    {{- if lookPath $ostressPath -}}
+        {{- .lineEnding -}}
+        {{- template "newAliasTmpl" (dict "name" "ostress" "value" $ostressPath ) -}}
+    {{- end -}}
+
+    {{- $vswhereBin := "vswhere" -}}
+    {{- $vswherePath := lookPath $vswhereBin -}}
+    {{- $vswhereDefaultPath := lookPath ( joinPath $prg86 "Microsoft Visual Studio" "Installer" ( print $vswhereBin ".exe" ) ) -}}
+    {{- if and ( not $vswherePath ) $vswhereDefaultPath -}}
+        {{- $vswherePath = $vswhereDefaultPath -}}
+        {{- .lineEnding -}}
+        {{- template "newAliasTmpl" (dict "name" $vswhereBin "value" $vswherePath ) -}}
+    {{- end -}}
+
+    {{- if $vswherePath -}}
+        {{- $tfPath := "" -}}
+        {{- $tfPathList := output $vswherePath "-products" "*" "-find" "**\\TF.exe" | trim | splitList "\r\n" -}}
+        {{- $tfVersionPathDict := dict -}}
+        {{- $tfVersionPathWorkspaceDict := dict -}}
+        {{- range $currentTfPath :=  $tfPathList -}}
+            {{- $currentTfVersion := output $currentTfPath | splitList "\r\n" | first | regexFind "[0-9.]+$" -}}
+            {{- if ( output $currentTfPath "vc" "workspaces" | trim | ne "No workspace matching * found on this computer." ) -}}
+                {{- $_ := set $tfVersionPathWorkspaceDict $currentTfVersion $currentTfPath -}}
+            {{- else -}}
+                {{- $_ := set $tfVersionPathDict $currentTfVersion $currentTfPath -}}
+            {{- end -}}
+        {{- end -}}
+        {{- if $tfVersionPathWorkspaceDict -}}
+            {{- $tfPath = get $tfVersionPathWorkspaceDict ( keys $tfVersionPathWorkspaceDict | sortAlpha | last ) -}}
+        {{- else -}}
+            {{- $tfPath = get $tfVersionPathDict ( keys $tfVersionPathDict | sortAlpha | last ) -}}
+        {{- end -}}
+        {{- if $tfPath -}}
+            {{- .lineEnding -}}
+            {{- template "newAliasTmpl" (dict "name" "tf" "value" $tfPath ) -}}
+        {{- end -}}
+
+        {{- $launchVsDevShellPath := "" -}}
+        {{- $launchVsDevShellPath = output $vswherePath "-latest" "-products" "*" "-requiresAny" "-requires" "Microsoft.VisualStudio.Workload.VCTools" "-requires" "Microsoft.VisualStudio.NativeDesktop" "-find" "**\\Launch-VsDevShell.ps1" | trim -}}
+        {{- if $launchVsDevShellPath -}}
+            {{- .lineEnding -}}
+            {{- template "newAliasTmpl" (dict "name" "Launch-VsDevShell" "value" $launchVsDevShellPath ) -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{ $vpncliAnyPath := joinPath $prg86 "Cisco" "Cisco AnyConnect Secure Mobility Client" "vpncli.exe" -}}
+    {{ $vpncliSecPath := joinPath $prg86 "Cisco" "Cisco Secure Client" "vpncli.exe" -}}
+    {{- $vpncliPath := "" -}}
+    {{- if lookPath $vpncliSecPath -}}
+        {{- $vpncliPath = $vpncliSecPath -}}
+    {{- else if lookPath $vpncliAnyPath -}}
+        {{- $vpncliPath = $vpncliAnyPath -}}
+    {{- end -}}
+    {{- if ne $vpncliPath "" -}}
+        {{- .lineEnding -}}
+        {{- template "newAliasTmpl" (dict "name" "vpncli" "value" $vpncliPath ) -}}
+    {{ end -}}
+
+    {{- $kerbConfigPath := joinPath $prgFiles "Microsoft" "Kerberos Configuration Manager for SQL Server" "KerberosConfigMgr.exe" -}}
+    {{- if lookPath $kerbConfigPath -}}
+        {{- .lineEnding -}}
+        {{- template "newAliasTmpl" (dict "name" "kerberosconfigmgr" "value" $kerbConfigPath ) -}}
+    {{- end -}}
+
+    {{- if lookPath ( joinPath ( env "USERPROFILE" ) "scoop" "apps" "gsudo" "current" "gsudo.exe" ) -}}
+        {{- $senOnePath := joinPath ( glob ( joinPath $prgFiles "SentinelOne" "Sentinel Agent *" ) | sortAlpha | last ) "SentinelCtl.exe" -}}
+        {{- if lookPath $senOnePath -}}
+            {{- .lineEnding -}}
+            {{- printf "function sentinelctl { invoke-gsudo -ScriptBlock { & %s @args } -ArgumentList $args }" ( $senOnePath | squote ) -}}
+        {{- end -}}
+
+        {{- $spcSnifPath := "SpaceSniffer.exe" -}}
+        {{- /* `invoke-gsudo` usage causes console to hang while `spacesniffer.exe` is open. `help` needs special handling to bypass shim. */ -}}
+        {{- if lookPath $spcSnifPath }}
+            {{- .lineEnding -}}
+            {{- printf "function spacesniffer { if ($args -contains 'help') { & (scoop which spacesniffer.exe) help } else { gsudo { & %s @args } -args $args } }" ( output "pwsh" "-NoLogo" "-NoProfile" "-Command" "scoop" "which" $spcSnifPath | trim | squote ) -}}
+        {{- end -}}
+    {{- end -}}
+    {{- .lineEnding -}}
+    #endregion windows
 {{- end }}
