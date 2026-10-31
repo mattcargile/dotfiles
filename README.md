@@ -50,6 +50,7 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
    module function. consider features used in that comment by mklemmot on [github](https://github.com/PowerShell/PowerShell/issues/21525#issuecomment-2078215370).
 1. inspect how edit vi visually works in psrl to see about better compat with flatten.nvim or the like.
 1. figure out how to properly handle copy in an ssh session while retainin the current behavior and not breaking paste. `wezterm` doesn't support paste which i tend to agree with for security. i can ust `c-s-v`. `:h clipboard-osc52` / `= require('vim.ui.clipboard.osc52').copy('+')({vim.fn.getreg('v')})`
+
 1. handle arrowing up in a long terminal prompt in neovim. It won't let me go up. i can only edit it with vi visual mode by typing v.
 1. is there a way to launch `gvpn` async to get the time left on vpn easily and fast. maybe some api.
 1. still want that neovim anywhere.
@@ -65,6 +66,7 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. the whole build tools situation with admin required is a pain for _neovim_ on windows. how to handle without admin for `cl.exe`. maybe work with the `CC` environment variable and maybe `mingw` and `msys2`.
 1. create `if` template blocks for the bulk of the whole profile to keep a super minimal profile at the limits of what is possible. try to get around not being able to install certain terminal tools, etc. how minimal can it be?
 1. can `powershell` be used only if `pwsh` can't be put on the machine? minimal config.
+1. add `chelsea's live` , `lbbatonrouge`, _smoothie king_ , _super dome_, _river center theater_ and _river center arena_ to `gcmdy`
 
 ## Road to Full Auto
 1. Core hard dep to get to prompt.
