@@ -7,14 +7,14 @@
         else {
             'desktop.psm1'
         }
-        # else *nix/mac {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 4 "string" ( squote "core.psm1" ) ) }}{{ end }}
+        # else *nix/mac {{- else }}{{ .lineEnding }}{{ indent 4 ( squote "core.psm1" ) }}{{ end }}
     ) 
     ModuleVersion = '0.1.0'
     CompatiblePSEditions = @(
         # chezmoi if windows {{- if .isWindows }}
         'Desktop'
         'Core'
-        # else *nix/mac {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 4 "string" ( squote "Core" ) ) }}{{ end }}
+        # else *nix/mac {{- else }}{{ .lineEnding }}{{ indent 4 ( squote "Core" ) }}{{ end }}
     )
     GUID = '403248e3-3cb7-4192-b32b-77d104ee14e2'
     Author = 'Matthew Cargile'
@@ -24,7 +24,7 @@
     PowerShellVersion =
         # chezmoi if windows {{- if .isWindows }}
         '5.1'
-        # else *nix/mac {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 4 "string" ( squote "7.5.4" ) ) }}{{ end }}
+        # else *nix/mac {{- else }}{{ .lineEnding }}{{ indent 4 ( squote "7.5.4" ) }}{{ end }}
     TypesToProcess = @(
         '.\MyProfile.types.ps1xml'
     )
@@ -39,29 +39,29 @@
         else {
             '.\lib\desktop\MyProfileLib.dll'
         }
-        # else *nix/mac {{- else }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" .lineEnding "width" 4 "string" ( joinPath "." "lib" "core" "MyProfileLib.dll" | squote ) ) }}{{ end }}
+        # else *nix/mac {{- else }}{{ .lineEnding }}{{ indent 4 ( joinPath "." "lib" "core" "MyProfileLib.dll" | squote ) }}{{ end }}
     )
     # chezmoi get functions and aliases {{- $funcCmdletAliasOutJson := output "pwsh" "-NoLogo" "-NoProfile" "-File" ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-MyProfileFuncCmdletAliasExportJson.ps1" ) | fromJson }}
     FunctionsToExport = @(
-        # chezmoi if all functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.All.Function }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 8 "string" ( $currentAllFunc | squote ) ) }}{{ end }}
+        # chezmoi if all functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.All.Function }}{{ $.lineEnding }}{{ indent 8 ( $currentAllFunc | squote ) }}{{ end }}
         if ($PSEdition -eq 'Core') {
-            # chezmoi if core functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Core.Function }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 12 "string" ( $currentAllFunc | squote ) ) }}{{ end }}
+            # chezmoi if core functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Core.Function }}{{ $.lineEnding }}{{ indent 12 ( $currentAllFunc | squote ) }}{{ end }}
         }
         else {
-            # chezmoi if desk functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Desktop.Function }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 12 "string" ( $currentAllFunc | squote ) ) }}{{ end }}
+            # chezmoi if desk functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Desktop.Function }}{{ $.lineEnding }}{{ indent 12 ( $currentAllFunc | squote ) }}{{ end }}
         }
     )
     CmdletsToExport = @(
-        # chezmoi if all cmdlets {{- range $currentAllCmdlet := $funcCmdletAliasOutJson.All.Cmdlet }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 8 "string" ( $currentAllCmdlet | squote ) ) }}{{ end }}
+        # chezmoi if all cmdlets {{- range $currentAllCmdlet := $funcCmdletAliasOutJson.All.Cmdlet }}{{ $.lineEnding }}{{ indent 8 ( $currentAllCmdlet | squote ) }}{{ end }}
     )
     VariablesToExport = @()
     AliasesToExport = @(
-        # chezmoi all aliases {{- range $currentAllAlias := $funcCmdletAliasOutJson.All.Alias }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 8 "string" ( $currentAllAlias | squote ) ) }}{{ end }}
+        # chezmoi all aliases {{- range $currentAllAlias := $funcCmdletAliasOutJson.All.Alias }}{{ $.lineEnding }}{{ indent 8 ( $currentAllAlias | squote ) }}{{ end }}
         if ($PSEdition -eq 'Core') {
-            # chezmoi if core functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Core.Alias }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 12 "string" ( $currentAllFunc | squote ) ) }}{{ end }}
+            # chezmoi if core functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Core.Alias }}{{ $.lineEnding }}{{ indent 12 ( $currentAllFunc | squote ) }}{{ end }}
         }
         else {
-            # chezmoi if desk functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Desktop.Alias }}{{ includeTemplate "tools/WriteOsAwareNIndent.tmpl" ( dict "lineEnding" $.lineEnding "width" 12 "string" ( $currentAllFunc | squote ) ) }}{{ end }}
+            # chezmoi if desk functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.Desktop.Alias }}{{ $.lineEnding }}{{ indent 12 ( $currentAllFunc | squote ) }}{{ end }}
         }
     ) 
     PrivateData = @{
