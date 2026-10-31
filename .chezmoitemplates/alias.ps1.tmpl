@@ -69,7 +69,7 @@
 
     {{- if $vswherePath -}}
         {{- $tfPath := "" -}}
-        {{- $tfPathList := output $vswherePath "-products" "*" "-find" "**\\TF.exe" | trim | splitList "\r\n" -}}
+        {{- $tfPathList := output $vswherePath "-products" "*" "-find" "**\\TF.exe" | trim | splitList "\r\n" | compact -}}
         {{- $tfVersionPathDict := dict -}}
         {{- $tfVersionPathWorkspaceDict := dict -}}
         {{- range $currentTfPath :=  $tfPathList -}}
@@ -82,7 +82,7 @@
         {{- end -}}
         {{- if $tfVersionPathWorkspaceDict -}}
             {{- $tfPath = get $tfVersionPathWorkspaceDict ( keys $tfVersionPathWorkspaceDict | sortAlpha | last ) -}}
-        {{- else -}}
+        {{- else if $tfVersionPathDict -}}
             {{- $tfPath = get $tfVersionPathDict ( keys $tfVersionPathDict | sortAlpha | last ) -}}
         {{- end -}}
         {{- if $tfPath -}}
