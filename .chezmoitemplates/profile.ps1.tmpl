@@ -36,13 +36,7 @@ $OutputEncoding = [System.Console]::InputEncoding = [System.Console]::OutputEnco
      * passes `nvim` to the _PSES_ terminal. In summary, the below `code` relies on
      * parameters passed into `Start-EditorServices.ps1`.
      */}}
-if(
-    (
-        $env:TERM_PROGRAM -eq 'vscode' -and
-        $Host.Name -eq 'Visual Studio Code Host'
-    ) -or
-        $Host.Name -eq 'nvim'
-){
+if( $Host.Name -in @( 'Visual Studio Code Host', 'nvim' ) ){
 {{- if $hasCommandSuiteAvailable }}
     Import-CommandSuite
 {{- end -}}
