@@ -8,11 +8,11 @@ namespace MyProfileLib;
 
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Cmdlet(VerbsLifecycle.Stop, "UpstreamCommand")]
-public class CommandStopper : PSCmdlet
+public class StopUpstreamCommand : PSCmdlet
 {
     private static readonly Func<PSCmdlet, Exception> s_creator;
 
-    static CommandStopper()
+    static StopUpstreamCommand()
     {
         ParameterExpression cmdlet = Expression.Parameter(typeof(PSCmdlet), "cmdlet");
         Type? stopUpStreamType = typeof(PSObject).Assembly.GetType("System.Management.Automation.StopUpstreamCommandsException");
@@ -44,34 +44,12 @@ public class CommandStopper : PSCmdlet
     [Hidden, EditorBrowsable(EditorBrowsableState.Never)]
     public static void Stop(PSCmdlet cmdlet)
     {
-        var exception = s_creator(cmdlet);
-        cmdlet.SessionState.PSVariable.Set("__exceptionToThrow", exception);
-        var variable = GetOrCreateVariable(cmdlet, "__exceptionToThrow");
-        object oldValue = variable.Value;
-        try
-        {
-            variable.Value = exception;
-            ScriptBlock.Create("& $ExecutionContext.InvokeCommand.GetCmdletByTypeName([MyProfileLib.CommandStopper]) $__exceptionToThrow")
-                .GetSteppablePipeline(CommandOrigin.Internal)
-                .Begin(false);
-        }
-        finally
-        {
-            variable.Value = oldValue;
-        }
-    }
-
-    private static PSVariable GetOrCreateVariable(PSCmdlet cmdlet, string name)
-    {
-        PSVariable result = cmdlet.SessionState.PSVariable.Get(name);
-        if (result != null)
-        {
-            return result;
-        }
-
-        result = new PSVariable(name, null);
-        cmdlet.SessionState.PSVariable.Set(result);
-        return result;
+        var command = new CmdletInfo("Stop-UpstreamCommand", typeof(StopUpstreamCommand));
+        ScriptBlock.Create("param($command, $exception) & $command $exception")
+            .GetSteppablePipeline(
+                CommandOrigin.Internal,
+                new object[] { command, s_creator(cmdlet) } )
+            .Begin(false);
     }
 
     protected override void BeginProcessing()

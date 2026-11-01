@@ -22,17 +22,11 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
    ```
 1. Explore `nvim` mini status line with `mssql.nvim`. add it to the left side instead maybe.
 1. explore `vim.pack` plugin which makes jumping easier with `f` an `t`. something easy jump or the like that highlights the second or third `t` or the like to go further than word, etc.
-1. figure out why `at` and `top` won't work inside `s { $_.commandline | slexe | at 1}` context initiall until `at` is run once outside. Might need to initialize the class somehow on module load before
-1. handle none found on `scoop fsearch vimdiff`. Need to check output of `sfsu` as it must be piping something in a native fashion into the pipe.
-1. alias psrl key handler doesn't work when using an alias like `badb` before the module is loaded. need to add `get-command` lookup or `ipmo` or maybe `if` with `gmo`.
 1. `mssql.nvim`, handle results output opt. maybe make the bottom window have a different size depending on results size.
 1. `mssql.nvim` has another op delegate for the handle for the messages. would need a `function()` to collect all the messages into one and then write it to a buffer.
-1. maybe disable arrow keys to force keyboard changing. need better special characters
 1. set up lsp for `pwsh` and `.cs`
 1. handle carapace excludes better between unix and windows. `strings` is an example which breaks on windows.
 1. add _powertoys_ keymap settings for cmd pal. local app data microsoft powertoys. there is a backup file in onedrive documents powertoys that is a zip archive too.
-1. set up `.chezmoitemplates` for _*nix_ and _windows_
-1. sync up my nvim configs across locals and remotes. some features are only on certain machines.
 1. handle syncing up the chromium _vimium_ json config. is there a way to auto import it or sync it on the file system or does the import have to happen manually in the browser?
 1. redo the `mini.statusline` to better present the _mssql.nvim_ data.
 1. fix `nvim` `telescope` handling with scratch buffers and files that aren't save. we need to see the live active contents. 
@@ -50,11 +44,9 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
    module function. consider features used in that comment by mklemmot on [github](https://github.com/PowerShell/PowerShell/issues/21525#issuecomment-2078215370).
 1. inspect how edit vi visually works in psrl to see about better compat with flatten.nvim or the like.
 1. figure out how to properly handle copy in an ssh session while retainin the current behavior and not breaking paste. `wezterm` doesn't support paste which i tend to agree with for security. i can ust `c-s-v`. `:h clipboard-osc52` / `= require('vim.ui.clipboard.osc52').copy('+')({vim.fn.getreg('v')})`
-
 1. handle arrowing up in a long terminal prompt in neovim. It won't let me go up. i can only edit it with vi visual mode by typing v.
 1. is there a way to launch `gvpn` async to get the time left on vpn easily and fast. maybe some api.
 1. still want that neovim anywhere.
-1. use the `.Var.Var` feature in `oh-my-posh`. to embed data like the `onedrive` paths and such.
 1. handle the `carapace` completers more nicely for _*nix_ vs _windows_. `strings` is a windows feature and more default on _*nix_.
 1. work in `nuget` [package](https://www.nuget.org/packages/Microsoft.Windows.Console.ConPTY) for `alacritty` on windows to use modern _conpty_. simple fix is `cp ~\scoop\apps\wezterm-nightly\current\conpty.dll, ~\scoop\apps\wezterm-nightly\current\OpenConsole.exe ~\scoop\apps\alacritty\current\`
 1. `ctcn` add `-expand` and add `-propertyname` for like `name` instead of `computername` or maybe just add it outright?
