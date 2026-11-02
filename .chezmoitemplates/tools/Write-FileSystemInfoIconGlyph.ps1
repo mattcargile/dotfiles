@@ -30,7 +30,7 @@ if ($glyphRemoteData -and $glyphData.METADATA.date -ne $glyphRemoteData.METADATA
 
 $fileSystemInfoIconPath = Join-Path $PSScriptRoot '..' .\filesysteminfoicon.psd1.tmpl
 $fileSystemInfoIconScript =  chezmoi execute-template --file $fileSystemInfoIconPath | Out-String
-if ($LASTEXITCODE -gt 0) {
+if ($LASTEXITCODE -ne 0) {
     throw [InvalidOperationException]'chezmoi execute-template failed with non-zero exit code'
 }
 

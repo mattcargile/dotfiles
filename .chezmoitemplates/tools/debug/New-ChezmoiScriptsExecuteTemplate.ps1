@@ -21,7 +21,7 @@ foreach ( $currentScript in $chezmoiScripts ) {
     $currentScriptTemplateFilePath = $currentScript.FullName
     if ($PSCmdlet.ShouldProcess($currentScript.FullName, "Creating actual script $currentOutFilePath from template")) {
         $currentScriptOutput = chezmoi execute-template --file $currentScriptTemplateFilePath 2>&1
-        if ($LASTEXITCODE -gt 0) {
+        if ($LASTEXITCODE -ne 0) {
             Write-Error "Failed to execute template for $currentScriptTemplateFilePath | $currentScriptOutput"
             continue
         }

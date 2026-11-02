@@ -39,7 +39,7 @@ $outPsObj = [PSCustomObject]@{
 if ($IsWindows) {
     # Need to force `Import-Module` otherwise the shell won't load it.
     $desktopPsrlVersion = (powershell -NoLogo -NoProfile -Command { Import-Module -ErrorAction Stop -Name PSReadLine; Get-Module -Name PSReadLine -ErrorAction Stop }).Version
-    if ($LASTEXITCODE -gt 0 -or $null -eq $desktopPsrlVersion -or $desktopPsrlVersion -eq '') {
+    if ($LASTEXITCODE -ne 0 -or $null -eq $desktopPsrlVersion -or $desktopPsrlVersion -eq '') {
         throw [InvalidOperationException]'Failed to import and/or get the Windows Powershell PSReadLine version.'
     }
 

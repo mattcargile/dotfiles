@@ -88,14 +88,14 @@ catch {
     return
 }
 $scoopAliasCurrent = scoop alias list --verbose 6>$null
-if ($LASTEXITCODE -gt 0) {
+if ($LASTEXITCODE -ne 0) {
     throw [InvalidOperationException]'Failed to get current aliases'
 }
 if ($null -eq $scoopAliasCurrent) {
     if ($PSCmdlet.ShouldProcess('scoop alias', 'Adding all aliases for new install')) {
         foreach ($currentAliasToSync in $scoopAliasToSync) {
             scoop alias add $currentAliasToSync.Name $currentAliasToSync.Command $currentAliasToSync.Summary
-            if ($LASTEXITCODE -gt 0) {
+            if ($LASTEXITCODE -ne 0) {
                 throw [InvalidOperationException]"Failed to add alias $($currentAliasToSync.Name)"
             }
         }
@@ -113,11 +113,11 @@ else {
             if ($currentAliasToSync.Command -ne $currentAliasData.Command -or $currentAliasToSync.Summary -ne $currentAliasData.Summary) {
                 if ($PSCmdlet.ShouldProcess('scoop alias', "Removing and adding $($currentAliasToSync.Name) as they have a different command or summary")) {
                     scoop alias rm $currentAliasToSync.Name 6>$null
-                    if ($LASTEXITCODE -gt 0) {
+                    if ($LASTEXITCODE -ne 0) {
                         throw [InvalidOperationException]"Failed to remove current alias $($currentAliasToSync.Name)"
                     }
                     scoop alias add $currentAliasToSync.Name $currentAliasToSync.Command $currentAliasToSync.Summary
-                    if ($LASTEXITCODE -gt 0) {
+                    if ($LASTEXITCODE -ne 0) {
                         throw [InvalidOperationException]"Failed to add current alias $($currentAliasToSync.Name)"
                     }
                 }
@@ -131,7 +131,7 @@ foreach ($currentAlias in $scoopAliasCurrent) {
         if ($PSCmdlet.ShouldProcess('scoop alias', "Alias $($currentAlias.Name) doesn't exist on sync data. Removing.")) {
             Write-Verbose "Attempting to remove $($currentAlias.Name) as it isn't in the sync data."
             scoop alias rm $currentAlias.Name 6>$null
-            if ($LASTEXITCODE -gt 0) {
+            if ($LASTEXITCODE -ne 0) {
                 throw [InvalidOperationException]"Failed to remove alias $($currentAliasToSync.Name) not in the chezmoi sync data."
             }
         }

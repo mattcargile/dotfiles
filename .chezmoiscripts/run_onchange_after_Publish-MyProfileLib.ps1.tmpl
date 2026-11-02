@@ -81,12 +81,12 @@ if ($outputDir) {
     $dotnetDesktopArgs += '--output', ( Join-Path $outputDir 'desktop' )
 }
 $publishCore = dotnet @dotnetArgs @dotnetCoreArgs
-if ($LASTEXITCODE -gt 0) {
+if ($LASTEXITCODE -ne 0) {
     throw $publishCore
 }
 if ($IsWindows) {
     $publishDesktop = dotnet @dotnetArgs @dotnetDesktopArgs
-    if ($LASTEXITCODE -gt 0) {
+    if ($LASTEXITCODE -ne 0) {
         throw $publishDesktop
     }
 }

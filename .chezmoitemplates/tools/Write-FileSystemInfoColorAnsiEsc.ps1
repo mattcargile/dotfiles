@@ -8,7 +8,7 @@ $ErrorActionPreference = 'Stop'
 
 $fileSystemInfoColorPath = Join-Path $PSScriptRoot ".." .\filesysteminfocolor.psd1.tmpl
 $fileSystemInfoColorScript =  chezmoi execute-template --file $fileSystemInfoColorPath | Out-String
-if ($LASTEXITCODE -gt 0) {
+if ($LASTEXITCODE -ne 0) {
     throw [InvalidOperationException]'chezmoi execute-template failed with non-zero exit code'
 }
 
