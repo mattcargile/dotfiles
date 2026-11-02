@@ -3,18 +3,40 @@
 param (
 )
 
-Set-StrictMode -Version Latest
+# Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+# Below needed to output the glyphs correctly otherwise we have question mark(s) in the output
+$OutputEncoding = [System.Console]::InputEncoding = [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
-$fileSystemInfoColorPath = Join-Path $PSScriptRoot ".." .\filesysteminfocolor.psd1.tmpl
-$fileSystemInfoColorScript =  chezmoi execute-template --file $fileSystemInfoColorPath | Out-String
+$glyphPath = Join-Path $PSScriptRoot '..' glyphnames.json
+Write-Debug "Glyph file path is $glyphPath"
+if (Test-Path $glyphPath) {
+    $glyphData = Get-Content -Path $glyphPath -Raw | ConvertFrom-Json
+}
+try {
+    $glyphRemoteData = Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/glyphnames.json' -Verbose:$false -Debug:$false
+}
+catch {
+    Write-Warning "Using current glyphs on disk. Cannot get latest glyphnames.json. $_"
+}
+if (-not $glyphData -and -not $glyphRemoteData) {
+    throw [InvalidOperationException]'Cannot find glyph data on disk or on remote. Maybe retry or check internet.'
+}
+if ($glyphRemoteData -and $glyphData.METADATA.date -ne $glyphRemoteData.METADATA.date) {
+    Write-Verbose 'Glyph data on disk has a different date than one from remote. Writing new file.'
+    $glyphRemoteData | ConvertTo-Json | Set-Content -Path $glyphPath
+    $glyphData = $glyphRemoteData
+}
+
+$fileSystemInfoIconPath = Join-Path $PSScriptRoot '..' '.chezmoitemplates' .\filesysteminfoicon.psd1.tmpl
+$fileSystemInfoIconScript =  chezmoi execute-template --file $fileSystemInfoIconPath | Out-String
 if ($LASTEXITCODE -ne 0) {
     throw [InvalidOperationException]'chezmoi execute-template failed with non-zero exit code'
 }
 
 [System.Management.Automation.Language.Token[]]$parserTokens = $null
 [System.Management.Automation.Language.ParseError[]]$parserErrors = $null
-$ast = [System.Management.Automation.Language.Parser]::ParseInput( $fileSystemInfoColorScript, [ref]$parserTokens, [ref]$parserErrors )
+$ast = [System.Management.Automation.Language.Parser]::ParseInput( $fileSystemInfoIconScript, [ref]$parserTokens, [ref]$parserErrors )
 if ($parserErrors) {
     Write-Information -MessageData $parserErrors -Tags 'ParserError'
     Write-Error "[$($fileSystemInfoIconPath)] $($parserErrors.Message) Start Line $($parserErrors.Extent.StartLineNumber) and Start Column $($parserErrors.Extent.StartColumnNumber)."
@@ -23,12 +45,12 @@ if ($parserErrors) {
 Write-Information -MessageData $ast -Tags Ast
 Write-Information -MessageData $parserTokens -Tags Tokens
 if ($ast.BeginBlock -or $ast.CleanBlock -or $ast.DynamicParamBlock -or $ast.ProcessBlock -or $ast.ParamBlock -or $ast.ScriptRequirements) {
-    Write-Error -Message "[$($currentFile.Name)] Ast in a form that isn't expected and includes more code blocks than only End Block. Continuing to next item."
+    Write-Error -Message "[$($currentFile.Name)] Ast in a form that isn't expected and includes more code blocks than only End Block."
     return
 }
 $outStringBuilder = [System.Text.StringBuilder]::new($ast.Extent.EndOffset)
-$outStringBuilder.AppendLine( '[Diagnostics.CodeAnalysis.SuppressMessageAttribute( ''PSUseDeclaredVarsMoreThanAssignments'', ''formatFileSystemInfoColor'', Justification = ''Variable used as cache in later module calls.'')]' ) | Out-Null
-$outStringBuilder.Append( '$formatFileSystemInfoColor = ' ) | Out-Null
+$outStringBuilder.AppendLine( '[Diagnostics.CodeAnalysis.SuppressMessageAttribute( ''PSUseDeclaredVarsMoreThanAssignments'', ''formatFileSystemInfoIcon'', Justification = ''Variable used as cache in later module calls.'')]' ) | Out-Null
+$outStringBuilder.Append( '$formatFileSystemInfoIcon = ' ) | Out-Null
 for ($tkIdx = 0; $tkIdx -lt $parserTokens.Count; $tkIdx++) {
     if ($tkIdx -gt 0) { $previousToken = $parserTokens[$tkIdx - 1] }
     else { $previousToken = $null }
@@ -66,11 +88,14 @@ for ($tkIdx = 0; $tkIdx -lt $parserTokens.Count; $tkIdx++) {
             Out-Null
     }
     elseif (${previousToken}?.TokenFlags -contains 'AssignmentOperator' -and $currentToken.Kind -eq 'StringLiteral' ) {
+        $currentGlyphProperty = $currentToken.Value.Substring(3) # Trim leading nf- as json download doesn't have it while the website does
+        Write-Debug "Current modified Glyph Property for Json look up is $currentGlyphProperty"
+        $currentGlyphData = $glyphData.$currentGlyphProperty
         $outStringBuilder.
             Append( "'" ).
-            Append( $PSStyle.Foreground.FromRgb( "0x$($currentToken.Value.Substring(1))" ) ). # Remove the helper formatting hash (#)
+            Append( $currentGlyphData.char ).
             Append( "'" ).
-            Append( " $($currentToken.Value)") | Out-Null
+            Append( " # $currentGlyphProperty|$($currentGlyphData.code)") | Out-Null
     }
     else {
         $outStringBuilder.Append($currentToken) | Out-Null

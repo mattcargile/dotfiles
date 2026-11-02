@@ -41,7 +41,7 @@
         }
         # else *nix/mac {{- else }}{{ .lineEnding }}{{ indent 4 ( joinPath "." "lib" "core" "MyProfileLib.dll" | squote ) }}{{ end }}
     )
-    # chezmoi get functions and aliases {{- $funcCmdletAliasOutJson := output "pwsh" "-NoLogo" "-NoProfile" "-File" ( joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-MyProfileFuncCmdletAliasExportJson.ps1" ) | fromJson }}
+    # chezmoi get functions and aliases {{- $funcCmdletAliasOutJson := output "pwsh" "-NoLogo" "-NoProfile" "-File" ( joinPath .chezmoi.sourceDir "tools" "Write-MyProfileFuncCmdletAliasExportJson.ps1" ) | fromJson }}
     FunctionsToExport = @(
         # chezmoi if all functions {{- range $currentAllFunc := $funcCmdletAliasOutJson.All.Function }}{{ $.lineEnding }}{{ indent 8 ( $currentAllFunc | squote ) }}{{ end }}
         if ($PSEdition -eq 'Core') {

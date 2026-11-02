@@ -64,3 +64,4 @@ if ($IsWindows) {
 }
 
 $outPsObj | ConvertTo-Json -Compress
+

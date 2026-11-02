@@ -48,8 +48,8 @@ end {
         }
     }
 
-    $publicFunctionsRootFiles = Get-ChildItem -Path "$PSScriptRoot\..\MyProfile\functions" -Recurse -File -Include *.ps1, *.ps1.tmpl
-    $publicCmdletsRootFiles = Get-ChildItem -Path "$PSScriptRoot\..\..\MyProfileLib\Commands" -Recurse -File -Include *.cs
+    $publicFunctionsRootFiles = Get-ChildItem -Path "$PSScriptRoot\..\.chezmoitemplates\MyProfile\functions" -Recurse -File -Include *.ps1, *.ps1.tmpl
+    $publicCmdletsRootFiles = Get-ChildItem -Path "$PSScriptRoot\..\MyProfileLib\Commands" -Recurse -File -Include *.cs
     $publicFunctionOut = @{
         All = @{
             Function = [SortedSet[string]]::new()

@@ -1,4 +1,4 @@
-{{- $argList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir ".chezmoitemplates" "tools" "Write-PSReadLinePredictionJson.ps1" ) -}}
+{{- $argList := list "-NoProfile" "-NoLogo" "-File" (joinPath .chezmoi.sourceDir "tools" "Write-PSReadLinePredictionJson.ps1" ) -}}
 {{- $psrlPrediction := outputList "pwsh" $argList | fromJson -}}
 {{- $predictionSource := "" -}}
 {{- $hasColorsInlinePrediction := false }}
