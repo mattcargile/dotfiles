@@ -156,21 +156,6 @@ Set-PSReadlineKeyHandler -Chord 'v' -ViMode 'Command' -BriefDescription 'ViEditV
     [Microsoft.PowerShell.PSConsoleReadLine]::ClearScreen()
 }
 #endregion
-#region For part way completion of History PredictionSource
-Set-PSReadLineKeyHandler -Chord 'Alt+y' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ViMode 'Insert' -ScriptBlock {
-    param($key, $arg)
-
-    $line = $null
-    $cursor = $null
-    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
-
-    if ($cursor -lt $line.Length) {
-        [Microsoft.PowerShell.PSConsoleReadLine]::NextWord($key, $arg)
-    } else {
-        [Microsoft.PowerShell.PSConsoleReadLine]::AcceptNextSuggestionWord($key, $arg)
-    }
-}
-#endregion
 #region Save current line to history ( without execution ) and clear line.
 {{- $saveinHistorySb := `{
     param($key, $arg)
@@ -594,11 +579,10 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+c' -Function CopyOrCancelLine -ViMode Inse
 Set-PSReadLineKeyHandler -Chord 'Ctrl+c' -Function CopyOrCancelLine -ViMode Command
 Set-PSReadLineKeyHandler -Chord 'Ctrl+p' -Function PreviousHistory -ViMode Insert
 Set-PSReadLineKeyHandler -Chord 'Ctrl+n' -Function NextHistory -ViMode Insert
-Set-PSReadLineKeyHandler -Chord 'Ctrl+y' -Function AcceptSuggestion -ViMode Insert
 Set-PSReadLineKeyHandler -Chord 'Ctrl+r' -Function Redo -ViMode Command
 Set-PSReadLineKeyHandler -Chord 'Ctrl+x,Ctrl+o' -ViMode Insert -Function MenuComplete
 Set-PSReadLineKeyHandler -Chord 'Ctrl+x,Ctrl+z' -ViMode Insert -Function Abort
 Set-PSReadLineKeyHandler -Chord 'Ctrl+x,Ctrl+z' -ViMode Command -Function Abort
 Set-PSReadLineKeyHandler -Chord 'Ctrl+o,o' -ViMode Insert -Function AddLine
-Set-PSReadLineKeyHandler -Chord 'Ctrl+x,h' -ViMode Insert -Function ShowParameterHelp
 #endregion
+

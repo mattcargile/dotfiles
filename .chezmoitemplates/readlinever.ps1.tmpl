@@ -1,0 +1,96 @@
+{{- /* PSReadline Version specific features for Core versus Desktop */ -}}
+{{- /* Calling `pwsh` or `powershell` checks for non-interactive usage and won't load PSReadline by default.  */ -}}
+{{- /* The `ToString()` representation of Desktop `PSVersion` isn't a supported semantic version format with the `.Revision` at the end */ -}}
+{{- $psVersionVarCommand := "$psVer = $PSVersionTable.PSVersion;" -}}
+{{- $psVersionCommandFmt := "$psVerStr = \"$($psVer.Major).$($psVer.Minor).$($psVer.%s)\";" -}}
+{{- $psrlVersionCommand := "Import-Module PSReadLine -ErrorAction Stop; $psrlVer = (Get-Module PSReadLine -ErrorAction Stop).Version.ToString();" -}}
+{{- $currentPsCommandFmt := print $psVersionVarCommand $psVersionCommandFmt $psrlVersionCommand "\"$psrlVer|$psVerStr\"" -}}
+{{- $currentPsCommand := "" -}}
+{{- $currentPsrlVersion := "0.0.0" -}}
+{{- $currentPsVersion := "0.0.0" -}}
+{{- if .isPSCore -}}
+    {{- $currentPsCommand = printf $currentPsCommandFmt "Patch" -}}
+{{- else -}}
+    {{- /* Have to wrap `powershell` call in `pwsh` or else `$env:PSModulePath` won't be reset and give proper version results  */ -}}
+    {{- $currentPsCommand = printf "powershell -NoProfile -Command { %s }" ( printf $currentPsCommandFmt "Build" ) }}
+{{- end -}}
+{{- /* Below returns PSReadLineVersion and PSVersion separated by a pipe character */ -}}
+{{- $psDataDict := output "pwsh" "-NoProfile" "-Command" $currentPsCommand | trim | split "|" -}}
+{{- $currentPsrlVersion = $psDataDict._0 -}}
+{{- $currentPsVersion = $psDataDict._1 -}}
+{{- $currentPsrlPredictionSource := "" -}}
+{{- if ( semverCompare ">=2.0.4" $currentPsrlVersion ) -}}
+    {{- if ( semverCompare ">=7.2.0" $currentPsVersion ) -}}
+        {{- $currentPsrlPredictionSource = "HistoryAndPlugin" -}}
+    {{- else -}}
+        {{- $currentPsrlPredictionSource = "History" -}}
+    {{- end -}}
+{{- end -}}
+{{- /*
+     * HistorySavePath: Microsoft Defender complains about history on Onedrive
+     * AddToHistoryHandler: By default PSReadline removes "password", "cred", etc items from history. This forces save of all commands to history.
+     */ -}}
+Set-PSReadLineOption {{- if $currentPsrlPredictionSource }} -PredictionSource {{ $currentPsrlPredictionSource | squote -}}{{- end }} -BellStyle None -EditMode Vi -ViModeIndicator Script -HistorySavePath "{{ joinPath .chezmoi.homeDir ".config" "PSReadLine" "All$($Host.Name)_history.txt" | replace `"` `""` }}" -MaximumHistoryCount 500000 -HistoryNoDuplicates -AddToHistoryHandler {
+    param([string]$line)
+{{- /* Do not save any command line unless it has more than 4 characters.  Prevents storing gci, gps, etc. */}}
+    return $line.Length -gt 4
+} -Colors @{
+{{- if ( semverCompare ">=2.1.0" $currentPsrlVersion ) }}
+    InlinePrediction      = '{{ "\u001B[38;5;243m" }}'
+{{- end }}
+{{- if ( semverCompare ">=2.2.2" $currentPsrlVersion ) }}
+    ListPrediction        = '{{ "\u001B[38;2;195;100;241m" }}'
+    ListPredictionToolTip = '{{ "\u001B[38;5;243m\u001B[3m" }}'
+{{- end }}
+    Member                = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
+    Parameter             = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
+    Default               = '{{- "\u001B[38;2;228;228;228m" -}}'                                            #e4e4e4
+    Operator              = '{{- "\u001B[38;2;197;197;197m" -}}'                                            #c5c5c5
+    Keyword               = '{{- "\u001B[38;2;197;134;192m" -}}'                                            #c586c0
+    Command               = '{{- "\u001B[38;2;220;220;125m" -}}'                                            #dcdc7d
+    Emphasis              = '{{- "\u001B[27m\u001B[4m\u001B[48;2;40;40;40m\u001B[48;2;38;79;120m" -}}'      #264f78 With underline and background
+    Selection             = '{{- "\u001B[7m" -}}'                                                             #Swap foreground and background colors for `carapace` completers
+    Type                  = '{{- "\u001B[38;2;78;201;176m" -}}'                                             #4ec9b0
+    Variable              = '{{- "\u001B[38;2;124;220;254m" -}}'                                            #7cdcfe
+    String                = '{{- "\u001B[38;2;206;145;120m" -}}'                                            #ce9178
+    Comment               = '{{- "\u001B[38;2;96;139;78m" -}}'                                              #608b4e
+    Number                = '{{- "\u001B[38;2;147;206;168m" -}}'                                            #93cea8
+    Error                 = '{{- "\u001B[38;2;139;0;0m" -}}'                                                #8b0000
+} -ViModeChangeHandler {
+    param([Microsoft.PowerShell.ViMode]$mode)
+{{- /* https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#cursor-shape */}}
+    if ( $mode -eq 'Command' ) {
+{{- /* Steady block cursor shape */}}
+        [Console]::Write("$([char]0x1B)[2 q")
+    }
+    else {
+{{- /* Steady bar cursor shape */}}
+        [Console]::Write("$([char]0x1B)[6 q")
+    }
+}
+{{- /* `Set-PSReadLineOption` must be run first as the below relies on `-ViMode` */ -}}
+{{- if ( semverCompare ">=2.1.0" $currentPsrlVersion ) }}
+#region PSReadLine Version Specific
+Set-PSReadLineKeyHandler -Chord 'Ctrl+x,h' -ViMode Insert -Function ShowParameterHelp
+Set-PSReadLineKeyHandler -Chord 'Ctrl+y' -Function AcceptSuggestion -ViMode Insert
+#region For part way completion of History PredictionSource
+Set-PSReadLineKeyHandler -Chord 'Alt+y' -BriefDescription 'NextWordAndAcceptNextSuggestionWord' -Description 'Move cursor one word to the right in the current editing line and accept the next word in suggestion when it''s at the end of current editing line' -ViMode 'Insert' -ScriptBlock {
+    param($key, $arg)
+
+    $line = $null
+    $cursor = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+
+    if ($cursor -lt $line.Length) {
+        [Microsoft.PowerShell.PSConsoleReadLine]::NextWord($key, $arg)
+    } else {
+        [Microsoft.PowerShell.PSConsoleReadLine]::AcceptNextSuggestionWord($key, $arg)
+    }
+}
+#endregion
+{{ if ( semverCompare ">=2.2.1" $currentPsrlVersion ) -}}
+Set-PSReadLineKeyHandler -Chord 'Alt+a' -Function SelectCommandArgument -ViMode Insert
+{{ end -}}
+#endregion
+{{ end -}}
+
