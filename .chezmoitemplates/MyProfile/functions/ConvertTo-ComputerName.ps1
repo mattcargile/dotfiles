@@ -6,33 +6,47 @@
 .NOTES
     Began this journey because ADComputer object dynamically creates object upon selection making piping to cmdlets like Get-CimInstance troublesome
 .EXAMPLE
-    Get-ADComputer Computer | ConverTo-ComputerName | Get-CimInstance Win32_OperatingSystem
+    Get-ADComputer Computer | ConvertTo-ComputerName | Get-CimInstance Win32_OperatingSystem
     Gets the ADComputer for Computer and converts to friendly object and then pipes into Get-CimInstance to retreive the Win32_OperatingSystem object
+.EXAMPLE
+    Get-ADComputer Computer | ConvertTo-ComputerName -Property Name
+    Returns an object with the resolved computer name in its Name property
+.EXAMPLE
+    Get-ADComputer Computer | ConvertTo-ComputerName -ExpandProperty
+    Returns the resolved computer name directly
 #>
 filter ConvertTo-ComputerName {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Property')]
     [Alias('ctcn')]
     param (
         # Object to convert into friendly name
-        [Parameter(Mandatory, ValueFromPipeline, Position = 0)]
+        [Parameter(Mandatory, ValueFromPipeline, Position = 1)]
         [Alias('io')]
         [object[]]
         $InputObject,
+        # Property name for the output
+        [Parameter(Position = 0, ParameterSetName = 'Property')]
+        [Alias('p')]
+        [string]
+        $Property = 'ComputerName',
+        # Return the resolved computer name directly
+        [Parameter(ParameterSetName = 'ExpandProperty')]
+        [Alias('e')]
+        [switch]
+        $ExpandProperty,
         # Whether to include the $InputObject in the output object
-        [Parameter()]
+        [Parameter(ParameterSetName = 'Property')]
         [Alias('iio')]
         [switch]
         $IncludeInputObject
     )
     foreach ($currentInputObject in $InputObject) {
-        $propertyName = $null
-        $secondPropertyName = $null
         if ('Microsoft.ActiveDirectory.Management.ADComputer' -as [type] -and $currentInputObject -is [Microsoft.ActiveDirectory.Management.ADComputer]) {
             if ([string]::IsNullOrWhiteSpace($currentInputObject.DNSHostName)) {
-                $propertyName = 'Name'
+                $computerName = $currentInputObject.Name
             }
             else {
-                $propertyName = 'DNSHostName'
+                $computerName = $currentInputObject.DNSHostName
             }
         }
         elseif ('VMware.VimAutomation.ViCore.Impl.V1.VM.UniversalVirtualMachineImpl' -as [type] -and
@@ -41,17 +55,16 @@ filter ConvertTo-ComputerName {
                 $currentInputObject -is [VMware.VimAutomation.ViCore.Impl.V1.Inventory.VirtualMachineImpl] # -Tag outputs different type
             )
         ) {
-            $propertyName = 'Name'
+            $computerName = $currentInputObject.Name
         }
         elseif ('VMware.VimAutomation.ViCore.Impl.V1.VM.Guest.VMGuestImpl' -as [type] -and
             $currentInputObject -is [VMware.VimAutomation.ViCore.Impl.V1.VM.Guest.VMGuestImpl]
         ) {
             if ([string]::IsNullOrWhiteSpace($currentInputObject.HostName)) {
-                $propertyName = 'VM'
-                $secondPropertyName = 'Name'
+                $computerName = $currentInputObject.VM.Name
             }
             else {
-                $propertyName = 'HostName'
+                $computerName = $currentInputObject.HostName
             }
         }
         elseif ('Dataplat.Dbatools.Parameter.DbaInstanceParameter' -as [type] -and # Assuming dbatools is imported along with below classes
@@ -60,66 +73,32 @@ filter ConvertTo-ComputerName {
                 $currentInputObject -is [Microsoft.SqlServer.Management.Smo.Server]
             )
         ) {
-            $currentInputObject = [Dataplat.Dbatools.Parameter.DbaInstanceParameter]::new($currentInputObject)
-            $propertyName = 'ComputerName'
-        }
-        elseif ($currentInputObject.psobject.Properties.Name -contains 'PSComputerName' -and -not [string]::IsNullOrWhiteSpace($currentInputObject.PSComputerName)) {
-            $propertyName = 'PSComputerName'
-        }
-        elseif ($currentInputObject.psobject.Properties.Name -contains 'DNSHostName' -and -not [string]::IsNullOrWhiteSpace($currentInputObject.DNSHostName)) {
-            $propertyName = 'DNSHostName'
-        }
-        elseif ($currentInputObject.psobject.Properties.Name -contains 'HostName' -and -not [string]::IsNullOrWhiteSpace($currentInputObject.HostName)) {
-            $propertyName = 'HostName'
-        }
-        elseif ($currentInputObject.psobject.Properties.Name -contains 'ComputerName' -and -not [string]::IsNullOrWhiteSpace($currentInputObject.ComputerName)) {
-            $propertyName = 'ComputerName'
-        }
-        elseif ($currentInputObject.psobject.Properties.Name -contains 'ServerName' -and -not [string]::IsNullOrWhiteSpace($currentInputObject.ServerName)) {
-            $propertyName = 'ServerName'
-        }
-        elseif ($currentInputObject.psobject.Properties.Name -contains 'Name' -and -not [string]::IsNullOrWhiteSpace($currentInputObject.Name)) {
-            $propertyName = 'Name'
-        }
-
-        if ($secondPropertyName) {
-            if ($IncludeInputObject) {
-                [PSCustomObject]@{
-                    ComputerName = $currentInputObject.$propertyName.$secondPropertyName
-                    InputObject = $InputObject
-                }
-            }
-            else {
-                [PSCustomObject]@{
-                    ComputerName = $currentInputObject.$propertyName.$secondPropertyName
-                }
-            }
-        }
-        elseif ($propertyName) {
-            if ($IncludeInputObject) {
-                [PSCustomObject]@{
-                    ComputerName = $currentInputObject.$propertyName
-                    InputObject = $InputObject
-                }
-            }
-            else {
-                [PSCustomObject]@{
-                    ComputerName = $currentInputObject.$propertyName
-                }
-            }
+            $computerName = [Dataplat.Dbatools.Parameter.DbaInstanceParameter]::new($currentInputObject).ComputerName
         }
         else {
+            $computerName = $null
+            foreach ($propertyName in 'PSComputerName', 'DNSHostName', 'HostName', 'ComputerName', 'ServerName', 'Name') {
+                $candidateProperty = $currentInputObject.psobject.Properties[$propertyName]
+                if ($null -ne $candidateProperty -and -not [string]::IsNullOrWhiteSpace($candidateProperty.Value)) {
+                    $computerName = $candidateProperty.Value
+                    break
+                }
+            }
+
+            if ($null -eq $computerName) {
+                $computerName = [string]$currentInputObject
+            }
+        }
+
+        if ($ExpandProperty) {
+            $computerName
+        }
+        else {
+            $outputProperties = [ordered]@{ $Property = $computerName }
             if ($IncludeInputObject) {
-                [PSCustomObject]@{
-                    ComputerName = [string]$currentInputObject
-                    InputObject = $InputObject
-                }
+                $outputProperties['InputObject'] = $currentInputObject
             }
-            else {
-                [PSCustomObject]@{
-                    ComputerName = [string]$currentInputObject
-                }
-            }
+            [PSCustomObject]$outputProperties
         }
     }
 }
