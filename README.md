@@ -21,7 +21,6 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
     gsudo --integrity Medium 'pwsh -c { irm get.scoop.sh | iex}'
    ```
 1. Explore `nvim` mini status line with `mssql.nvim`. add it to the left side instead maybe.
-1. explore `vim.pack` plugin which makes jumping easier with `f` an `t`. something easy jump or the like that highlights the second or third `t` or the like to go further than word, etc.
 1. `mssql.nvim`, handle results output opt. maybe make the bottom window have a different size depending on results size.
 1. `mssql.nvim` has another op delegate for the handle for the messages. would need a `function()` to collect all the messages into one and then write it to a buffer.
 1. set up lsp for `pwsh` and `.cs`
@@ -49,11 +48,8 @@ Personal cross-platform ( with primary focus on _Windows_ ) configuration using 
 1. still want that neovim anywhere.
 1. handle the `carapace` completers more nicely for _*nix_ vs _windows_. `strings` is a windows feature and more default on _*nix_.
 1. work in `nuget` [package](https://www.nuget.org/packages/Microsoft.Windows.Console.ConPTY) for `alacritty` on windows to use modern _conpty_. simple fix is `cp ~\scoop\apps\wezterm-nightly\current\conpty.dll, ~\scoop\apps\wezterm-nightly\current\OpenConsole.exe ~\scoop\apps\alacritty\current\`
-1. `ctcn` add `-expand` and add `-propertyname` for like `name` instead of `computername` or maybe just add it outright?
 1. get `rio` going with _sixel_ and _conpty_ for `nuget`.
 1. get `contour` going to with _sixel_ and _conpty_ ( it may already contain the `exe` and `dll` )
-1. `gcimp` and `gcims` don't handle empty "path" and end up excluding the wrong ones. need an `OR` block somewhere.
-1. `vswhere` alias along with `tf.exe`
 1. need less dependencies for machine without admin to get to lowest common denomenator setup. `dotnet` could exist but it fails with a negative error code. font may not be available either and need to dump nerd fonts if not available with sub-dued prompt.
 1. the whole build tools situation with admin required is a pain for _neovim_ on windows. how to handle without admin for `cl.exe`. maybe work with the `CC` environment variable and maybe `mingw` and `msys2`.
 1. create `if` template blocks for the bulk of the whole profile to keep a super minimal profile at the limits of what is possible. try to get around not being able to install certain terminal tools, etc. how minimal can it be?
