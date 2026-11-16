@@ -122,8 +122,12 @@ function Set-SsmsQueryShortcut {
                 return
             }
             # Uses jsonc where the first line has a comment describing the file
-            $jsonDoc = Get-Content -LiteralPath $ssmsSettingsFile | Select-Object -Skip 1 | ConvertFrom-Json -AsHashtable -Depth 10 -ErrorAction Stop
-            $jsonDoc.'environment.keyboard.queryShortcuts.shortcuts' = @(
+            $jsonDoc = Get-Content -LiteralPath $ssmsSettingsFile | Select-Object -Skip 1 | ConvertFrom-Json -Depth 10 -ErrorAction Stop
+            $jsonKeyName = 'environment.keyboard.queryShortcuts.shortcuts'
+            if (-not $jsonDoc.$jsonKeyName) {
+                $jsonDoc | Add-Member $jsonKeyName $null
+            }
+            $jsonDoc.$jsonKeyName = @(
                 @{
                     key = '-2'
                     storedProcedure = 'sp_help'
