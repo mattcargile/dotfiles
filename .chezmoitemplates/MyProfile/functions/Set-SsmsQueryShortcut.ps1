@@ -20,7 +20,7 @@ function Set-SsmsQueryShortcut {
     [int]$Version
   )
 
-  $queryXml = @'
+    $queryXml = @'
         <Element>
           <Key>
             <int>-1</int>
@@ -95,20 +95,112 @@ function Set-SsmsQueryShortcut {
         </Element>
 '@
 
-  $ssmsUserSettingsDirectory = "$env:APPDATA\Microsoft\SQL Server Management Studio\$Version.0" 
-  $ssmsUserSettingsFile = Join-Path $ssmsUserSettingsDirectory "UserSettings.xml"
-  $ssmsUserSettingsBackupFile = Join-Path $ssmsUserSettingsDirectory "UserSettings_backup_$(Get-Date -Format "yyyyMMdd_HHmmssfff").xml"
-  Copy-Item $ssmsUserSettingsFile $ssmsUserSettingsBackupFile 
-  Write-Verbose "Backup of UserSettings.xml created at $ssmsUserSettingsBackupFile"
+    # Appears the ending commit hash is used in the folder name
+    $ssmsSettingsDirectoryWildcard = "$env:LOCALAPPDATA\Microsoft\SSMS\$Version.0_*"
+    $ssmsUserSettingsDirectory = "$env:APPDATA\Microsoft\SQL Server Management Studio\$Version.0" 
+    $ssmsUserSettingsFile = Join-Path $ssmsUserSettingsDirectory 'UserSettings.xml'
 
-  [xml]$xmlDoc = Get-Content $ssmsUserSettingsFile
-  $qeSettings = $xmlDoc.SqlStudio.SSMS.QueryExecution;
-  $queryShortcutsElement = $qeSettings.SelectSingleNode('QueryShortcuts')
-  if (-not $queryShortcutsElement) {
-    Write-Error "Cannot find Query Shortcuts element. Xml Schema might have changed."
-    return
-  }
-  $queryShortcutsElement.InnerXml = $queryXml
-  $xmlDoc.Save($ssmsUserSettingsFile)
-  Write-Verbose "SSMS query shortcuts have been set successfully."
+    try {
+        [xml]$xmlDoc = Get-Content $ssmsUserSettingsFile -Raw -ErrorAction Stop
+    }
+    catch {
+        Write-Error -ErrorRecord $_
+        return
+    }
+
+    $qeSettings = $xmlDoc.SqlStudio.SSMS.QueryExecution
+    if (-not $qeSettings) {
+        try {
+            $ssmsSettingsDirectory = Resolve-Path $ssmsSettingsDirectoryWildcard -ErrorAction Stop
+            if ($ssmsSettingsDirectory.Count -ne 1) {
+                Write-Error "Cannot find $ssmsSettingsDirectoryWildcard or there was multiple paths resolved." -Category InvalidResult
+                return
+            }
+            $ssmsSettingsFile = Join-Path $ssmsSettingsDirectory[0].Path 'settings.json'
+            if (-not (Test-Path $ssmsSettingsFile)) {
+                Write-Error "Cannot find $ssmsSettingsFile" -Category ObjectNotFound
+                return
+            }
+            # Uses jsonc where the first line has a comment describing the file
+            $jsonDoc = Get-Content -LiteralPath $ssmsSettingsFile | Select-Object -Skip 1 | ConvertFrom-Json -ErrorAction Stop
+            $jsonDoc.'environment.keyboard.queryShortcuts.shortcuts' = @(
+                @{
+                    key = '-2'
+                    storedProcedure = 'sp_help'
+                }
+                @{
+                    key = '-1'
+                    storedProcedure = ''
+                }
+                @{
+                    key = '1'
+                    storedProcedure = 'sp_who'
+                }
+                @{
+                    key = '2'
+                    storedProcedure = 'sp_lock'
+                }
+                @{
+                    key = '3'
+                    storedProcedure = 'sp_WhoIsActive'
+                }
+                @{
+                  key = '4'
+                  storedProcedure = 'sp_BlitzFirst'
+                }
+                @{
+                  key = '5'
+                  storedProcedure = 'SELECT TOP (100) * FROM '
+                }
+                @{
+                  key = '6'
+                  storedProcedure = 'sp_helpme '
+                }
+                @{
+                  key = '7'
+                  storedProcedure = 'sp_BlitzWho'
+                }
+                @{
+                  key = '8'
+                  storedProcedure = 'sp_WhoIsActive @format_output = 2 , @get_plans = 1 , @get_outer_command = 1 , @find_block_leaders = 1 , @sort_order = N''[blocked_session_count] DESC, [start_time]'''
+                }
+                @{
+                   key = '9'
+                   storedProcedure = 'sp_WhoIsActive @format_output = 2 , @show_sleeping_spids = 2'
+                },
+                @{
+                   key = '0'
+                   storedProcedure = ''
+                }
+            )
+            $ssmsUserBackupFile = Join-Path $ssmsSettingsDirectory "settings_backup_$(Get-Date -Format "yyyyMMdd_HHmmssfff").json"
+            Copy-Item $ssmsSettingsFile $ssmsUserSettingsBackupFile -ErrorAction Stop
+            Write-Verbose "Backup of settings.json created at $ssmsUserBackupFile"
+            $jsonDoc | ConvertTo-Json -Depth 10 | Set-Content $ssmsSettingsFile -NoNewLine
+        }
+        catch {
+            Write-Error -ErrorRecord $_
+            return
+        }
+
+    }
+    else {
+        try {
+            $queryShortcutsElement = $qeSettings.SelectSingleNode('QueryShortcuts')
+            $ssmsUserSettingsBackupFile = Join-Path $ssmsUserSettingsDirectory "UserSettings_backup_$(Get-Date -Format "yyyyMMdd_HHmmssfff").xml"
+            Copy-Item $ssmsUserSettingsFile $ssmsUserSettingsBackupFile -ErrorAction Stop
+            Write-Verbose "Backup of UserSettings.xml created at $ssmsUserSettingsBackupFile"
+            if (-not $queryShortcutsElement) {
+                Write-Error "Cannot find Query Shortcuts element. Xml Schema might have changed."
+                return
+            }
+            $queryShortcutsElement.InnerXml = $queryXml
+            $xmlDoc.Save($ssmsUserSettingsFile)
+
+        }
+        catch {
+            Write-Error -ErrorRecord $_
+            return
+        }
+    }
 }
