@@ -122,7 +122,7 @@ function Set-SsmsQueryShortcut {
                 return
             }
             # Uses jsonc where the first line has a comment describing the file
-            $jsonDoc = Get-Content -LiteralPath $ssmsSettingsFile | Select-Object -Skip 1 | ConvertFrom-Json -ErrorAction Stop
+            $jsonDoc = Get-Content -LiteralPath $ssmsSettingsFile | Select-Object -Skip 1 | ConvertFrom-Json -AsHashtable -Depth 10 -ErrorAction Stop
             $jsonDoc.'environment.keyboard.queryShortcuts.shortcuts' = @(
                 @{
                     key = '-2'
@@ -176,7 +176,7 @@ function Set-SsmsQueryShortcut {
             $ssmsUserBackupFile = Join-Path $ssmsSettingsDirectory "settings_backup_$(Get-Date -Format "yyyyMMdd_HHmmssfff").json"
             Copy-Item $ssmsSettingsFile $ssmsUserSettingsBackupFile -ErrorAction Stop
             Write-Verbose "Backup of settings.json created at $ssmsUserBackupFile"
-            $jsonDoc | ConvertTo-Json -Depth 10 | Set-Content $ssmsSettingsFile -NoNewLine
+            $jsonDoc | ConvertTo-Json -Depth 10 -ErrorAction Stop | Set-Content $ssmsSettingsFile -NoNewLine
         }
         catch {
             Write-Error -ErrorRecord $_
