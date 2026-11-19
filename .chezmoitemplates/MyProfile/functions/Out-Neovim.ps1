@@ -13,8 +13,8 @@
 .EXAMPLE
     ... | onvim -OutVariable edited | Out-Null
 #>
-function Out-Neovim {
-    [Alias('Out-Vim', 'ovim', 'onvim')]
+function Out-Vi {
+    [Alias('Out-Vim', 'ovim', 'onvim', 'Out-Nvim', 'Out-Neovim', 'ovi')]
     [CmdletBinding()]
     param(
         # Optional extension used by Neovim for filetype detection.
@@ -22,64 +22,73 @@ function Out-Neovim {
         [Alias('ext')]
         [ArgumentCompletions(
             'sql', 'ps1', 'md', 'js', 'ts', 'json', 'csv', 'ini',
-            'yml', 'cs', 'xml', 'html', 'css', 'tmpl'
+            'yml', 'cs', 'xml', 'html', 'css', 'tmpl', 'go', 'rs',
+            'cpp', 'hpp', 'c', 'h'
         )]
         [string]
         $LanguageExtension,
 
         # Text to edit.
-        [Parameter(ValueFromPipeline, Mandatory)]
+        [Parameter(ValueFromPipeline, Mandatory, Position = 1)]
+        [AllowEmptyString()]
         [string]
         $InputObject,
 
         # Whether to collect all the input strings into a single buffer
-        [Parameter()]
-        [Alias('SingleBuffer', 'r')]
+        [Parameter(ParameterSetName = 'Raw')]
+        [Alias('SingleBuffer', 'r', 'ra')]
         [switch]
-        $Raw
+        $Raw,
+
+        # String to Join list of strings with in Raw Mode
+        [Parameter(ParameterSetName = 'Raw')]
+        [Alias('rjw')]
+        $RawJoinWith = [System.Environment]::NewLine
     )
 
     begin {
-        if ( Get-Command -Name 'nvim' -CommandType 'Application' -ErrorAction 'Ignore' ) {
-            $viCommand = 'nvim'
-        }
-        elseif ( Get-Command -Name 'vim' -CommandType 'Application' -ErrorAction 'Ignore' ) {
-            $viCommand = 'vim'
-        }
-        elseif ( Get-Command -Name 'vim' -CommandType 'Application' -ErrorAction 'Ignore' ) { 
-            $viCommand = 'vi'
+        foreach ($currentCommand in 'nvim', 'vim', 'vi' ) {
+            # Using `-CommandType Application` returns all results and _neovim_ adds its own path to `$env:Path`
+            $viCommand = Get-Command -Name $currentCommand -CommandType 'Application' -TotalCount 1 -ErrorAction 'Ignore'
+            if($viCommand) {
+                Write-Debug "Found vi-like command: $viCommand at $($viCommand.Path)"
+                break
+            }
         }
 
         if (-not $viCommand) {
             $errorRecord = [System.Management.Automation.ErrorRecord]::new(
-                [System.Exception]::new(
-                    'Cannot find nvim.exe. Install Neovim or fix the PATH environment variable.'
+                [System.Management.Automation.CommandNotFoundException]::new(
+                    'Cannot find vi-like binary. Install vi-like editor or fix the PATH environment variable.'
                 ),
-                'Profile.psm1.OutNeovim.MissingDependency',
+                'Profile.psm1.OutVi.MissingDependency',
                 [System.Management.Automation.ErrorCategory]::ObjectNotFound,
-                'nvim.exe'
+                '*vi*.exe'
             )
 
             $PSCmdlet.ThrowTerminatingError($errorRecord)
         }
 
+        $inputLines = $null
         if ($Raw) {
             $inputLines = [System.Collections.Generic.List[string]]::new()
         }
     }
 
     process {
-        if ($Raw -and -not [string]::IsNullOrWhiteSpace($InputObject)) {
+        if ($Raw) {
             $inputLines.Add($InputObject)
         }
-        else {
-            Invoke-Neovim -InputObject $InputObject  -LanguageExtension $LanguageExtension -EditorCommand $viCommand
+        elseif ($InputObject) {
+            Invoke-Vi -InputObject $InputObject -LanguageExtension $LanguageExtension -EditorCommand $viCommand
         }
     }
 
     end {
+        # Somewhat duplicating check in `$Raw` to pass strict mode requirements on `$null` property calls
         if ($Raw -and $inputLines.Count -gt 0) {
-            Invoke-Neovim -InputObject $inputLines -LanguageExtension $LanguageExtension -EditorCommand $viCommand
+            $endInputString = $inputLines -join $RawJoinWith
+            Invoke-Vi -InputObject $endInputString -LanguageExtension $LanguageExtension -EditorCommand $viCommand
         }
     }
 }
