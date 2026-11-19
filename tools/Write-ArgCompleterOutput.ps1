@@ -58,7 +58,7 @@ end {
     }
 
     #endregion
-    
+ 
     #region Add custom made files and strings for processing
     if (Get-Command fd -CommandType Application -ErrorAction Ignore) {
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (fd --gen-completions powershell | Out-String) -Comment 'fd PSReadline Argument Completer') )
@@ -84,7 +84,7 @@ end {
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (chezmoi completion powershell | Out-String) -Comment 'chezmoi dotfile management Prompt Completions' ) )
     }
     if (Get-Command glow -CommandType Application -ErrorAction Ignore) {
-        $argCompFiles.Add( ( New-ArgCompleterObject -Script (glow completion powershell | Out-String) -Comment 'glow Markdown Viewer Prompt Completions' ) ) 
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (glow completion powershell | Out-String) -Comment 'glow Markdown Viewer Prompt Completions' ) )
     }
     if (Get-Command bb -CommandType Application -ErrorAction Ignore) {
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (bb completion powershell | Out-String) -Comment 'bb Bitbucket Prompt Completions' ) ) 
@@ -100,6 +100,9 @@ end {
     }
     if (Get-Command codex -CommandType Application -ErrorAction Ignore) {
         $argCompFiles.Add( ( New-ArgCompleterObject -Script (codex completion powershell | Out-String) -Comment 'codex Prompt Completions' ) ) 
+    }
+    if (Get-Command docker -CommandType Application -ErrorAction Ignore) {
+        $argCompFiles.Add( ( New-ArgCompleterObject -Script (docker completion powershell | Out-String) -Comment 'docker Completions' ) ) 
     }
     if (Get-Command dotnet -CommandType Application -ErrorAction Ignore) {
         $env:DOTNET_NOLOGO = 'true' # Avoid welcome message on first run. Confusing output from chezmoi
