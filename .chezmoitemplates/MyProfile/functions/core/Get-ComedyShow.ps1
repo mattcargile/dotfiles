@@ -117,6 +117,44 @@ function Get-ComedyShow {
                 }
             }
 
+        # The Orange Violet
+        Invoke-RestMethod -Uri https://punchup.live/api/v2/public/venues/grouped-shows?venuePageId=956857e7-9bb2-4c7f-8e99-76f1ba548d51 |
+            ForEach-Object -MemberName data |
+            ForEach-Object -Process {
+                if ($_.type -eq 'group') {
+                    $_.group.shows
+                }
+                elseif ($_.type -eq 'single') {
+                    $_.show
+                }
+                else {
+                    Write-Warning "Did not find expected type group or single. Returned $($_.type)."
+                }
+            } |
+            Select-Object -Property @{
+                Name = 'Name'
+                Expression = {
+                    if ($_.show_comedians) {
+                        $_.show_comedians.display_name -join ' & '
+                    }
+                    else {
+                        $_.title -replace $nameReplace
+                    }
+                }
+            },
+            @{
+                Name = 'StartDate'
+                Expression = {
+                    $_.datetime
+                }
+            },
+            @{
+                Name = 'Location'
+                Expression = {
+                    'The Orange Violet'
+                }
+            }
+
         PSParseHTML\ConvertFrom-HTML -Url https://us.atgtickets.com/venues/saenger-theatre/whats-on/us/comedy?sort=newest-onsale |
             Select-AtgTicket -NameReplaceRegex $nameReplace
 
