@@ -630,6 +630,7 @@ do
     --
     -- But for many setups, the LSP (`ts_ls`) will work just fine
     -- ts_ls = {},
+    roslyn_ls = {},
 
     stylua = {
       root_dir = function(bufnr, on_dir)
