@@ -78,6 +78,13 @@ if ($null -eq $args[0]) {
 '@
         Summary = 'Fast sfsu status ( removing held packages without updates. sfsu maintainer has different semantics )'
     }
+    @{
+        Name = 'upall'
+        Command = @'
+scoop update *; scoop cleanup *
+'@
+        Summary = 'Update all unheld packages and cleanup all'
+    }
 )
 
 try {
